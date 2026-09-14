@@ -18,6 +18,17 @@ describe("SessionStateMachine", () => {
     expect(machine.status).toBe("completed");
   });
 
+  it("resets progress when a terminal session returns to idle", () => {
+    const { machine } = make();
+    machine.transition("waiting");
+    machine.setProgress(0.7);
+    machine.transition("completed");
+    expect(machine.progress).toBe(0.7);
+    machine.transition("idle");
+    expect(machine.progress).toBeNull();
+    expect(machine.transition("waiting")).toBe(true);
+  });
+
   it("is idempotent for same-state transitions", () => {
     const { machine, emit } = make();
     expect(machine.transition("waiting")).toBe(true);
