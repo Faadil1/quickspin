@@ -36,7 +36,7 @@ export function createRunnerSurface(width: number, height: number): RunnerSurfac
   };
 }
 
-/** One physics step. All coordinates are logical (CSS) pixels. */
+/** One physics step. `progress` is the host-provided or phase-derived intensity. */
 export function runnerStep(s: RunnerSurface, dt: number, width: number, progress: number): void {
   if (s.crashed) return;
   const p = Math.max(0, Math.min(1, progress ?? 0));
@@ -54,9 +54,6 @@ export function runnerStep(s: RunnerSurface, dt: number, width: number, progress
   }
 
   s.obstacleX -= s.speed * dt;
-
-  // Spawn the next obstacle only once the current one has fully exited
-  // the left edge — then give it a randomized, fair gap before it returns.
   if (s.obstacleX + s.obstacleW < 0) {
     s.obstacleX = width + 40 + (180 + Math.random() * 140);
     s.obstacleH = 40 + Math.random() * 28;
@@ -125,8 +122,7 @@ export const runnerGame: GameDefinition = {
       if (e.code !== "Space") return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-      // Let buttons and links inside the widget keep their native Space activation.
-      if (t && t !== host.root && !t.classList.contains("quickspin-canvas")) return;
+      if (t && t !== host.root && t !== host.canvas) return;
       e.preventDefault();
       runnerJump(state);
     };
@@ -159,6 +155,12 @@ export const runnerGame: GameDefinition = {
       ctx.font = "10px system-ui, sans-serif";
       ctx.fillStyle = "rgba(255,255,255,0.5)";
       ctx.fillText(`${state.distance.toFixed(0)} m`, 8, 12);
+      if (host.phase) {
+        const label = host.phase.slice(0, 30);
+        const width = ctx.measureText(label).width;
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.fillText(label, Math.max(8, logicalW - width - 8), 12);
+      }
     };
 
     return {
@@ -166,6 +168,7 @@ export const runnerGame: GameDefinition = {
         paused = false;
         resizeIfNeeded();
         host.root.tabIndex = 0;
+        host.canvas.tabIndex = 0;
         host.root.addEventListener("keydown", onKey);
         host.canvas.addEventListener("pointerdown", onPointer);
         host.canvas.setAttribute(
@@ -177,7 +180,7 @@ export const runnerGame: GameDefinition = {
       tick(_time: number, dt: number) {
         if (paused) return;
         resizeIfNeeded();
-        runnerStep(state, Math.min(dt, 0.05), logicalW, host.progress ?? 0);
+        runnerStep(state, Math.min(dt, 0.05), logicalW, host.intensity);
         if (runnerCollides(state)) {
           state.crashed = true;
           host.finish("player-failed");
