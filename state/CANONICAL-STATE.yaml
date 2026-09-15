@@ -51,8 +51,11 @@ verified_reality_pattern:
   evidence: evidence/REALITY-ANCHOR.md
 
 winning_intelligence_v2:
-  status: IMPLEMENTED_PENDING_INDEPENDENT_PR_CI_CODEQL
+  status: PASS_INDEPENDENT_PR_CI_CODEQL
   evidence: evidence/WINNING-INTELLIGENCE-V2.md
+  ci_run: 35000563352
+  codeql_run: 35000563920
+  test_count: 35
   judge_memory_sentence: QuickSpin turns AI waiting into a game you can verify afterward.
   product_metaphor: Flight recorder for playable AI waiting.
   signature_path: OBSERVED_SIGNAL_TO_PLAY_TO_EVIDENCE_CAPSULE
@@ -87,9 +90,10 @@ completed:
   - HOST_OBSERVE_BRIDGE_IMPLEMENTED
   - HOST_INTERVENTION_ACK_CONTRACT_IMPLEMENTED
   - CAPSULE_JSON_EXPORT_IMPLEMENTED
+  - WI_V2_PRODUCT_DELTA_PR_CI_CODEQL_PASS
 
 open_blocking_gates:
-  - WI_V2_PRODUCT_DELTA_PR_VALIDATION
+  - WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
   - NEGATIVE_PATH_VIDEO_CAPTURE
   - QA_LIVE_REHEARSAL
@@ -106,8 +110,9 @@ closed_risks:
   one_shot_patch_workflow_noise: REMOVED_AFTER_FAILURE_RETENTION
   public_deployment_proof: PASS_VERIFIED_VERCEL_RUNTIME
   single_page_jury_compression_risk: MITIGATED_BY_MULTI_PAGE_ARCHITECTURE
+  wi_v2_product_validation: PASS_CI_CODEQL_35_TESTS
 
-next_required_gate: WI_V2_PRODUCT_DELTA_PR_VALIDATION
+next_required_gate: WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
 
 terminal_sequence:
   - verification-before-completion
@@ -122,7 +127,7 @@ terminal_sequence:
   - project-complete-only-if-all-blocking-gates-pass
 
 security_gate: PASS_ZERO_NPM_AUDIT
-runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME
+runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_WI_V2
 runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58
 runtime_deployment_id: dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL
 runtime_url: https://quickspin-runtime.vercel.app
