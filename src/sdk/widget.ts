@@ -2,6 +2,12 @@ import type {
   CreateQuickSpinOptions,
   EndReason,
   ExecutionSignal,
+  ExecutionTrailEntry,
+  HostIntervention,
+  HostObservation,
+  InterventionIntent,
+  InterventionResult,
+  WaitCapsule,
   GameDefinition,
   GameHost,
   GameInstance,
@@ -17,7 +23,9 @@ import { runnerGame } from "./runner";
 import { orbitGame } from "./orbit";
 import {
   bestLabel,
+  evidenceCoverageFromTrail,
   recordSession,
+  sessionRecordToCapsule,
   totalSessions,
   totalWaitTurnedToPlayMs,
   updateSessionPerception,
@@ -237,6 +245,8 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   let phaseIndex = -1;
   let phaseIntensity = 0;
   const pendingSignals: ExecutionSignal[] = [];
+  const executionTrail: ExecutionTrailEntry[] = [];
+  let lastCapsule: WaitCapsule | null = null;
   let latestStatus = "Waiting for the model…";
   const machine = new SessionStateMachine(emit);
 
@@ -245,6 +255,15 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   function emit(e: WaitEvent): void {
     if (opts.onEvent) opts.onEvent(e);
     if (externalHandler) externalHandler(e);
+  }
+
+  function trailAtMs(): number {
+    return startedAt > 0 ? Math.max(0, performance.now() - startedAt) : 0;
+  }
+
+  function finalizeCapsule(record: Parameters<typeof sessionRecordToCapsule>[0]): void {
+    lastCapsule = sessionRecordToCapsule(record);
+    emit({ type: "capsule", data: lastCapsule });
   }
 
   function clearRevealTimer(): void {
@@ -449,6 +468,8 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       feltWaitMs: null,
       completed: true,
       outcome: "completed",
+      trail: executionTrail,
+      evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
     });
     const engagedRatio = actualWaitMs > 0 ? clamp01(engagedMs / actualWaitMs) : 0;
     emit({
@@ -464,6 +485,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         sessionStreak: rec.sessionStreak,
       },
     });
+    finalizeCapsule(rec.record);
     destroyGame();
     updateFooterStats();
 
@@ -498,11 +520,14 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       feltWaitMs: null,
       completed: false,
       outcome: "cancelled",
+      trail: executionTrail,
+      evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
     });
     emit({
       type: "cancel",
       data: { id: rec.id, outcome: "cancelled", game: currentGame ? gameId : null },
     });
+    finalizeCapsule(rec.record);
     destroyGame();
     if (uiShown) showCancelledOverlay();
     else syncVisibility();
@@ -524,6 +549,8 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       outcome: "failed",
       failureCode: "HOST_REQUEST_FAILED",
       failureMessage: failure.message.slice(0, 240),
+      trail: executionTrail,
+      evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
     });
     emit({
       type: "fail",
@@ -534,6 +561,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         error: { name: failure.name, message: failure.message },
       },
     });
+    finalizeCapsule(rec.record);
     destroyGame();
     if (uiShown) showErrorOverlay(failure, rec.id);
     else syncVisibility();
@@ -841,6 +869,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     phaseIndex = -1;
     phaseIntensity = 0;
     pendingSignals.length = 0;
+    executionTrail.length = 0;
     collapsed = false;
     uiShown = false;
     progressFill.style.width = "0%";
@@ -873,6 +902,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         latestPhase = normalized;
         phaseIndex += 1;
         phaseIntensity = clamp01(0.18 + Math.max(0, phaseIndex) * 0.22);
+        executionTrail.push({ type: "phase", atMs: trailAtMs(), phase: normalized });
       }
       statusEl.textContent = normalized;
       if (uiShown && !currentGame && !overlay.hidden) {
@@ -904,6 +934,12 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       if (!sessionActive) return false;
       const normalized = normalizeExecutionSignal(signal);
       if (!normalized) {
+        executionTrail.push({
+          type: "signal-rejected",
+          atMs: trailAtMs(),
+          phase: latestPhase ?? undefined,
+          reason: "INSUFFICIENT_EVIDENCE",
+        });
         emit({
           type: "signal-rejected",
           data: {
@@ -915,6 +951,13 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         });
         return false;
       }
+
+      executionTrail.push({
+        type: "signal",
+        atMs: trailAtMs(),
+        phase: latestPhase ?? undefined,
+        signal: normalized,
+      });
 
       if (currentGame?.signal) currentGame.signal(normalized);
       else {
@@ -931,6 +974,65 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         },
       });
       return true;
+    },
+    observe(observation: HostObservation) {
+      if (!sessionActive) return false;
+      let observed = false;
+      let accepted = true;
+      const phase = typeof observation?.phase === "string" ? observation.phase.trim() : "";
+      if (phase) {
+        observed = true;
+        session.setPhase(phase);
+      }
+      if (observation?.signal) {
+        observed = true;
+        accepted = session.signal(observation.signal) && accepted;
+      }
+      return observed && accepted;
+    },
+    async intervene(intent: InterventionIntent): Promise<InterventionResult> {
+      const id = globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+      if (!sessionActive) return { id, accepted: false, reason: "SESSION_NOT_ACTIVE" };
+      const hostIntent: HostIntervention = {
+        kind: intent.kind,
+        label: typeof intent.label === "string" ? intent.label.slice(0, 96) : undefined,
+        payload: intent.payload,
+        id,
+        atMs: trailAtMs(),
+      };
+      executionTrail.push({
+        type: "intervention",
+        atMs: hostIntent.atMs,
+        intervention: hostIntent,
+      });
+      emit({ type: "intervention", data: hostIntent });
+      let result: InterventionResult;
+      if (!opts.onIntervention) {
+        result = { id, accepted: false, reason: "NO_HOST_HANDLER" };
+      } else {
+        try {
+          const hostResult = await opts.onIntervention(hostIntent);
+          result = {
+            id,
+            accepted: Boolean(hostResult?.accepted),
+            reason:
+              typeof hostResult?.reason === "string" ? hostResult.reason.slice(0, 160) : undefined,
+            evidenceRef:
+              typeof hostResult?.evidenceRef === "string" && hostResult.evidenceRef.trim()
+                ? hostResult.evidenceRef.trim().slice(0, 160)
+                : undefined,
+          };
+        } catch {
+          result = { id, accepted: false, reason: "HOST_HANDLER_FAILED" };
+        }
+      }
+      executionTrail.push({
+        type: "intervention-result",
+        atMs: trailAtMs(),
+        interventionResult: result,
+      });
+      emit({ type: "intervention-result", data: result });
+      return result;
     },
     complete() {
       completeSession();
@@ -990,6 +1092,12 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       return () => {
         if (externalHandler === handler) externalHandler = null;
       };
+    },
+    getLastCapsule() {
+      return lastCapsule ? (JSON.parse(JSON.stringify(lastCapsule)) as WaitCapsule) : null;
+    },
+    exportLastCapsule() {
+      return lastCapsule ? JSON.stringify(lastCapsule, null, 2) : null;
     },
     get status() {
       return machine.status;

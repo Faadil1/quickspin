@@ -4,6 +4,8 @@ import {
   bestScore,
   completedSessions,
   currentDayStreak,
+  evidenceCoverageFromTrail,
+  latestWaitCapsule,
   leaderboard,
   loadStorage,
   perceivedWaitStats,
@@ -234,6 +236,68 @@ describe("persistence", () => {
     expect(rec?.outcome).toBe("failed");
     expect(rec?.failureCode).toBe("HOST_REQUEST_FAILED");
     expect(rec?.failureMessage).toBe("DEMO_PROVIDER_TIMEOUT");
+  });
+
+  it("builds a portable Evidence Capsule with transparent coverage", () => {
+    const trail = [
+      { type: "phase" as const, atMs: 10, phase: "Searching" },
+      {
+        type: "signal" as const,
+        atMs: 20,
+        signal: {
+          kind: "retrieval" as const,
+          label: "Retrieved sources",
+          evidenceRef: "run:retrieval:1",
+        },
+      },
+      { type: "signal-rejected" as const, atMs: 30, reason: "INSUFFICIENT_EVIDENCE" },
+      {
+        type: "intervention-result" as const,
+        atMs: 40,
+        interventionResult: { id: "intent-1", accepted: true, evidenceRef: "run:intent:1" },
+      },
+    ];
+    const coverage = evidenceCoverageFromTrail(trail);
+    expect(coverage).toMatchObject({
+      phaseChanges: 1,
+      acceptedSignals: 1,
+      rejectedSignals: 1,
+      uniqueEvidenceRefs: 2,
+      acceptedInterventions: 1,
+    });
+    recordSession({
+      gameId: "runner",
+      score: 42,
+      actualWaitMs: 12000,
+      engagedPlayMs: 8000,
+      completed: true,
+      outcome: "completed",
+      trail,
+      evidenceCoverage: coverage,
+    });
+    const capsule = latestWaitCapsule();
+    expect(capsule?.outcome).toBe("completed");
+    expect(capsule?.trail).toHaveLength(4);
+    expect(capsule?.trail[1].signal?.evidenceRef).toBe("run:retrieval:1");
+    expect(capsule?.evidenceCoverage.rejectedSignals).toBe(1);
+  });
+
+  it("preserves failure truth inside the Evidence Capsule", () => {
+    recordSession({
+      gameId: null,
+      score: null,
+      actualWaitMs: 1400,
+      engagedPlayMs: 0,
+      completed: false,
+      outcome: "failed",
+      failureCode: "HOST_REQUEST_FAILED",
+      failureMessage: "DEMO_PROVIDER_TIMEOUT",
+      trail: [{ type: "signal-rejected", atMs: 100, reason: "INSUFFICIENT_EVIDENCE" }],
+    });
+    const capsule = latestWaitCapsule();
+    expect(capsule?.outcome).toBe("failed");
+    expect(capsule?.failureMessage).toBe("DEMO_PROVIDER_TIMEOUT");
+    expect(capsule?.evidenceCoverage.rejectedSignals).toBe(1);
   });
 
   it("resetAll clears everything", () => {

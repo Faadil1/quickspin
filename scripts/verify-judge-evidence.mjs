@@ -1,6 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 
 const required = {
+  "evidence/WINNING-INTELLIGENCE-V2.md": [
+    "Distinction Gate",
+    "Evidence Capsule",
+    "Flight recorder for playable AI waiting",
+    "COMMONS_SUBMISSION_LOCK",
+    "Maximum 3 product-differentiation iterations",
+  ],
   "evidence/REALITY-ANCHOR.md": [
     "Signal positif / opportunité",
     "Événement négatif concret, réel et vérifiable",

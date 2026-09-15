@@ -110,7 +110,7 @@ function homePage(): string {
       <div>
         <div class="eyebrow">Commonsmade · Make Waiting for AI Fun</div>
         <h1 class="display">Make AI waiting <em>playable.</em><br>Keep the truth.</h1>
-        <p class="lede">QuickSpin turns real host-observed AI execution into optional gameplay, then produces a signed Wait Receipt for what actually happened — including failure and UNKNOWN.</p>
+        <p class="lede">QuickSpin turns real host-observed AI execution into optional gameplay, then produces a truthful Wait Receipt for what actually happened — including failure and UNKNOWN.</p>
         <div class="route-actions">
           <a class="action signal" href="/lab">Enter the live wait lab →</a>
           <a class="action" href="/proof">Inspect the evidence</a>
@@ -161,6 +161,7 @@ function labPage(): string {
         <div class="lab-actions">
           <button id="run-demo" class="run">Run 12-second comparison</button>
           <button id="run-failure" class="failure">Run negative-path proof</button>
+          <button id="copy-capsule">Copy Evidence Capsule</button>
           <button id="reset-stats">Reset local evidence</button>
         </div>
       </div>
@@ -189,7 +190,9 @@ function proofPage(): string {
       <div class="receipt-row"><span>ENGAGED</span><strong>7.88 s</strong></div>
       <div class="receipt-row signal"><span>FELT WAIT</span><strong>9.00 s / −25%</strong></div>
       <div class="receipt-row"><span>PROVENANCE</span><strong>HOST-OBSERVED</strong></div>
-      <div class="receipt-foot">Illustrative receipt layout. The live lab records the actual session values; signed perceived wait is allowed to be shorter, equal, or longer.</div>
+      <div class="receipt-row"><span>EVIDENCE CAPSULE</span><strong>PORTABLE JSON</strong></div>
+      <div class="receipt-row"><span>UNKNOWN</span><strong>RETAINED / NOT LAUNDERED</strong></div>
+      <div class="receipt-foot">Illustrative receipt layout. The live lab records the actual session values; perceived-wait delta is allowed to be shorter, equal, or longer.</div>
     </section>
     <section class="evidence-grid" style="margin-top:54px">
       <article class="evidence-panel"><div class="eyebrow">Reality anchor</div><h2>A real production failure, not a hypothetical risk.</h2><p>OpenAI documented elevated errors and latency on June 2–3, 2026 across Responses API, Codex and ChatGPT. QuickSpin does not claim to repair provider reliability; the incident proves waiting, rejection and degraded flows are real product states.</p><div class="status-line"><span>PRIMARY-SOURCE EVENT</span><span class="status">PASS</span></div></article>
@@ -326,6 +329,7 @@ function mountLab(app: HTMLElement): void {
   const segBtns = Array.from(app.querySelectorAll<HTMLButtonElement>(".seg button"));
   const runBtn = app.querySelector<HTMLButtonElement>("#run-demo")!;
   const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure")!;
+  const copyCapsuleBtn = app.querySelector<HTMLButtonElement>("#copy-capsule")!;
   const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats")!;
   const phaseEl = app.querySelector<HTMLElement>("#qs-phase")!;
   const classicPhase = app.querySelector<HTMLElement>("#classic-phase")!;
@@ -337,11 +341,18 @@ function mountLab(app: HTMLElement): void {
     logEl.scrollTop = logEl.scrollHeight;
   };
 
-  let ctrl: QuickSpinController = createQuickSpin({
+  const controllerOptions = {
     target: mount,
     delayMs: 0,
     onEvent: logEvents,
-  });
+    onIntervention: (intent: { id: string; kind: string }) => ({
+      id: intent.id,
+      accepted: intent.kind === "refine",
+      reason: intent.kind === "refine" ? "HOST_APPLIED_REFINEMENT" : "DEMO_HOST_REFUSED_INTENT",
+      evidenceRef: intent.kind === "refine" ? "demo:intervention:walkability" : undefined,
+    }),
+  };
+  let ctrl: QuickSpinController = createQuickSpin(controllerOptions);
   let mode: "classic" | "quickspin" = "quickspin";
   let running = false;
 
@@ -398,6 +409,11 @@ function mountLab(app: HTMLElement): void {
   const runQuickSpin = async (): Promise<void> => {
     const session = ctrl.start({ status: PHASES[0].status });
     session.setProgress();
+    session.signal({ kind: "retrieval", label: "Unproven retrieval candidate", evidenceRef: "" });
+    const intervention = await session.intervene({
+      kind: "refine",
+      label: "Prioritize walkability in the final ranking",
+    });
     for (const phase of PHASES) {
       session.setPhase(phase.status);
       session.signal(phase.signal);
@@ -405,7 +421,15 @@ function mountLab(app: HTMLElement): void {
       await sleep(phase.ms);
     }
     session.complete();
-    phaseEl.innerHTML = "Phase: <strong>Done</strong> — response ready; inspect the Wait Receipt.";
+    const capsule = ctrl.getLastCapsule();
+    phaseEl.innerHTML =
+      "Phase: <strong>Done</strong> — Evidence Capsule retained <strong>" +
+      String(capsule?.evidenceCoverage.acceptedSignals ?? 0) +
+      "</strong> accepted signal(s), <strong>" +
+      String(capsule?.evidenceCoverage.rejectedSignals ?? 0) +
+      "</strong> UNKNOWN/rejected signal(s), and host intervention <strong>" +
+      (intervention.accepted ? "ACKNOWLEDGED" : "REJECTED") +
+      "</strong>.";
     appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
     refreshStats();
   };
@@ -462,12 +486,22 @@ function mountLab(app: HTMLElement): void {
 
   runBtn.addEventListener("click", () => void runDemo());
   failureBtn.addEventListener("click", () => void runFailure());
+  copyCapsuleBtn.addEventListener("click", () => {
+    const capsule = ctrl.exportLastCapsule();
+    if (!capsule) {
+      copyCapsuleBtn.textContent = "Run a QuickSpin path first";
+      return;
+    }
+    void navigator.clipboard?.writeText(capsule);
+    copyCapsuleBtn.textContent = "Evidence Capsule copied";
+  });
   resetBtn.addEventListener("click", () => {
     ctrl.destroy();
     mount.innerHTML = "";
     resetAll();
     logEl.innerHTML = "";
-    ctrl = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents });
+    ctrl = createQuickSpin(controllerOptions);
+    copyCapsuleBtn.textContent = "Copy Evidence Capsule";
     refreshStats();
   });
   for (const button of segBtns)
