@@ -1,8 +1,8 @@
 schema_version: 1
 project: QuickSpin
-workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
-canonical_base_sha: 54421421a0903ebdf3431204aca43706c9a267af
-candidate_branch: winning-intelligence-v2
+workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE
+canonical_base_sha: 2ee56ce711e6ee495f38908b21767698da9fe394
+candidate_branch: winning-intelligence-v3-open-space
 candidate_head_policy: TRACK_BRANCH_HEAD
 project_complete: false
 readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
@@ -11,17 +11,12 @@ activities:
   - id: A-001
     stage: reality-anchor-five-part-pattern
     outcome: PASS
-    evidence:
-      - evidence/REALITY-ANCHOR.md
-    note: Signal/opportunity, primary-source real negative event, observable impact, design lesson, and scoped mitigation are explicit.
+    evidence: [evidence/REALITY-ANCHOR.md]
 
   - id: A-002
     stage: negative-path-and-unknown-assurance
     outcome: PASS
-    evidence:
-      - evidence/FAILURE-LEDGER.md
-      - evidence/CLAIM-LEDGER.md
-    note: Actual rejected Promise terminates failed; insufficient provenance produces UNKNOWN/refusal and no gameplay mutation.
+    evidence: [evidence/FAILURE-LEDGER.md, evidence/CLAIM-LEDGER.md]
 
   - id: A-003
     stage: dependency-security-reconciliation
@@ -33,37 +28,86 @@ activities:
       - evidence/security/npm-pack-dry-run.json
 
   - id: A-004
-    stage: build-readiness-validation
-    outcome: PASS_WITH_LIMITATIONS
-    evidence:
-      - github-actions:34929604542
-    note: Node 22/24 CI, format, tests, judge verification, SDK/demo artifacts, and CodeQL passed before PR #4 merge.
+    stage: public-runtime-vercel-proof-pre-v3
+    outcome: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3
+    evidence: [evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md]
+    note: Existing future-classic production runtime and five routes are verified, but it does not yet prove V3.
 
   - id: A-005
-    stage: github-pages-runtime-attempt
-    outcome: HISTORICAL_FAILURE_RETAINED_RUNTIME_LATER_CLOSED_BY_VERCEL
+    stage: winning-intelligence-v2-final-validation
+    outcome: PASS_INDEPENDENT_CI_CODEQL
     evidence:
-      - github-actions:34929705731
-      - evidence/FAILURE-LEDGER.md
-      - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
-    note: Pages authority failed historically; later Vercel production runtime was independently verified. The old red run remains evidence but is no longer a blocking runtime gate.
+      - github-actions:35001906327
+      - github-actions:35001906289
+      - evidence/WINNING-INTELLIGENCE-V2.md
+    note: V2 passed final permanent CI and CodeQL after stale-verifier recovery, then merged as 98c87f409c8b4b9586ef398812fb4d995fd1b5da.
 
   - id: A-006
-    stage: final-judge-sample-reconciliation
-    outcome: PASS
+    stage: winning-intelligence-v2-merge
+    outcome: PASS_MERGED
     evidence:
-      - github-actions:34930139522
-      - src/demo/main.ts
-    note: Displayed SDK sample includes evidenceRef and matches runtime provenance contract.
+      - git-commit:98c87f409c8b4b9586ef398812fb4d995fd1b5da
 
   - id: A-007
-    stage: one-shot-workflow-cleanup
-    outcome: PASS_AFTER_FAILURE_RETENTION
+    stage: v3-public-field-open-space-scan
+    outcome: PASS_WITH_NON_EXHAUSTIVE_BOUNDARY
     evidence:
-      - evidence/FAILURE-LEDGER.md
-    note: Non-idempotent patch-workflow red runs remain recorded as F-09; temporary workflow was removed.
+      - evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
+    note: Public field shows crowded generic waiting-game/useful-wait territory; replay/share/compare from redacted evidence is treated as an observed open-space hypothesis, never an exclusivity claim.
 
   - id: A-008
+    stage: v3-private-capsule-to-redacted-ghost-contract
+    outcome: IMPLEMENTED_TRANSIENT_PASS
+    evidence:
+      - src/sdk/capsule.ts
+      - src/sdk/types.ts
+      - src/sdk/capsule.test.ts
+      - github-actions:35003001488
+    note: Wait Ghost removes labels, refs, payloads, private ids/timestamps and failure details while preserving relative timing/event classes/outcome/counts.
+
+  - id: A-009
+    stage: v3-historical-replay-truth
+    outcome: IMPLEMENTED_TRANSIENT_PASS
+    evidence:
+      - src/sdk/capsule.ts
+      - src/demo/main.ts
+      - src/sdk/capsule.test.ts
+    note: Ghost replay returns deterministic historical steps and does not emit current host execution signals.
+
+  - id: A-010
+    stage: v3-wait-regression-diff
+    outcome: IMPLEMENTED_TRANSIENT_PASS
+    evidence:
+      - src/sdk/capsule.ts
+      - src/sdk/capsule.test.ts
+    note: Comparison exposes signed deltas only and deliberately contains no winner, trust, confidence or quality score.
+
+  - id: A-011
+    stage: v3-persistence-privacy-hardening
+    outcome: PASS_TRANSIENT
+    evidence:
+      - src/sdk/types.ts
+      - src/sdk/widget.ts
+      - github-actions:35003001488
+    note: Full HostIntervention payload remains available to the host callback in memory but is no longer persisted in QuickSpin's durable execution trail.
+
+  - id: A-012
+    stage: v3-transient-product-validation
+    outcome: PASS_TYPECHECK_41_TESTS
+    evidence:
+      - github-actions:35003001488
+    note: Temporary surgical application passed npm install with zero vulnerabilities, TypeScript, and 41 tests before committing the V3 product files.
+
+  - id: A-013
+    stage: v3-diff-scope-assurance
+    outcome: PASS_AFTER_SCOPE_DRIFT_REJECTION
+    evidence:
+      - git-commit:31a494459baf0dd907130578e7997641ef468078
+      - git-commit:944781484a592028c65367a68503daafc1ac95d5
+      - evidence/FAILURE-LEDGER.md
+    note: An 845-line widget rewrite was rejected as scope drift; exact validated widget restored before surgical V3 patching.
+
+  - id: A-014
     stage: requirements-evidence-artifacts-risks-project-state-build-reconciliation
     outcome: PASS_WITH_CONDITIONS
     evidence:
@@ -72,64 +116,24 @@ activities:
       - evidence/GATE-REPORT.md
       - state/CANONICAL-STATE.yaml
     open_blocking_gates:
-      - WI_V2_PRODUCT_DELTA_PR_VALIDATION
-      - WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
-      - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
-      - NEGATIVE_PATH_VIDEO_CAPTURE
+      - WI_V3_PRODUCT_DELTA_PR_VALIDATION
+      - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
+      - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
+      - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
       - QA_LIVE_REHEARSAL
       - COMMONS_SUBMISSION_LOCK
       - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
 
-  - id: A-009
+  - id: A-015
     stage: handoff-to-finisher
-    outcome: PAUSED_FOR_WI_V2_VALIDATION
-    evidence:
-      - HACKATHON-HANDOFF.yaml
-      - state/HANDOVER.yaml
-    note: Finisher resumes only after the product-differentiation branch is independently validated and runtime proof is refreshed.
+    outcome: PAUSED_FOR_WI_V3_PROOF
+    evidence: [HACKATHON-HANDOFF.yaml, state/HANDOVER.yaml]
 
-  - id: A-010
-    stage: orchestration-and-judge-performance-assurance
-    outcome: PASS_WITH_EXPLICIT_UPSTREAM_UNKNOWN
-    evidence:
-      - evidence/ORCHESTRATION-JPA.md
-      - evidence/CYCLE-GATE-MATRIX.md
-    note: Faadil Agent System route and Judge Coverage/Critical-Path/Technical Ownership/Session Continuity gates are explicit. Missing HOI/Chief-of-Staff repo provenance remains UNKNOWN_IN_REPO rather than fabricated PASS.
-
-  - id: A-011
-    stage: supply-chain-install-script-review
-    outcome: REVIEWED_WARNING_NONRUNTIME
-    evidence:
-      - evidence/security/SUPPLY-CHAIN-REVIEW.md
-    note: npm surfaced esbuild postinstall as not covered by project allowScripts; audit remains zero and package boundary excludes build tooling. No blanket approval is inferred.
-
-  - id: A-012
-    stage: public-runtime-vercel-proof
-    outcome: PASS_VERIFIED_PUBLIC_RUNTIME
-    evidence:
-      - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
-    note: Future-classic multi-page runtime reached READY on Vercel and all five canonical routes returned HTTP 200.
-
-  - id: A-013
-    stage: winning-intelligence-v2-distinction-gate
-    outcome: PASS_IMPLEMENTED_PENDING_INDEPENDENT_PR_VALIDATION
-    evidence:
-      - evidence/WINNING-INTELLIGENCE-V2.md
-      - src/sdk/types.ts
-      - src/sdk/persistence.ts
-      - src/sdk/widget.ts
-      - src/demo/main.ts
-    note: Public competitor scan led to a distinct flight-recorder position, Evidence Capsule, coverage counts, observe bridge, host-acknowledged interventions, export, and a signature accepted-signal/UNKNOWN/capsule demo sequence.
-
-  - id: A-014
-    stage: winning-intelligence-v2-migration-assurance
-    outcome: PASS_AFTER_REAL_FAILURE_RETENTION
-    evidence:
-      - github-actions:34999196264
-      - github-actions:34999366553
-      - github-actions:34999396864
-      - evidence/FAILURE-LEDGER.md
-    note: Initial migration script failed before product mutation; parse-safe replacement then passed migration, format, TypeScript, tests and judge verification. Temporary migration machinery was removed.
+  - id: A-016
+    stage: v3-feature-freeze
+    outcome: ACTIVE_AFTER_V3_PROOF
+    evidence: [evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md]
+    note: This is Winning Intelligence differentiation iteration 3 of 3. After permanent proof, next major work is TRACE visual-jury elevation unless new high-signal competitor evidence invalidates the distinction.
 
 failure_records_retained:
   - github-actions:34925583311
@@ -144,6 +148,10 @@ failure_records_retained:
   - github-actions:34979638351
   - github-actions:34999196264
   - github-actions:34999366553
+  - github-actions:35000339670
+  - github-actions:35000815478
+  - git-commit:679860f0afc987bc024f5fbbd55d25bb716825f2
+  - git-commit:31a494459baf0dd907130578e7997641ef468078
 
 invariants:
   - REAL_FAILURE_GT_FAKE_SUCCESS
@@ -156,5 +164,8 @@ invariants:
   - EXPECTED_URL_IS_NOT_RUNTIME_EVIDENCE
   - EVIDENCE_CAPSULE_IS_NOT_A_CRYPTOGRAPHIC_SIGNATURE
   - HOST_INTERVENTION_INTENT_IS_NOT_EXECUTION_UNTIL_ACKNOWLEDGED
+  - FULL_CAPSULE_IS_PRIVATE_EVIDENCE_WAIT_GHOST_IS_REDACTED_DERIVATIVE
+  - GHOST_REPLAY_IS_NOT_LIVE_AI
+  - SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT
   - PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION
   - MISSING_ORCHESTRATION_PROVENANCE_STAYS_UNKNOWN
