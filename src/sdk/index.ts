@@ -2,6 +2,15 @@ import { createQuickSpin } from "./widget";
 export { createQuickSpin } from "./widget";
 export { SessionStateMachine } from "./state-machine";
 export {
+  createWaitGhost,
+  createWaitGhostReplay,
+  compareWaitExperiences,
+  decodeWaitGhost,
+  encodeWaitGhost,
+  validateWaitCapsule,
+  validateWaitGhost,
+} from "./capsule";
+export {
   bestScore,
   bestLabel,
   completedSessions,
@@ -61,12 +70,17 @@ export type {
   InterventionResult,
   PlanOption,
   QuickSpinController,
+  RecordedIntervention,
   SessionOutcome,
   SessionStatus,
   ThemeConfig,
   WaitCapsule,
+  WaitComparison,
   WaitEvent,
   WaitEventHandler,
+  WaitGhost,
+  WaitGhostEvent,
+  WaitGhostReplayStep,
   WaitMetrics,
   WaitSession,
 } from "./types";
