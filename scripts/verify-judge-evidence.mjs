@@ -25,10 +25,12 @@ const required = {
     "F-15",
     "F-16",
     "F-17",
+    "F-18",
     "35000815478",
     "679860f0afc987bc024f5fbbd55d25bb716825f2",
     "31a494459baf0dd907130578e7997641ef468078",
     "35003001488",
+    "35004294002",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -81,7 +83,7 @@ const required = {
     "Wait Ghost is derived from a full Wait Capsule",
     "Wait Ghost replay is live AI | REFUSED",
     "wait-to-wait diff decides a winner | REFUSED",
-    "WI V3 permanent PR CI/CodeQL is green | UNKNOWN_PENDING_PR",
+    "WI V3 permanent PR CI/CodeQL is green | VERIFIED",
     "public runtime already contains WI V3 Wait Ghost changes | UNKNOWN / NOT_CLAIMED",
   ],
   "evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md": [
@@ -101,8 +103,11 @@ const required = {
     "FULL_CAPSULE_IS_PRIVATE_EVIDENCE_WAIT_GHOST_IS_REDACTED_DERIVATIVE",
     "GHOST_REPLAY_IS_NOT_LIVE_AI",
     "SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT",
+    "status: PASS_INDEPENDENT_PR_CI_CODEQL",
     "transient_validation_run: 35003001488",
-    "transient_test_count: 41",
+    "permanent_ci_run: 35004024452",
+    "permanent_codeql_run: 35004024601",
+    "test_count: 41",
     "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3",
     "project_complete: false",
   ],
@@ -126,10 +131,11 @@ const required = {
   "HACKATHON-STATE.yaml": [
     "candidate_branch: winning-intelligence-v3-open-space",
     "iteration: 3_OF_3",
-    "wait_ghost_redaction: TRANSIENT_PASS_IMPLEMENTED_AND_TESTED",
-    "wait_ghost_replay: TRANSIENT_PASS_HISTORICAL_NOT_LIVE_AI",
-    "wait_regression_diff: TRANSIENT_PASS_SIGNED_DELTAS_NO_WINNER_SCORE",
-    "v3_codeql: PENDING_INDEPENDENT_PR",
+    "wait_ghost_redaction: PASS_IMPLEMENTED_AND_TESTED",
+    "wait_ghost_replay: PASS_HISTORICAL_NOT_LIVE_AI",
+    "wait_regression_diff: PASS_SIGNED_DELTAS_NO_WINNER_SCORE",
+    "v3_code_correctness: PASS_CI_35004024452_NODE_22_24_41_TESTS",
+    "v3_codeql: PASS_35004024601",
     "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3",
     "project_complete: false",
   ],
@@ -184,11 +190,17 @@ if (canonical.includes("candidate:\n  branch: winning-intelligence-v2")) {
 if (canonical.includes("workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION")) {
   throw new Error("canonical state still exposes V2 as the active workstream");
 }
+if (canonical.includes("IMPLEMENTED_TRANSIENT_PASS_PENDING_INDEPENDENT_PR_CI_CODEQL")) {
+  throw new Error("canonical state regressed V3 from permanent PR validation to transient/pending state");
+}
 if (hackathon.includes("candidate_branch: winning-intelligence-v2")) {
   throw new Error("hackathon state still points to the V2 candidate");
 }
-if (hackathon.includes("v3_codeql: PASS")) {
-  throw new Error("hackathon state overclaims V3 CodeQL before permanent PR evidence exists");
+if (hackathon.includes("v3_codeql: PENDING_INDEPENDENT_PR")) {
+  throw new Error("hackathon state regressed V3 CodeQL to pending after permanent proof exists");
+}
+if (claims.includes("WI V3 permanent PR CI/CodeQL is green | UNKNOWN_PENDING_PR")) {
+  throw new Error("claim ledger regressed validated V3 PR proof to UNKNOWN_PENDING_PR");
 }
 if (claims.includes("public runtime already contains WI V3 Wait Ghost changes | VERIFIED")) {
   throw new Error("claim ledger overclaims V3 public runtime before exact deployment proof");
