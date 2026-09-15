@@ -33,8 +33,13 @@ const SIGNAL_KINDS = new Set<ExecutionSignal["kind"]>(["retrieval", "tool", "art
 function normalizeExecutionSignal(signal: ExecutionSignal): ExecutionSignal | null {
   const kind = signal?.kind;
   const label = typeof signal?.label === "string" ? signal.label.trim() : "";
-  if (!SIGNAL_KINDS.has(kind) || !label) return null;
-  return { kind, label: label.slice(0, 64) };
+  const evidenceRef = typeof signal?.evidenceRef === "string" ? signal.evidenceRef.trim() : "";
+  if (!SIGNAL_KINDS.has(kind) || !label || !evidenceRef) return null;
+  return {
+    kind,
+    label: label.slice(0, 64),
+    evidenceRef: evidenceRef.slice(0, 160),
+  };
 }
 
 const DARK_THEME: Required<ThemeConfig> = {
@@ -443,6 +448,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       engagedPlayMs: engagedMs,
       feltWaitMs: null,
       completed: true,
+      outcome: "completed",
     });
     const engagedRatio = actualWaitMs > 0 ? clamp01(engagedMs / actualWaitMs) : 0;
     emit({
@@ -484,15 +490,19 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     clearRevealTimer();
     sessionActive = false;
     machine.transition("cancelled");
-    recordSession({
+    const rec = recordSession({
       gameId: currentGame ? gameId : null,
       score: null,
       actualWaitMs: performance.now() - startedAt,
       engagedPlayMs: engagedMs,
       feltWaitMs: null,
       completed: false,
+      outcome: "cancelled",
     });
-    emit({ type: "cancel", data: { game: currentGame ? gameId : null } });
+    emit({
+      type: "cancel",
+      data: { id: rec.id, outcome: "cancelled", game: currentGame ? gameId : null },
+    });
     destroyGame();
     if (uiShown) showCancelledOverlay();
     else syncVisibility();
@@ -503,17 +513,29 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     clearRevealTimer();
     sessionActive = false;
     machine.transition("failed");
-    recordSession({
+    const failure = error instanceof Error ? error : new Error(String(error ?? "UNKNOWN_FAILURE"));
+    const rec = recordSession({
       gameId: currentGame ? gameId : null,
       score: null,
       actualWaitMs: performance.now() - startedAt,
       engagedPlayMs: engagedMs,
       feltWaitMs: null,
       completed: false,
+      outcome: "failed",
+      failureCode: "HOST_REQUEST_FAILED",
+      failureMessage: failure.message.slice(0, 240),
     });
-    emit({ type: "fail", data: { error } });
+    emit({
+      type: "fail",
+      data: {
+        id: rec.id,
+        outcome: "failed",
+        code: "HOST_REQUEST_FAILED",
+        error: { name: failure.name, message: failure.message },
+      },
+    });
     destroyGame();
-    if (uiShown) showErrorOverlay(error);
+    if (uiShown) showErrorOverlay(failure, rec.id);
     else syncVisibility();
   }
 
@@ -729,14 +751,17 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     overlay.appendChild(label);
   }
 
-  function showErrorOverlay(error?: unknown): void {
+  function showErrorOverlay(error: Error, recordId: string): void {
     overlay.hidden = false;
     overlay.innerHTML = "";
     const label = document.createElement("div");
     label.className = "quickspin-label";
-    label.textContent = "Something went wrong.";
-    if (error instanceof Error) label.textContent += ` ${error.message}`;
+    label.textContent = "Request failed — no response fabricated.";
+    const detail = document.createElement("div");
+    detail.className = "quickspin-notes";
+    detail.textContent = `${error.message} · evidence ${recordId.slice(0, 8)}`;
     overlay.appendChild(label);
+    overlay.appendChild(detail);
   }
 
   function updateBest(): void {
@@ -876,9 +901,20 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       }
     },
     signal(signal: ExecutionSignal) {
-      if (!sessionActive) return;
+      if (!sessionActive) return false;
       const normalized = normalizeExecutionSignal(signal);
-      if (!normalized) return;
+      if (!normalized) {
+        emit({
+          type: "signal-rejected",
+          data: {
+            outcome: "UNKNOWN",
+            reason: "INSUFFICIENT_EVIDENCE",
+            phase: latestPhase,
+            status: machine.status,
+          },
+        });
+        return false;
+      }
 
       if (currentGame?.signal) currentGame.signal(normalized);
       else {
@@ -894,6 +930,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
           status: machine.status,
         },
       });
+      return true;
     },
     complete() {
       completeSession();

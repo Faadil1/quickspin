@@ -84,9 +84,13 @@ describe("runner physics", () => {
 
   it("only scores a host execution signal after an actual pickup collision", () => {
     const s = createRunnerSurface(480, 220);
-    expect(runnerInjectSignal(s, 480, { kind: "tool", label: "Called restaurant search" })).toBe(
-      true
-    );
+    expect(
+      runnerInjectSignal(s, 480, {
+        kind: "tool",
+        label: "Called restaurant search",
+        evidenceRef: "test:runner:tool-1",
+      })
+    ).toBe(true);
     expect(s.signalBonus).toBe(0);
     s.signalX = 8;
     s.signalY = s.playerY + 8;

@@ -1,98 +1,85 @@
-# QuickSpin — Demo Recording Script
+# QuickSpin — Judge Demo Recording Script
 
-Target: **2:30–2:55**. Keep the product proof ahead of pricing.
+Target: **2:40–2:55**. Product proof first; pricing last.
 
-## Prep
+## 0:00 — PAIN + real-world negative event
 
-1. `npm run dev` and open `http://localhost:5173`.
-2. Use a 1280px+ browser window at 100% zoom.
-3. Reset stats once before the take.
-4. Leave the demo in **With QuickSpin** initially.
-5. The local simulated model wait is now exactly **12 seconds** in both modes.
+> “AI wait is not theoretical. On June 2, 2026, OpenAI documented elevated latency and errors
+> across Responses API, Codex, and ChatGPT; some Responses API requests took longer than normal
+> to begin generating. HCI research also shows system-imposed waits can increase frustration and
+> ambiguity. QuickSpin treats waiting as a product state that must remain honest.”
 
-## 0:00 — The problem and the product
+Do not imply QuickSpin prevents provider outages. The claim is narrower: it makes latency states
+interactive, observable, measurable, and honest when completion is uncertain.
 
-Show the hero.
+## 0:18 — Same 12-second wait: control
 
-> “AI products spend a surprising amount of their experience asking users to stare at a spinner.
-> QuickSpin turns live AI execution into an optional playable waiting layer — and then measures
-> whether the wait actually felt better.”
+Run **Classic spinner**.
 
-## 0:15 — Same wait, before
+> “Exactly twelve seconds. The percentage here belongs only to the controlled demo. A real host
+> should never invent progress it cannot prove.”
 
-Switch to **Classic spinner** and run the generation.
+## 0:42 — Same wait: QuickSpin happy path
 
-> “This is the control. Exactly twelve seconds: reasoning, search, drafting, polishing. The progress
-> here is only part of the demo simulation — in a real host, QuickSpin never needs to invent a
-> percentage.”
+Switch to **With QuickSpin**, run again, choose **Play while you wait**, and collect at least one
+execution-signal token.
 
-Let the answer land.
+> “Same twelve seconds. Real phase changes drive pace. Observed tool, retrieval, and artifact
+> events carry evidence references and become gameplay. No observed event means no token.”
 
-## 0:40 — Same wait, QuickSpin
+## 1:18 — EVIDENCE: Wait Receipt
 
-Switch to **With QuickSpin** and run again. Choose **Play while you wait** and play Wait Runner.
+Answer the perceived-wait question and show **WAIT RECEIPT**.
 
-> “Same twelve seconds. QuickSpin starts in a real waiting state. This demo deliberately leaves
-> progress indeterminate, so the host’s phase changes drive game intensity. The host also sends
-> explicit execution signals — retrievals, tools, and artifacts — and those become real game events.”
+> “Actual wait, actual played time, engagement, and felt wait. The result is signed: shorter,
+> same, or longer. QuickSpin never forces a positive metric.”
 
-Point at the phase label and event log, then collect at least one signal token. Clarify that these are
-deterministic demo-host events, not AI state invented by QuickSpin.
+## 1:43 — NEGATIVE PATH: real failure > fake success
 
-## 1:15 — Response ready + Wait Receipt
+Click **Run negative-path proof**. The harness executes a real rejected Promise with the controlled
+error `DEMO_PROVIDER_TIMEOUT`.
 
-When the response becomes ready, answer the perceived-wait question once.
+Expected visible evidence:
 
-> “The game ends when the request ends — not on a fake timer. Now QuickSpin asks how the wait felt.
-> That answer is persisted onto this exact session.”
+1. a `warning` signal appears only after the Promise actually rejects;
+2. the SDK emits a structured `fail` event with a persisted evidence id;
+3. the widget says **Request failed — no response fabricated**;
+4. no AI answer bubble appears;
+5. local session evidence keeps `outcome: failed`.
 
-Show the **WAIT RECEIPT**.
+> “This failure is intentionally induced, but the failure itself is real runtime behavior. We do
+> not replace it with a success toast or canned answer.”
 
-> “Actual wait. Time actually played. Engagement ratio. Felt wait. And importantly, this metric can
-> say the wait felt shorter, the same, or longer. We don’t force an improvement.”
+## 2:03 — UNKNOWN / abstention proof
 
-Click **View response** so the widget hands off cleanly.
+Point to the SDK docs or event contract.
 
-## 1:45 — Repeatability and accessibility
+> “Execution signals require a host-owned evidence reference. If the signal is incomplete,
+> QuickSpin returns no gameplay mutation and emits `signal-rejected: UNKNOWN /
+INSUFFICIENT_EVIDENCE`. No evidence, no claim.”
 
-Run another QuickSpin wait and switch to **Orbit Catch**.
+## 2:22 — DIFFERENTIATOR + repeatability
 
-> “Two games ship now. Runner supports Space or pointer. Orbit supports pointer and keyboard too.
-> The widget is Shadow-DOM isolated, themeable, and can collapse to a small live pill without
-> disappearing — the game pauses until you resume.”
+> “This is not just a minigame overlay: the wait state is coupled to observable execution, the
+> outcome is persisted, and both positive and negative paths remain auditable. Runner and Orbit
+> share the same host contract; keyboard/pointer and reduced-motion support are built in.”
 
-Collapse and reopen once if pacing allows.
+## 2:40 — Close / business model
 
-## 2:10 — Integration proof
+> “The current SDK is honestly open. Team Pilot is integration support, not a fake paywall.
+> QuickSpin: make AI waiting playable, keep failure truthful, and prove what happened.”
 
-Scroll to the SDK block.
+## Q&A fallback proof
 
-> “Production integration has one important guardrail: QuickSpin waits 650 milliseconds by default,
-> so fast AI responses don’t flash a game UI. Mount it once, pass real phases, and when your runtime
-> genuinely observes a retrieval, tool call, artifact, or warning, pass that event too. If you don’t
-> know progress, leave it indeterminate.”
-
-Point to `delayMs`, `setProgress()`, `setPhase()`, `signal()`, and `complete()`.
-
-## 2:35 — Packaging / business model
-
-Show pricing briefly.
-
-> “The SDK features you just saw are honestly available in the open SDK. Team Pilot is support and
-> branded setup, not a fake paywall around APIs that are already public. Hosted analytics and extra
-> game packs are clearly marked as future work. If a Stripe Payment Link is configured, the paid
-> button uses real Stripe; otherwise the demo is labeled preview.”
-
-## 2:50 — Close
-
-Return to the hero or hold on the Wait Receipt.
-
-> “QuickSpin: make AI waiting playable, couple the play to real execution, and prove what happened.”
+If a judge asks whether the negative path is cosmetic, rerun it and keep the event log visible.
+The evidence id must change per failed session, while the outcome remains `failed`.
 
 ## Guardrails
 
-- Never claim npm availability unless the package has actually been published.
-- Never claim every user experiences a shorter wait; show the signed receipt instead.
-- Never call the demo’s simulated model phases or execution signals “live production AI.”
-- Do not claim hosted analytics or extra game packs exist yet.
+- Never call controlled demo phases/signals live production AI.
+- Never call the controlled Promise rejection a real provider outage.
+- Never claim QuickSpin prevents provider latency/errors; it changes the waiting experience and
+  preserves outcome truth.
+- Never claim every user experiences a shorter wait; show the signed receipt.
+- Never claim npm availability until published.
 - If Stripe is not configured, say “checkout preview,” not “payment.”

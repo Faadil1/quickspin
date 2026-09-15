@@ -217,6 +217,25 @@ describe("persistence", () => {
     expect(totalWaitTurnedToPlayMs()).toBe(5000);
   });
 
+  it("preserves a failed outcome instead of laundering it into completion", () => {
+    recordSession({
+      gameId: "runner",
+      score: null,
+      actualWaitMs: 1400,
+      engagedPlayMs: 400,
+      completed: false,
+      outcome: "failed",
+      failureCode: "HOST_REQUEST_FAILED",
+      failureMessage: "DEMO_PROVIDER_TIMEOUT",
+    });
+    const records = loadStorage().records;
+    const rec = records[records.length - 1];
+    expect(rec?.completed).toBe(false);
+    expect(rec?.outcome).toBe("failed");
+    expect(rec?.failureCode).toBe("HOST_REQUEST_FAILED");
+    expect(rec?.failureMessage).toBe("DEMO_PROVIDER_TIMEOUT");
+  });
+
   it("resetAll clears everything", () => {
     recordSession({
       gameId: "runner",

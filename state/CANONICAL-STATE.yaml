@@ -1,0 +1,33 @@
+project: QuickSpin
+canonical_base:
+  branch: main
+  sha_at_hardening_start: c0d3a0d61d74d6944e20f8a0af7e3ceac6b6a2e4
+workstream: JUDGE_ASSURANCE_NEGATIVE_PATH
+lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+project_complete: false
+invariants:
+  - REAL_FAILURE_GT_FAKE_SUCCESS
+  - NO_EVIDENCE_NO_CLAIM
+  - UNKNOWN_PROGRESS_STAYS_INDETERMINATE
+  - FAILURE_IS_NOT_COMPLETION
+  - CONTROLLED_DEMO_IS_NOT_LIVE_PROVIDER_EVIDENCE
+completed:
+  - P0_P1_PRODUCT_PROOF_PASS
+  - EXECUTION_SIGNALS_LAYER
+  - REALITY_ANCHOR_DEFINED
+  - NEGATIVE_PATH_IMPLEMENTED
+  - FAILURE_LEDGER_CREATED
+  - RUBRIC_TRACEABILITY_CREATED
+  - JUDGE_QA_CREATED
+open_risks:
+  - DEPENDENCY_VULNERABILITY_RECONCILIATION
+  - PUBLIC_DEPLOYMENT_PROOF
+  - NEGATIVE_PATH_VIDEO_CAPTURE
+  - FINAL_SUBMISSION_PACKAGE
+  - BROADER_USER_VALIDATION
+next_required_gate: verification-before-completion
+terminal_sequence:
+  - verification-before-completion
+  - requirements-evidence-artifacts-risks-project-state-build-reconciliation
+  - build-readiness
+  - handoff-to-finisher

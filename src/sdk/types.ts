@@ -20,6 +20,8 @@ export type ExecutionSignalKind = "retrieval" | "tool" | "artifact" | "warning";
 export interface ExecutionSignal {
   kind: ExecutionSignalKind;
   label: string;
+  /** Host-owned trace/provenance reference. Missing evidence is rejected as UNKNOWN. */
+  evidenceRef: string;
 }
 
 export interface GameResult {
@@ -46,6 +48,7 @@ export interface WaitEvent {
     | "phase"
     | "progress"
     | "signal"
+    | "signal-rejected"
     | "game-start"
     | "score"
     | "session-complete"
@@ -88,7 +91,7 @@ export interface WaitSession {
    * Feed one observed host execution event into gameplay. The event must come
    * from the host's real runtime; QuickSpin does not infer or fabricate signals.
    */
-  signal(signal: ExecutionSignal): void;
+  signal(signal: ExecutionSignal): boolean;
   /** Mark the AI wait over and hand off to the response. */
   complete(): void;
   cancel(): void;

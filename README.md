@@ -55,9 +55,17 @@ const session = quickSpin.start({ status: "Reasoning…" });
 // No trustworthy percentage? Stay indeterminate.
 session.setProgress();
 session.setPhase("Searching the web…");
-session.signal({ kind: "retrieval", label: "Retrieved 12 sources" });
+session.signal({
+  kind: "retrieval",
+  label: "Retrieved 12 sources",
+  evidenceRef: "run_123:retrieval_4",
+});
 session.setPhase("Drafting…");
-session.signal({ kind: "artifact", label: "Draft assembled" });
+session.signal({
+  kind: "artifact",
+  label: "Draft assembled",
+  evidenceRef: "run_123:artifact_1",
+});
 
 const response = await modelRequest();
 session.complete();
@@ -78,9 +86,21 @@ turn a **real observed runtime event** into game content. QuickSpin supports fou
 semantic kinds: `retrieval`, `tool`, `artifact`, and `warning`.
 
 ```ts
-session.signal({ kind: "retrieval", label: "Retrieved 12 sources" });
-session.signal({ kind: "tool", label: "Called maps search" });
-session.signal({ kind: "artifact", label: "Draft assembled" });
+session.signal({
+  kind: "retrieval",
+  label: "Retrieved 12 sources",
+  evidenceRef: "run_123:retrieval_4",
+});
+session.signal({
+  kind: "tool",
+  label: "Called maps search",
+  evidenceRef: "run_123:tool_2",
+});
+session.signal({
+  kind: "artifact",
+  label: "Draft assembled",
+  evidenceRef: "run_123:artifact_1",
+});
 ```
 
 Wait Runner emits those events as collectible diamonds; Orbit Catch attaches them to catchable
@@ -88,8 +108,22 @@ targets. A signal only changes the score after the player actually interacts wit
 arrive before the player starts are queued briefly and delivered when gameplay begins.
 
 **Epistemic rule:** QuickSpin never infers these events from elapsed time, phase names, or animation.
-The host must call `session.signal(...)` from something it genuinely observed in its own AI runtime.
-If the host has no such events, it simply does not send them.
+The host must call `session.signal(...)` from something it genuinely observed in its own AI runtime,
+and attach a host-owned `evidenceRef`. If kind, label, or evidence reference is missing, QuickSpin emits
+`signal-rejected` with `UNKNOWN / INSUFFICIENT_EVIDENCE` and does not mutate gameplay. If the host has
+no trustworthy event, it should abstain instead of manufacturing one.
+
+## Negative path: real failure > fake success
+
+The demo includes a **Run negative-path proof** control. It runs an actual Promise that rejects with
+`DEMO_PROVIDER_TIMEOUT`; QuickSpin records the session as `failed`, emits structured failure data,
+and deliberately does **not** append an AI answer. The failure remains in local session evidence.
+This is controlled runtime evidence, not a claim that a live provider failed during the recording.
+
+The problem also has a real-world anchor: on **June 2, 2026**, OpenAI reported elevated errors and
+latency across the Responses API, Codex, and ChatGPT; affected Responses API traffic took longer than
+normal to begin generating responses. See `evidence/REALITY-ANCHOR.md` for the source and the five-part
+problem→impact→design→mitigation chain.
 
 ## Wait Receipt
 
@@ -104,7 +138,7 @@ The perception calculation is signed. A wait that felt longer is reported as lon
 clamped to a fake “0% improvement.” The underlying record is updated in `localStorage`, so aggregate
 `perceivedWaitStats()` is based on real submitted answers.
 
-Relevant events include `session-start`, `phase`, `progress`, `signal`, `game-start`, `session-complete`,
+Relevant events include `session-start`, `phase`, `progress`, `signal`, `signal-rejected`, `game-start`, `session-complete`,
 `perceived-wait`, `receipt`, `cancel`, and `fail`.
 
 ## Games

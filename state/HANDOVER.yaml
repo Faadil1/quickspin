@@ -1,0 +1,30 @@
+project: QuickSpin
+workstream: JUDGE_ASSURANCE_NEGATIVE_PATH
+source_main_sha: c0d3a0d61d74d6944e20f8a0af7e3ceac6b6a2e4
+objective: >-
+  Add real negative evidence, explicit UNKNOWN/abstention behavior, and judge-assurance
+  traceability without disturbing main while collaborator review is active.
+current_truth:
+  main_untouched_by_this_workstream: true
+  branch_requires_ci_before_merge: true
+  project_complete: false
+  readiness_target: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+proof_paths:
+  - evidence/REALITY-ANCHOR.md
+  - evidence/FAILURE-LEDGER.md
+  - evidence/JUDGE-CYCLE.md
+  - evidence/RUBRIC-TRACEABILITY.md
+  - evidence/RECONCILIATION.md
+  - evidence/GATE-REPORT.md
+  - evidence/JUDGE-QA.md
+  - evidence/CLAIM-LEDGER.md
+  - demo.md
+blockers_or_open_items:
+  - dependency audit and exploitability review
+  - public deployment/runtime proof
+  - negative-path video capture
+  - final submission package
+next_action: >-
+  Run branch validation; inspect diff and gates; only then decide whether to merge after
+  collaborator review timing is appropriate.
+rollback: delete_or_close_branch_without_touching_main

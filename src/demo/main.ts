@@ -24,6 +24,12 @@ const LIVE_PAYMENTS = Boolean(STRIPE_LINKS.pro);
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
+function controlledProviderFailure(): Promise<never> {
+  return new Promise((_, reject) => {
+    window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400);
+  });
+}
+
 /** Exactly 12 seconds: the before/after demo claim now matches runtime reality. */
 interface DemoPhase {
   status: string;
@@ -37,25 +43,37 @@ const PHASES: DemoPhase[] = [
     status: "Reasoning…",
     progress: 0.12,
     ms: 2600,
-    signal: { kind: "tool", label: "Planned constraints" },
+    signal: { kind: "tool", label: "Planned constraints", evidenceRef: "demo:phase:reasoning" },
   },
   {
     status: "Searching the web…",
     progress: 0.32,
     ms: 3100,
-    signal: { kind: "retrieval", label: "Retrieved Austin dinner options" },
+    signal: {
+      kind: "retrieval",
+      label: "Retrieved Austin dinner options",
+      evidenceRef: "demo:phase:retrieval",
+    },
   },
   {
     status: "Drafting…",
     progress: 0.62,
     ms: 3400,
-    signal: { kind: "artifact", label: "Ranked five candidate spots" },
+    signal: {
+      kind: "artifact",
+      label: "Ranked five candidate spots",
+      evidenceRef: "demo:phase:draft",
+    },
   },
   {
     status: "Polishing…",
     progress: 0.88,
     ms: 2900,
-    signal: { kind: "artifact", label: "Final answer assembled" },
+    signal: {
+      kind: "artifact",
+      label: "Final answer assembled",
+      evidenceRef: "demo:phase:final",
+    },
   },
 ];
 
@@ -96,6 +114,7 @@ function main(): void {
   const qsPanel = app.querySelector<HTMLElement>("#qs-panel")!;
   const segBtns = Array.from(app.querySelectorAll<HTMLButtonElement>(".seg button"));
   const runBtn = app.querySelector<HTMLButtonElement>("#run-demo")!;
+  const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure")!;
   const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats")!;
   const phaseEl = app.querySelector<HTMLElement>("#qs-phase")!;
   const classicPhase = app.querySelector<HTMLElement>("#classic-phase")!;
@@ -170,13 +189,55 @@ function main(): void {
     if (running) return;
     running = true;
     runBtn.disabled = true;
+    failureBtn.disabled = true;
     runBtn.textContent = "Generating…";
     appendBubble("Where should five friends eat tonight in Austin?", "user");
     if (mode === "classic") await runClassic();
     else await runQuickSpin();
     running = false;
     runBtn.disabled = false;
+    failureBtn.disabled = false;
     runBtn.textContent = "Run demo generation";
+  };
+
+  const runFailureProof = async (): Promise<void> => {
+    if (running) return;
+    running = true;
+    setMode("quickspin");
+    runBtn.disabled = true;
+    failureBtn.disabled = true;
+    failureBtn.textContent = "Running real failure…";
+    appendBubble(
+      "Find dinner options, but preserve failure truth if the provider rejects.",
+      "user"
+    );
+
+    const session = ctrl!.start({ status: "Calling restaurant search provider…" });
+    session.setProgress();
+    session.setPhase("Calling restaurant search provider…");
+    phaseEl.innerHTML =
+      "Negative path: <strong>provider call in flight</strong> — no success has been assumed.";
+
+    try {
+      await controlledProviderFailure();
+    } catch (err) {
+      const failure = err instanceof Error ? err : new Error(String(err));
+      session.signal({
+        kind: "warning",
+        label: "Provider request rejected",
+        evidenceRef: "demo:negative-path:promise-rejection",
+      });
+      session.fail(failure);
+      phaseEl.innerHTML =
+        `Negative path: <strong>FAILED</strong> — ${failure.message}. ` +
+        "No AI answer was fabricated; the failed outcome remains in local evidence.";
+      refreshStats();
+    }
+
+    running = false;
+    runBtn.disabled = false;
+    failureBtn.disabled = false;
+    failureBtn.textContent = "Run negative-path proof";
   };
 
   const refreshStats = (): void => {
@@ -193,6 +254,7 @@ function main(): void {
   };
 
   runBtn.addEventListener("click", runDemo);
+  failureBtn.addEventListener("click", () => void runFailureProof());
   resetBtn.addEventListener("click", () => {
     ctrl!.destroy();
     mount.innerHTML = "";
@@ -310,14 +372,22 @@ function buildPage(): HTMLElement {
   const runBtn = el("button", "btn primary", "Run demo generation");
   runBtn.id = "run-demo";
   runBtn.type = "button";
+  const failureBtn = el("button", "btn ghost", "Run negative-path proof");
+  failureBtn.id = "run-failure";
+  failureBtn.type = "button";
   const resetBtn = el("button", "btn ghost", "Reset stats");
   resetBtn.id = "reset-stats";
   resetBtn.type = "button";
   ctaRow.appendChild(runBtn);
+  ctaRow.appendChild(failureBtn);
   ctaRow.appendChild(resetBtn);
   hero.appendChild(ctaRow);
   hero.appendChild(
-    el("p", "sub", "The model wait in this demo is simulated locally and lasts exactly 12 seconds.")
+    el(
+      "p",
+      "sub",
+      "Happy-path model work is simulated locally for exactly 12 seconds. The negative-path button runs a real rejected Promise and is explicitly labeled controlled evidence."
+    )
   );
 
   const demo = el("section", "demo-section wrap");
