@@ -1,8 +1,9 @@
 name: Deploy QuickSpin demo
 
+# Public runtime is a blocking evidence gate, but GitHub Pages is not yet enabled for this repo.
+# Keep deployment manual until repository Pages is configured; otherwise every main push would
+# reproduce the known F-08 authority/configuration failure and create meaningless red noise.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
