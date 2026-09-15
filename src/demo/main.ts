@@ -206,7 +206,7 @@ function sdkPage(): string {
   return `<main class="page">
     ${pageHead("Integration surface", "The product is the runtime contract — not one minigame.", "Runner and Orbit consume the same lifecycle. Hosts can expose real phases and evidence-bearing execution signals without fabricating model progress.", "04 / SDK")}
     <section class="lifecycle">
-      ${["IDLE","WAITING","PLAYING","RESPONSE READY","COMPLETED","FAILED / CANCELLED"].map((s,i)=>`<div class="life"><b>0${i+1}</b><span>${s}</span></div>`).join("")}
+      ${["IDLE", "WAITING", "PLAYING", "RESPONSE READY", "COMPLETED", "FAILED / CANCELLED"].map((s, i) => `<div class="life"><b>0${i + 1}</b><span>${s}</span></div>`).join("")}
     </section>
     <section class="code-panel"><div class="code-head"><span>Vanilla integration</span><span>evidence-aware</span></div><pre>${escapeHtml(code)}</pre></section>
     <section class="evidence-grid" style="margin-top:28px">
@@ -220,27 +220,75 @@ function sdkPage(): string {
 
 function judgesPage(): string {
   const cycle = [
-    ["RUBRIC","Waiting experience, originality, AI-native fit, repeatability and execution mapped to proof.","PASS"],
-    ["PAIN","Real AI latency/rejection states plus HCI evidence that wait presentation changes experience.","PASS"],
-    ["PROBLEM","Passive waiting gives little agency and can imply confidence the host does not actually have.","PASS"],
-    ["DIFFERENTIATOR","Observed execution becomes gameplay; the outcome gets a signed Wait Receipt.","PASS"],
-    ["EXECUTION","Two games, lifecycle, persistence, React/vanilla, accessibility, security gates.","PASS"],
-    ["EVIDENCE","Primary-source incident, tests, CI/CodeQL, runtime, Claim + Failure Ledgers.","PASS"],
-    ["STORY","One narrative: real wait → playable execution → truthful outcome.","PASS"],
-    ["DEMO","12-second control, QuickSpin path, receipt, failure and UNKNOWN.","READY"],
-    ["Q&A","Adversarial answer bank refuses unsupported claims instead of improvising them.","PREPARED"],
+    [
+      "RUBRIC",
+      "Waiting experience, originality, AI-native fit, repeatability and execution mapped to proof.",
+      "PASS",
+    ],
+    [
+      "PAIN",
+      "Real AI latency/rejection states plus HCI evidence that wait presentation changes experience.",
+      "PASS",
+    ],
+    [
+      "PROBLEM",
+      "Passive waiting gives little agency and can imply confidence the host does not actually have.",
+      "PASS",
+    ],
+    [
+      "DIFFERENTIATOR",
+      "Observed execution becomes gameplay; the outcome gets a signed Wait Receipt.",
+      "PASS",
+    ],
+    [
+      "EXECUTION",
+      "Two games, lifecycle, persistence, React/vanilla, accessibility, security gates.",
+      "PASS",
+    ],
+    [
+      "EVIDENCE",
+      "Primary-source incident, tests, CI/CodeQL, runtime, Claim + Failure Ledgers.",
+      "PASS",
+    ],
+    ["STORY", "One narrative: real wait → playable execution → truthful outcome.", "PASS"],
+    ["DEMO", "12-second control, QuickSpin path, receipt, failure and UNKNOWN.", "READY"],
+    [
+      "Q&A",
+      "Adversarial answer bank refuses unsupported claims instead of improvising them.",
+      "PREPARED",
+    ],
   ];
   const pattern = [
-    ["01","Signal / opportunity","AI products increasingly contain non-zero waits worth designing intentionally."],
-    ["02","Real negative event","OpenAI June 2–3, 2026 latency, rejection and degraded user flows."],
-    ["03","Observable impact","Response-start delay, HTTP 429 rejection, broken continuity and uncertainty."],
-    ["04","Design lesson","Waiting cannot silently mean success; unknown evidence must stay unknown."],
-    ["05","Mitigation","Playable wait, provenance, explicit terminal outcomes and signed receipt."],
+    [
+      "01",
+      "Signal / opportunity",
+      "AI products increasingly contain non-zero waits worth designing intentionally.",
+    ],
+    [
+      "02",
+      "Real negative event",
+      "OpenAI June 2–3, 2026 latency, rejection and degraded user flows.",
+    ],
+    [
+      "03",
+      "Observable impact",
+      "Response-start delay, HTTP 429 rejection, broken continuity and uncertainty.",
+    ],
+    [
+      "04",
+      "Design lesson",
+      "Waiting cannot silently mean success; unknown evidence must stay unknown.",
+    ],
+    [
+      "05",
+      "Mitigation",
+      "Playable wait, provenance, explicit terminal outcomes and signed receipt.",
+    ],
   ];
   return `<main class="page">
     ${pageHead("Judge surface", "Every claim has a route to proof.", "This page compresses the build into judge logic: criterion → behavior → evidence → demo. It is intentionally explicit about what is verified, controlled, unknown, or refused.", "05 / JUDGES")}
-    <section class="judge-cycle">${cycle.map(r=>`<div class="judge-row"><div class="stage">${r[0]}</div><div class="why">${r[1]}</div><div class="verdict">${r[2]}</div></div>`).join("")}</section>
-    <section class="five-pattern">${pattern.map(p=>`<article class="pattern-step"><div class="n">${p[0]}</div><h3>${p[1]}</h3><p>${p[2]}</p></article>`).join("")}</section>
+    <section class="judge-cycle">${cycle.map((r) => `<div class="judge-row"><div class="stage">${r[0]}</div><div class="why">${r[1]}</div><div class="verdict">${r[2]}</div></div>`).join("")}</section>
+    <section class="five-pattern">${pattern.map((p) => `<article class="pattern-step"><div class="n">${p[0]}</div><h3>${p[1]}</h3><p>${p[2]}</p></article>`).join("")}</section>
     <section class="evidence-panel"><div class="eyebrow">Canonical distinction</div><h2>QuickSpin is not trying to be the biggest AI waiting game.</h2><p>It is the reusable waiting layer that makes real execution playable, preserves failure truth, refuses unsupported signals, and measures what the user experienced. That is the product — the minigames are interchangeable implementations of the contract.</p><div class="route-actions"><a class="action signal" href="/lab">See it run →</a><a class="action" href="/proof">Inspect evidence</a><a class="action" href="/sdk">Inspect integration</a></div></section>
   </main>`;
 }
@@ -253,7 +301,16 @@ function main(): void {
   const app = document.getElementById("app");
   if (!app) return;
   const current = route();
-  const content = current === "/lab" ? labPage() : current === "/proof" ? proofPage() : current === "/sdk" ? sdkPage() : current === "/judges" ? judgesPage() : homePage();
+  const content =
+    current === "/lab"
+      ? labPage()
+      : current === "/proof"
+        ? proofPage()
+        : current === "/sdk"
+          ? sdkPage()
+          : current === "/judges"
+            ? judgesPage()
+            : homePage();
   app.innerHTML = shell(content, current);
 
   const heroCanvas = app.querySelector<HTMLCanvasElement>(".hero-canvas");
@@ -280,13 +337,18 @@ function mountLab(app: HTMLElement): void {
     logEl.scrollTop = logEl.scrollHeight;
   };
 
-  let ctrl: QuickSpinController = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents });
+  let ctrl: QuickSpinController = createQuickSpin({
+    target: mount,
+    delayMs: 0,
+    onEvent: logEvents,
+  });
   let mode: "classic" | "quickspin" = "quickspin";
   let running = false;
 
   const setMode = (next: "classic" | "quickspin"): void => {
     mode = next;
-    for (const button of segBtns) button.setAttribute("aria-pressed", next === button.dataset.mode ? "true" : "false");
+    for (const button of segBtns)
+      button.setAttribute("aria-pressed", next === button.dataset.mode ? "true" : "false");
     classicPanel.style.display = next === "classic" ? "" : "none";
     qsPanel.style.display = next === "quickspin" ? "" : "none";
   };
@@ -355,7 +417,8 @@ function mountLab(app: HTMLElement): void {
     failureBtn.disabled = true;
     runBtn.textContent = "Generating…";
     appendBubble("Where should five friends eat tonight in Austin?", "user");
-    if (mode === "classic") await runClassic(); else await runQuickSpin();
+    if (mode === "classic") await runClassic();
+    else await runQuickSpin();
     running = false;
     runBtn.disabled = false;
     failureBtn.disabled = false;
@@ -369,16 +432,24 @@ function mountLab(app: HTMLElement): void {
     runBtn.disabled = true;
     failureBtn.disabled = true;
     failureBtn.textContent = "Failure in flight…";
-    appendBubble("Find dinner options, but preserve failure truth if the provider rejects.", "user");
+    appendBubble(
+      "Find dinner options, but preserve failure truth if the provider rejects.",
+      "user"
+    );
     const session = ctrl.start({ status: "Calling restaurant search provider…" });
     session.setProgress();
     session.setPhase("Calling restaurant search provider…");
-    phaseEl.innerHTML = "Negative path: <strong>provider call in flight</strong> — no success assumed.";
+    phaseEl.innerHTML =
+      "Negative path: <strong>provider call in flight</strong> — no success assumed.";
     try {
       await controlledProviderFailure();
     } catch (err) {
       const failure = err instanceof Error ? err : new Error(String(err));
-      session.signal({ kind: "warning", label: "Provider request rejected", evidenceRef: "demo:negative-path:promise-rejection" });
+      session.signal({
+        kind: "warning",
+        label: "Provider request rejected",
+        evidenceRef: "demo:negative-path:promise-rejection",
+      });
       session.fail(failure);
       phaseEl.innerHTML = `Negative path: <strong>FAILED</strong> — ${failure.message}. No AI answer was fabricated.`;
       refreshStats();
@@ -399,7 +470,11 @@ function mountLab(app: HTMLElement): void {
     ctrl = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents });
     refreshStats();
   });
-  for (const button of segBtns) button.addEventListener("click", () => !running && setMode((button.dataset.mode as "classic" | "quickspin") ?? "quickspin"));
+  for (const button of segBtns)
+    button.addEventListener(
+      "click",
+      () => !running && setMode((button.dataset.mode as "classic" | "quickspin") ?? "quickspin")
+    );
 
   setMode("quickspin");
   refreshStats();
