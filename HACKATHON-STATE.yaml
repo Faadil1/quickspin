@@ -6,6 +6,23 @@ candidate_head_policy: TRACK_BRANCH_HEAD
 state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
+orchestration_route:
+  canonical_sequence:
+    - HOI
+    - CHIEF_OF_STAFF
+    - PROJECT_AUTHORIZATION
+    - PBPD
+    - PROJECT_FINISHER
+    - HUMAN_SUBMIT
+    - POST_MORTEM
+  HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT
+  CHIEF_OF_STAFF: UNKNOWN_IN_REPO_LEGACY_IMPORT
+  PROJECT_AUTHORIZATION: VERIFIED_EXTERNAL_CONTEXT_NOT_REPO_LOCAL
+  PBPD: ACTIVE_PASS_WITH_CONDITIONS
+  PROJECT_FINISHER: ACTIVE
+  HUMAN_SUBMIT: PENDING_HUMAN_ACTION
+  POST_MORTEM: PENDING_AFTER_SUBMISSION
+
 cycle:
   RUBRIC: PASS
   PAIN: PASS
@@ -25,6 +42,13 @@ reality_pattern:
   response_mitigation: PASS_WITH_EXPLICIT_SCOPE_BOUNDARY
   source: evidence/REALITY-ANCHOR.md
 
+judge_performance_assurance:
+  judge_coverage: PASS
+  critical_path_assurance: PASS_WITH_RUNTIME_RENDER_PROOF_PENDING
+  technical_ownership: PASS_WITH_REHEARSAL_PENDING
+  session_continuity: PASS
+  source: evidence/ORCHESTRATION-JPA.md
+
 gates:
   eligibility_and_rubric_fit: PASS
   pain_reality_grounding: PASS
@@ -36,8 +60,12 @@ gates:
   unknown_abstention: PASS
   distinction: PASS
   judge_coverage: PASS
+  critical_path_assurance: PASS_WITH_RUNTIME_RENDER_PROOF_PENDING
+  technical_ownership: PASS_WITH_REHEARSAL_PENDING
+  session_continuity: PASS
   claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
   security_dependency: PASS_ZERO_NPM_AUDIT
+  supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME
   code_correctness: PASS
   codeql: PASS
   package_boundary: PASS
@@ -66,5 +94,10 @@ blocking_remaining:
   - NEGATIVE_PATH_VIDEO_CAPTURE
   - QA_LIVE_REHEARSAL
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
+
+nonblocking_open_items:
+  - BROADER_USER_VALIDATION
+  - STRICT_INSTALL_SCRIPT_POLICY_OPTIONAL_HARDENING
+  - UPSTREAM_ORCHESTRATION_PROVENANCE_NOT_REPO_LOCAL
 
 next_decision: Enable and verify the public runtime, then lock visual proof, capture, live Q&A rehearsal, and submission links before any PROJECT_COMPLETE promotion.
