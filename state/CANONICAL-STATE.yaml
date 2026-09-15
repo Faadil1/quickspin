@@ -9,28 +9,12 @@ workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE
 lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
-core_cycle:
-  - RUBRIC
-  - PAIN
-  - PROBLEM
-  - DIFFERENTIATOR
-  - EXECUTION
-  - EVIDENCE
-  - STORY
-  - DEMO
-  - QA
+core_cycle: [RUBRIC, PAIN, PROBLEM, DIFFERENTIATOR, EXECUTION, EVIDENCE, STORY, DEMO, QA]
 
 winning_intelligence_cycle:
   iteration: 3
   max_iterations: 3
-  stages:
-    - QUALIFY
-    - DECIDE
-    - DISTINCTION_GATE
-    - DESIGN
-    - DELIVER
-    - AUDIT
-    - EXPAND
+  stages: [QUALIFY, DECIDE, DISTINCTION_GATE, DESIGN, DELIVER, AUDIT, EXPAND]
   expansion_policy: STOP_AFTER_V3_PROOF_UNLESS_NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE
 
 invariants:
@@ -68,10 +52,12 @@ winning_intelligence_v2:
   product_metaphor: Flight recorder for playable AI waiting.
 
 winning_intelligence_v3:
-  status: IMPLEMENTED_TRANSIENT_PASS_PENDING_INDEPENDENT_PR_CI_CODEQL
+  status: PASS_INDEPENDENT_PR_CI_CODEQL
   evidence: evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
   transient_validation_run: 35003001488
-  transient_test_count: 41
+  permanent_ci_run: 35004024452
+  permanent_codeql_run: 35004024601
+  test_count: 41
   supporting_phrase: Private Capsule. Shareable Ghost. Comparable wait.
   open_space_hypothesis: PRIVACY_SAFE_WAIT_REPLAY_SHARE_AND_REGRESSION_DIFF
   competitor_scan_scope: PUBLIC_WEB_OBSERVED_NOT_EXHAUSTIVE
@@ -103,13 +89,6 @@ completed:
   - FUTURE_CLASSIC_MULTI_PAGE_ARCHITECTURE
   - ROUTES_HOME_LAB_PROOF_SDK_JUDGES_HTTP_200
   - FUTURE_CLASSIC_BUILD_CI_AND_CODEQL_GREEN
-  - WI_V2_PUBLIC_COMPETITOR_SCAN
-  - WI_V2_DISTINCTION_GATE
-  - EVIDENCE_CAPSULE_IMPLEMENTED
-  - EVIDENCE_COVERAGE_COUNTS_IMPLEMENTED
-  - HOST_OBSERVE_BRIDGE_IMPLEMENTED
-  - HOST_INTERVENTION_ACK_CONTRACT_IMPLEMENTED
-  - CAPSULE_JSON_EXPORT_IMPLEMENTED
   - WI_V2_PRODUCT_DELTA_PR_CI_CODEQL_PASS_AND_MERGE
   - WI_V3_OPEN_SPACE_SCAN
   - WAIT_GHOST_IMPLEMENTED
@@ -117,9 +96,9 @@ completed:
   - WAIT_GHOST_REPLAY_IMPLEMENTED
   - WAIT_DIFF_IMPLEMENTED
   - INTERVENTION_PAYLOAD_PERSISTENCE_REDACTED
+  - WI_V3_PRODUCT_DELTA_PR_CI_CODEQL_PASS
 
 open_blocking_gates:
-  - WI_V3_PRODUCT_DELTA_PR_VALIDATION
   - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
   - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
@@ -138,10 +117,10 @@ closed_risks:
   public_deployment_proof_pre_v3: PASS_VERIFIED_VERCEL_RUNTIME
   single_page_jury_compression_risk: MITIGATED_BY_MULTI_PAGE_ARCHITECTURE
   wi_v2_product_validation: PASS_CI_CODEQL_35_TESTS
-  wi_v3_transient_product_validation: PASS_TYPECHECK_41_TESTS
+  wi_v3_product_validation: PASS_CI_CODEQL_41_TESTS
   arbitrary_intervention_payload_persistence: CLOSED_V3_REDACTED_RECORD
 
-next_required_gate: WI_V3_PRODUCT_DELTA_PR_VALIDATION
+next_required_gate: WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
 
 terminal_sequence:
   - verification-before-completion
@@ -160,12 +139,7 @@ runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3
 runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58
 runtime_deployment_id: dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL
 runtime_url: https://quickspin-runtime.vercel.app
-runtime_routes_verified:
-  - /
-  - /lab
-  - /proof
-  - /sdk
-  - /judges
+runtime_routes_verified: [/, /lab, /proof, /sdk, /judges]
 runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
 visual_direction: SMOKED_PEARL_GRAPHITE_OXIDIZED_COPPER_ELECTRIC_SIGNAL
 visual_architecture: FUTURE_CLASSIC_MULTI_PAGE
