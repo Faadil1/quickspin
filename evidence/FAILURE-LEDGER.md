@@ -160,3 +160,14 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: the edit was considered scope drift and was not accepted as the V3 candidate despite being syntactically plausible.
 - Recovery: commit `944781484a592028c65367a68503daafc1ac95d5` restored the exact previously validated widget blob, then run `35003001488` applied only surgical V3 patches and passed TypeScript plus **41 tests**.
 - Lesson: **diff size and shape are an assurance gate. An overbroad edit should be discarded before CI can normalize it into false confidence.**
+
+## F-18 — V3 state promotion exposed another stale verifier marker
+
+- Event: PR #12 CI run `35004294002` failed after V3 was promoted from transient/pending validation to `PASS_INDEPENDENT_PR_CI_CODEQL`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/35004294002
+- Concurrent truth: Node 22 and Node 24 both passed TypeScript and all **41 tests**; CodeQL run `35004294004` also passed. The failure occurred at `npm run judge:verify`.
+- Exact failure: `state/CANONICAL-STATE.yaml missing required marker: transient_test_count: 41`.
+- Cause: the verifier still required the pre-promotion field name even though canonical state correctly replaced it with permanent `test_count: 41` plus the permanent CI/CodeQL run IDs.
+- Impact: build/demo/SDK steps were intentionally blocked because the assurance gate is conjunctive; the candidate was not merged on partial green evidence.
+- Mitigation: update the verifier to require the permanent V3 proof markers and reject regression back to pending/transient state, then rerun the full PR head.
+- Lesson: **promotion markers are part of provenance. Tests passing is not enough if the canonical verifier still describes the previous lifecycle state.**
