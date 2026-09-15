@@ -7,5 +7,14 @@ export default defineConfig({
   build: {
     outDir: "dist-demo",
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        home: "index.html",
+        lab: "lab/index.html",
+        proof: "proof/index.html",
+        sdk: "sdk/index.html",
+        judges: "judges/index.html",
+      },
+    },
   },
 });
