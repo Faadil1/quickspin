@@ -84,6 +84,33 @@ Voice:
 Optional final line:
 > “Open SDK. Honest outcomes. A waiting layer users can actually play.”
 
+## Canonical narrative mapping
+
+The edit must preserve this higher-level sequence even when scenes are compressed:
+
+`PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE`
+
+| Canonical beat | QuickSpin shot |
+| --- | --- |
+| PROBLEM | passive AI waiting is treated as a spinner rather than a truthful product state |
+| PAIN | real latency/rejection exists; classic 12-second control makes the wait visible |
+| TRIGGER | start the identical controlled request |
+| LIVE WORKFLOW | host phases/signals drive Runner while request remains unresolved |
+| WOW | an observed execution signal becomes an actual game event |
+| CONSEQUENCE | response yields signed Wait Receipt; rejection yields failed outcome |
+| ACTION | show the reusable SDK integration contract |
+| TECHNICAL PROOF | evidenceRef, UNKNOWN refusal, CI/tests/CodeQL/security |
+| IMPACT | waiting becomes interactive and measurable without claiming provider speedup |
+| CLOSE | “Turn live AI execution into play time — then get a receipt for what actually happened.” |
+
+Rules:
+
+- **value before technology**;
+- show **live/controlled proof**, not decorative slides pretending to be runtime;
+- keep one narrative rather than a feature montage;
+- reliability, failure, UNKNOWN, and fallback must be visible before rehearsal lock;
+- do not move GitHub plumbing ahead of the user/product consequence.
+
 ## Capture gate
 
 A take is not accepted unless it visibly contains:
