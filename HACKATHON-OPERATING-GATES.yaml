@@ -22,117 +22,57 @@ terminal_sequence:
   - PROJECT_COMPLETE
 
 gates:
-  - id: G01
-    name: ELIGIBILITY_AND_RUBRIC_FIT
-    status: PASS
-    evidence: evidence/RUBRIC-TRACEABILITY.md
-  - id: G02
-    name: REALITY_AND_PAIN
-    status: PASS
-    evidence: evidence/REALITY-ANCHOR.md
-  - id: G03
-    name: REAL_NEGATIVE_EVENT
-    status: PASS_PRIMARY_SOURCE
-  - id: G04
-    name: OBSERVABLE_IMPACT
-    status: PASS
-  - id: G05
-    name: DESIGN_LESSON_AND_MITIGATION
-    status: PASS
-  - id: G06
-    name: NEGATIVE_PATH
-    status: PASS
-    evidence: evidence/FAILURE-LEDGER.md
-  - id: G07
-    name: UNKNOWN_ABSTENTION
-    status: PASS
-    evidence: evidence/CLAIM-LEDGER.md
-  - id: G08
-    name: DISTINCTION
-    status: PASS_STRENGTHENED_BY_WI_V3_OPEN_SPACE
-    evidence: evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
-  - id: G09
-    name: CLAIM_EVIDENCE_RECONCILIATION
-    status: PASS_WITH_LIMITATIONS
-  - id: G10
-    name: BUILD_CORRECTNESS
-    status: V3_TRANSIENT_PASS_41_TESTS_PENDING_PERMANENT_PR
-  - id: G11
-    name: SECURITY_AND_PACKAGE_BOUNDARY
-    status: PASS_ZERO_NPM_AUDIT
-  - id: G12
-    name: ACCESSIBILITY_INPUT_PARITY
-    status: PASS_WITH_IMPLEMENTATION_EVIDENCE_PENDING_FINAL_RENDER_INSPECTION
-  - id: G13
-    name: FAST_RESPONSE_AND_PROGRESS_HONESTY
-    status: PASS
-  - id: G14
-    name: STATE_PERSISTENCE_INTEGRITY
-    status: PASS_WITH_V3_PAYLOAD_REDACTION
-  - id: G15
-    name: UX_UI_AND_DOMAIN_NATIVE_VISUAL
-    status: PASS_WITH_CONDITIONS_PENDING_V3_VISUAL_REVIEW
-  - id: G16
-    name: PUBLIC_RUNTIME
-    status: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3
-    evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
-  - id: G17
-    name: DEMO_PATH
-    status: V3_IMPLEMENTED_PENDING_PR_DEPLOY_AND_CAPTURE
-  - id: G18
-    name: VIDEO
-    status: PENDING_CAPTURE
-  - id: G19
-    name: QA
-    status: PREPARED_PENDING_LIVE_REHEARSAL
-  - id: G20
-    name: SUBMISSION_PACKAGE
-    status: DRAFT_READY_PENDING_FINAL_LINKS
-  - id: G21
-    name: LICENSE_IP_AND_THIRD_PARTY_CLAIMS
-    status: PASS_WITH_NO_NEW_UNVERIFIED_ASSET_CLAIMS
-  - id: G22
-    name: ROLLBACK_AND_HANDOFF
-    status: PASS_ACTIVE
-    evidence: state/HANDOVER.yaml
-  - id: G23
-    name: VERIFICATION_BEFORE_COMPLETION
-    status: PASS_WITH_CONDITIONS
-  - id: G24
-    name: BUILD_READINESS_AND_PROJECT_COMPLETE
-    status: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
-  - id: G25
-    name: WINNING_INTELLIGENCE_V2_DISTINCTION
-    status: PASS_MERGED_AFTER_FINAL_CI_CODEQL
-    evidence: evidence/WINNING-INTELLIGENCE-V2.md
-  - id: G26
-    name: COMMONS_SUBMISSION_LOCK
-    status: PENDING_HUMAN_PLATFORM_PROOF
+  - { id: G01, name: ELIGIBILITY_AND_RUBRIC_FIT, status: PASS }
+  - { id: G02, name: REALITY_AND_PAIN, status: PASS }
+  - { id: G03, name: REAL_NEGATIVE_EVENT, status: PASS_PRIMARY_SOURCE }
+  - { id: G04, name: OBSERVABLE_IMPACT, status: PASS }
+  - { id: G05, name: DESIGN_LESSON_AND_MITIGATION, status: PASS }
+  - { id: G06, name: NEGATIVE_PATH, status: PASS }
+  - { id: G07, name: UNKNOWN_ABSTENTION, status: PASS }
+  - { id: G08, name: DISTINCTION, status: PASS_STRENGTHENED_BY_WI_V3_OPEN_SPACE }
+  - { id: G09, name: CLAIM_EVIDENCE_RECONCILIATION, status: PASS_WITH_LIMITATIONS }
+  - { id: G10, name: BUILD_CORRECTNESS, status: PASS_MAIN_CI_35006274961_NODE_22_24_41_TESTS }
+  - { id: G11, name: SECURITY_AND_PACKAGE_BOUNDARY, status: PASS_ZERO_NPM_AUDIT }
+  - { id: G12, name: ACCESSIBILITY_INPUT_PARITY, status: PASS_WITH_IMPLEMENTATION_EVIDENCE_PENDING_FINAL_RENDER_INSPECTION }
+  - { id: G13, name: FAST_RESPONSE_AND_PROGRESS_HONESTY, status: PASS }
+  - { id: G14, name: STATE_PERSISTENCE_INTEGRITY, status: PASS_WITH_V3_PAYLOAD_REDACTION }
+  - { id: G15, name: UX_UI_AND_DOMAIN_NATIVE_VISUAL, status: PASS_WITH_CONDITIONS_PENDING_FINAL_V3_VISUAL_REVIEW }
+  - { id: G16, name: PUBLIC_RUNTIME, status: PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA, evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md }
+  - { id: G17, name: DEMO_PATH, status: PASS_LIVE_PENDING_FINAL_CAPTURE }
+  - { id: G18, name: VIDEO, status: PENDING_CAPTURE }
+  - { id: G19, name: QA, status: PREPARED_PENDING_LIVE_REHEARSAL }
+  - { id: G20, name: SUBMISSION_PACKAGE, status: DRAFT_READY_PENDING_FINAL_LINKS }
+  - { id: G21, name: LICENSE_IP_AND_THIRD_PARTY_CLAIMS, status: PASS_WITH_NO_NEW_UNVERIFIED_ASSET_CLAIMS }
+  - { id: G22, name: ROLLBACK_AND_HANDOFF, status: PASS_ACTIVE, evidence: state/HANDOVER.yaml }
+  - { id: G23, name: VERIFICATION_BEFORE_COMPLETION, status: PASS_WITH_CONDITIONS }
+  - { id: G24, name: BUILD_READINESS_AND_PROJECT_COMPLETE, status: BUILD_CANDIDATE_READY_WITH_LIMITATIONS }
+  - { id: G25, name: WINNING_INTELLIGENCE_V2_DISTINCTION, status: PASS_MERGED_AFTER_FINAL_CI_CODEQL }
+  - { id: G26, name: COMMONS_SUBMISSION_LOCK, status: PENDING_HUMAN_PLATFORM_PROOF }
   - id: G27
     name: WINNING_INTELLIGENCE_V3_OPEN_SPACE
-    pass_when: Public-field gap is explicitly scoped, Capsule-to-Ghost differentiation exists, and exclusivity is not overclaimed.
-    status: IMPLEMENTED_TRANSIENT_PASS_PENDING_PERMANENT_PR
+    status: PASS_MERGED_AND_DEPLOYED
     evidence: evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
   - id: G28
     name: WAIT_GHOST_PRIVACY_REDUCTION
-    pass_when: Share artifact excludes labels, evidence refs, payloads, record ids, timestamps and failure details.
-    status: PASS_TRANSIENT_TESTS
+    status: PASS_PERMANENT_TESTS
   - id: G29
     name: WAIT_GHOST_REPLAY_TRUTH
-    pass_when: Historical replay never emits or claims live host execution signals.
-    status: PASS_IMPLEMENTED_PENDING_PERMANENT_PR
+    status: PASS_LIVE_HISTORICAL_NOT_LIVE_AI
   - id: G30
     name: WAIT_DIFF_NO_SYNTHETIC_VERDICT
-    pass_when: Comparison reports signed deltas only with no winner/trust/confidence/quality score.
-    status: PASS_TRANSIENT_TESTS
+    status: PASS_PERMANENT_TESTS_AND_LIVE_BUNDLE
   - id: G31
     name: V3_FEATURE_FREEZE
-    pass_when: After V3 proof, next major work is TRACE visual-jury elevation rather than product scope growth unless new competitor evidence invalidates distinction.
     status: ACTIVE_AFTER_V3_PROOF
+  - id: G32
+    name: V3_EXACT_RUNTIME_PROVENANCE
+    status: PASS
+    source_sha: cb3b322907197e37518e85ddb377def2053edcc3
+    deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
+    routes: PASS_ALL_FIVE_HTTP_200
+    bundle: /assets/index-CRyhx7en.js
 
 blocking_final_gates:
-  - WI_V3_PRODUCT_DELTA_PR_VALIDATION
-  - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
   - VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
