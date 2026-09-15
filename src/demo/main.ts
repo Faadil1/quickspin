@@ -1,13 +1,6 @@
-import "./demo.css";
+import "./future-classic.css";
 import { createQuickSpin } from "../sdk/index";
-import type {
-  ExecutionSignal,
-  PlanOption,
-  QuickSpinController,
-  WaitEventHandler,
-} from "../sdk/types";
-import { PLANS, createCheckoutFlow } from "../sdk/paywall";
-import { mountHeroDemo } from "./hero";
+import type { ExecutionSignal, QuickSpinController, WaitEventHandler } from "../sdk/types";
 import {
   bestLabel,
   currentDayStreak,
@@ -17,37 +10,23 @@ import {
   totalWaitTurnedToPlayMs,
 } from "../sdk/index";
 
-const STRIPE_LINKS: Record<string, string> = {};
-const proLink = import.meta.env.VITE_STRIPE_PRO_LINK as string | undefined;
-if (proLink) STRIPE_LINKS.pro = proLink;
-const LIVE_PAYMENTS = Boolean(STRIPE_LINKS.pro);
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => window.setTimeout(resolve, ms));
 
-const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
-
-function controlledProviderFailure(): Promise<never> {
-  return new Promise((_, reject) => {
-    window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400);
-  });
-}
-
-/** Exactly 12 seconds: the before/after demo claim now matches runtime reality. */
 interface DemoPhase {
   status: string;
-  progress: number;
   ms: number;
   signal: ExecutionSignal;
 }
 
 const PHASES: DemoPhase[] = [
   {
-    status: "Reasoning…",
-    progress: 0.12,
+    status: "Reasoning",
     ms: 2600,
     signal: { kind: "tool", label: "Planned constraints", evidenceRef: "demo:phase:reasoning" },
   },
   {
-    status: "Searching the web…",
-    progress: 0.32,
+    status: "Searching",
     ms: 3100,
     signal: {
       kind: "retrieval",
@@ -56,8 +35,7 @@ const PHASES: DemoPhase[] = [
     },
   },
   {
-    status: "Drafting…",
-    progress: 0.62,
+    status: "Drafting",
     ms: 3400,
     signal: {
       kind: "artifact",
@@ -66,8 +44,7 @@ const PHASES: DemoPhase[] = [
     },
   },
   {
-    status: "Polishing…",
-    progress: 0.88,
+    status: "Polishing",
     ms: 2900,
     signal: {
       kind: "artifact",
@@ -77,110 +54,429 @@ const PHASES: DemoPhase[] = [
   },
 ];
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  cls?: string,
-  html?: string
-): HTMLElementTagNameMap[K] {
+const LAB_THEME = {
+  mode: "light" as const,
+  primary: "#a45f3d",
+  surface: "#e5e5de",
+  elevated: "#d4d5cf",
+  game: "#c7c9c3",
+  text: "#222321",
+  muted: "#62675f",
+  border: "rgba(34, 35, 33, 0.22)",
+  success: "#8fae2e",
+  radius: "2px",
+  font: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
+};
+
+const ROUTES = [
+  ["/", "Home"],
+  ["/lab/", "Lab"],
+  ["/proof/", "Proof"],
+  ["/sdk/", "SDK"],
+  ["/judges/", "Judges"],
+] as const;
+
+type Route = "home" | "lab" | "proof" | "sdk" | "judges";
+
+function h(tag: string, cls?: string, html?: string): HTMLElement {
   const node = document.createElement(tag);
   if (cls) node.className = cls;
-  if (html != null) node.innerHTML = html;
+  if (html !== undefined) node.innerHTML = html;
   return node;
 }
 
+function currentRoute(): Route {
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  if (path.endsWith("/lab")) return "lab";
+  if (path.endsWith("/proof")) return "proof";
+  if (path.endsWith("/sdk")) return "sdk";
+  if (path.endsWith("/judges")) return "judges";
+  return "home";
+}
+
+function pageShell(route: Route, body: HTMLElement): HTMLElement {
+  const shell = h("div", "site-shell");
+  shell.appendChild(renderNav(route));
+  const main = h("main", "site-main");
+  main.appendChild(body);
+  shell.appendChild(main);
+  shell.appendChild(renderFooter());
+  return shell;
+}
+
+function renderNav(route: Route): HTMLElement {
+  const nav = h("nav", "topbar");
+  nav.setAttribute("aria-label", "Primary");
+  const inner = h("div", "topbar-inner");
+  inner.innerHTML = `
+    <a class="wordmark" href="/" aria-label="QuickSpin home">
+      <span class="mark" aria-hidden="true"><span></span></span>
+      <span>QUICKSPIN</span>
+      <small>PLAYABLE WAIT RUNTIME</small>
+    </a>
+    <div class="nav-rail">
+      ${ROUTES.map(([href, label]) => {
+        const key = href === "/" ? "home" : href.split("/")[1];
+        const active = key === route ? ' aria-current="page"' : "";
+        return `<a href="${href}"${active}>${label}</a>`;
+      }).join("")}
+    </div>
+    <a class="nav-live" href="/lab/"><span></span> LIVE WAIT LAB</a>
+  `;
+  nav.appendChild(inner);
+  return nav;
+}
+
+function renderFooter(): HTMLElement {
+  const footer = h("footer", "footer");
+  footer.innerHTML = `
+    <div><strong>QUICKSPIN / 2026</strong><span>AI waiting, treated as an interaction state.</span></div>
+    <div><span>PUBLIC RUNTIME</span><a href="https://quickspin-runtime.vercel.app">quickspin-runtime.vercel.app</a></div>
+    <div><span>EVIDENCE RULE</span><strong>REAL FAILURE &gt; FAKE SUCCESS</strong></div>
+  `;
+  return footer;
+}
+
+function eyebrow(index: string, text: string): string {
+  return `<div class="eyebrow"><span>${index}</span>${text}</div>`;
+}
+
+function renderHome(): HTMLElement {
+  const page = h("div", "page home-page");
+  const hero = h("section", "home-hero frame");
+  hero.innerHTML = `
+    <div class="hero-copy">
+      ${eyebrow("00", "WAIT STATE / PLAY STATE / EVIDENCE STATE")}
+      <h1>Make the wait<br/><em>worth something.</em></h1>
+      <p class="hero-lead">QuickSpin turns live AI execution into optional play, then produces a receipt for what actually happened — including failure and uncertainty.</p>
+      <div class="hero-actions">
+        <a class="action action-primary" href="/lab/">ENTER LIVE WAIT LAB <span>↗</span></a>
+        <a class="action" href="/proof/">INSPECT THE PROOF <span>→</span></a>
+      </div>
+      <div class="hero-facts">
+        <div><b>12.00s</b><span>CONTROLLED COMPARISON</span></div>
+        <div><b>4</b><span>OBSERVED SIGNAL TYPES</span></div>
+        <div><b>±</b><span>SIGNED WAIT RECEIPT</span></div>
+      </div>
+    </div>
+    <div class="time-instrument" aria-label="QuickSpin timing instrument illustration">
+      <div class="instrument-meta"><span>QS / LIVE</span><span>00:12.000</span></div>
+      <div class="dial-wrap">
+        <div class="dial"><span class="dial-hand"></span><span class="dial-core">WAIT<br/><b>PLAYABLE</b></span></div>
+        <div class="dial-index">00&nbsp;&nbsp;03&nbsp;&nbsp;06&nbsp;&nbsp;09&nbsp;&nbsp;12</div>
+      </div>
+      <div class="signal-strip">
+        <span>REASONING</span><span>RETRIEVAL</span><span>ARTIFACT</span><span>VERIFIED</span>
+      </div>
+      <div class="instrument-note">NO FAKE PROGRESS. NO FAKE SUCCESS. SIGNALS REQUIRE PROVENANCE.</div>
+    </div>
+  `;
+  page.appendChild(hero);
+
+  const thesis = h("section", "split-section");
+  thesis.innerHTML = `
+    <div class="section-index">01 / THESIS</div>
+    <div class="statement"><p>Most AI products treat waiting as dead air.</p><h2>QuickSpin treats it as a <em>product state.</em></h2></div>
+    <div class="statement-note">Execution phases can drive the experience. Observed events can become game objects. Completion, failure, cancellation and UNKNOWN stay distinct.</div>
+  `;
+  page.appendChild(thesis);
+
+  const routes = h("section", "route-grid");
+  routes.innerHTML = `
+    <a class="route-card route-card-lab" href="/lab/"><span>02</span><small>LIVE SURFACE</small><h3>Wait Lab</h3><p>Run the same twelve-second request as a passive wait or a playable one. Trigger the negative path.</p><b>ENTER LAB ↗</b></a>
+    <a class="route-card" href="/proof/"><span>03</span><small>EVIDENCE SURFACE</small><h3>Proof Room</h3><p>Wait Receipt, reality anchor, failure truth, UNKNOWN/refusal and evidence boundaries.</p><b>INSPECT PROOF →</b></a>
+    <a class="route-card" href="/sdk/"><span>04</span><small>IMPLEMENTATION SURFACE</small><h3>SDK Desk</h3><p>The reusable execution-to-play contract: phases, signals, lifecycle and framework integration.</p><b>OPEN SDK →</b></a>
+    <a class="route-card" href="/judges/"><span>05</span><small>JURY SURFACE</small><h3>Judge Brief</h3><p>Rubric mapping, five-part reality pattern, differentiation, demo path and claim boundaries.</p><b>READ BRIEF →</b></a>
+  `;
+  page.appendChild(routes);
+
+  const close = h("section", "closing-banner");
+  close.innerHTML = `<span>SPINNER</span><i>→</i><span>PLAY</span><i>→</i><span>RECEIPT</span><i>→</i><span class="accent">TRUTH</span>`;
+  page.appendChild(close);
+  return page;
+}
+
+function renderLab(): HTMLElement {
+  const page = h("div", "page lab-page");
+  const intro = h("section", "page-intro frame");
+  intro.innerHTML = `
+    <div>${eyebrow("01", "LIVE WAIT LAB")}
+      <h1>Same wait.<br/><em>Different experience.</em></h1>
+      <p>Run a controlled 12-second request. QuickSpin never invents progress; real phase changes and evidence-bearing execution signals drive the playable layer.</p>
+    </div>
+    <div class="lab-spec"><span>CONTROL</span><b>12.000 SEC</b><span>PLAYABLE</span><b>12.000 SEC</b><span>FAILURE</span><b>PRESERVED</b></div>
+  `;
+  page.appendChild(intro);
+
+  const lab = h("section", "lab-console");
+  lab.innerHTML = `
+    <div class="console-header"><span>QS WAIT LAB / RUN 001</span><span class="status-led"><i></i>READY</span></div>
+    <div class="lab-toolbar">
+      <div class="seg" role="group" aria-label="Demo mode">
+        <button data-mode="classic" aria-pressed="false">CLASSIC WAIT</button>
+        <button data-mode="quickspin" aria-pressed="true">QUICKSPIN</button>
+      </div>
+      <div class="lab-actions">
+        <button class="lab-btn primary" id="run-demo">RUN 12S GENERATION</button>
+        <button class="lab-btn danger" id="run-failure">RUN NEGATIVE PATH</button>
+        <button class="lab-btn" id="reset-stats">RESET</button>
+      </div>
+    </div>
+    <div class="lab-stage">
+      <div class="stage-main">
+        <div id="classic-panel" class="demo-panel">
+          <div class="panel-label">CONTROL / PASSIVE WAIT</div>
+          <div class="chat"><div class="thinking"><span class="spinner"></span><span class="spinner-label">Reasoning</span><div class="progress-track"><span class="fill"></span></div><span class="progress-label">0%</span></div></div>
+          <div id="classic-phase" class="phase-line"></div>
+        </div>
+        <div id="qs-panel" class="demo-panel">
+          <div class="panel-label">QUICKSPIN / PLAYABLE WAIT</div>
+          <div class="chat"></div>
+          <div id="qs-mount" class="qs-mount"></div>
+          <div id="qs-phase" class="phase-line">Phase: <strong>READY</strong></div>
+        </div>
+      </div>
+      <aside class="evidence-feed">
+        <div class="feed-title"><span>EVIDENCE FEED</span><small>HOST-OBSERVED ONLY</small></div>
+        <div id="event-log" class="event-log"></div>
+      </aside>
+    </div>
+    <div class="stat-rail">
+      <div id="stat-sessions"><span>SESSIONS</span><b class="num">0</b></div>
+      <div id="stat-wait"><span>PLAY TIME</span><b class="num">0s</b></div>
+      <div id="stat-best"><span>BEST RUN</span><b class="num">—</b></div>
+      <div id="stat-felt"><span>AVG FELT</span><b class="num">—</b></div>
+      <div id="stat-streak"><span>DAY STREAK</span><b class="num">0</b></div>
+    </div>
+  `;
+  page.appendChild(lab);
+
+  const note = h("section", "lab-notes");
+  note.innerHTML = `
+    <div><span>POSITIVE PATH</span><p>Phase changes and execution signals are supplied by the host, then the response resolves normally.</p></div>
+    <div><span>NEGATIVE PATH</span><p>An actual Promise rejects with <code>DEMO_PROVIDER_TIMEOUT</code>. No response is fabricated.</p></div>
+    <div><span>UNKNOWN PATH</span><p>Signals without valid provenance are rejected and do not mutate gameplay.</p></div>
+  `;
+  page.appendChild(note);
+  return page;
+}
+
+function renderProof(): HTMLElement {
+  const page = h("div", "page proof-page");
+  const intro = h("section", "page-intro frame");
+  intro.innerHTML = `
+    <div>${eyebrow("02", "PROOF ROOM")}
+      <h1>The product ends<br/>with a <em>receipt.</em></h1>
+      <p>QuickSpin does not assume the wait felt better. It measures the outcome, preserves failure, and refuses unsupported execution claims.</p>
+    </div>
+    <div class="receipt-mini"><span>WAIT RECEIPT / SAMPLE</span><dl><dt>ACTUAL</dt><dd>12.0s</dd><dt>PLAYED</dt><dd>9.4s</dd><dt>ENGAGED</dt><dd>8.8s</dd><dt>FELT</dt><dd>8.0s</dd></dl><strong>−33% FELT WAIT</strong><small>SIGNED RESULT — CAN ALSO BE ZERO OR POSITIVE</small></div>
+  `;
+  page.appendChild(intro);
+
+  const reality = h("section", "proof-grid");
+  reality.innerHTML = `
+    <article class="proof-card wide"><span class="proof-no">01</span><small>REALITY ANCHOR</small><h2>Real failure before product mythology.</h2><p>On June 2–3, 2026, OpenAI documented elevated errors and latency across Responses API, Codex and ChatGPT. Some Responses API requests took longer than normal to begin generating; Codex requests were incorrectly rejected with HTTP 429.</p><div class="proof-rule">IMPLICATION → WAITING MUST NOT IMPLY GUARANTEED SUCCESS.</div></article>
+    <article class="proof-card fail"><span class="proof-no">02</span><small>NEGATIVE PATH</small><h3>Failure remains failure.</h3><p>The demo runs a real rejected Promise. The session persists <code>outcome: failed</code> and no AI answer is fabricated.</p><b>REAL FAILURE &gt; FAKE SUCCESS</b></article>
+    <article class="proof-card unknown"><span class="proof-no">03</span><small>UNKNOWN / ABSTENTION</small><h3>No evidence, no claim.</h3><p>Execution signals require <code>evidenceRef</code>. Missing provenance becomes <code>UNKNOWN / INSUFFICIENT_EVIDENCE</code>.</p><b>NO GAMEPLAY MUTATION</b></article>
+    <article class="proof-card"><span class="proof-no">04</span><small>MEASUREMENT</small><h3>Signed perceived wait.</h3><p>The Wait Receipt can report shorter, equal or longer perceived wait. There is no forced positive marketing result.</p><b>± PERCEPTION, NOT PROPAGANDA</b></article>
+  `;
+  page.appendChild(reality);
+
+  const chain = h("section", "evidence-chain");
+  chain.innerHTML = `<span>SIGNAL</span><i>→</i><span>REAL NEGATIVE EVENT</span><i>→</i><span>OBSERVABLE IMPACT</span><i>→</i><span>DESIGN LESSON</span><i>→</i><span>MITIGATION</span>`;
+  page.appendChild(chain);
+  return page;
+}
+
+function renderSdk(): HTMLElement {
+  const page = h("div", "page sdk-page");
+  const intro = h("section", "page-intro frame");
+  intro.innerHTML = `
+    <div>${eyebrow("03", "SDK DESK")}
+      <h1>One contract.<br/><em>Many waits.</em></h1>
+      <p>The product is not one minigame. It is a reusable execution-to-play contract that lets any AI host expose phases, observed signals and terminal outcomes truthfully.</p>
+    </div>
+    <div class="sdk-badge"><span>VANILLA</span><span>REACT</span><span>ESM</span><span>CJS</span><span>IIFE</span></div>
+  `;
+  page.appendChild(intro);
+
+  const desk = h("section", "sdk-desk");
+  desk.innerHTML = `
+    <div class="code-window"><div class="code-title"><span>integration.ts</span><span>TRUTHFUL HOST CONTRACT</span></div><pre><code>const qs = createQuickSpin({ target: "#quickspin" });
+const session = qs.start({ status: "Reasoning…" });
+
+session.setProgress(); // indeterminate
+session.setPhase("Searching…");
+session.signal({
+  kind: "retrieval",
+  label: "Retrieved 12 sources",
+  evidenceRef: "run_123:retrieval_4",
+});
+
+try {
+  const response = await modelRequest();
+  session.complete();
+  return response;
+} catch (error) {
+  session.fail(error);
+  throw error;
+}</code></pre></div>
+    <div class="contract-list">
+      <div><span>01</span><h3>START</h3><p>Enter a real waiting state with an optional 650ms anti-flash threshold.</p></div>
+      <div><span>02</span><h3>PHASE</h3><p>Host-observed phase changes can change game intensity without fake percentage progress.</p></div>
+      <div><span>03</span><h3>SIGNAL</h3><p>Tool, retrieval, artifact and warning events require provenance before they become gameplay.</p></div>
+      <div><span>04</span><h3>TERMINATE</h3><p>Complete, fail and cancel are distinct. UNKNOWN remains a valid refusal state.</p></div>
+    </div>
+  `;
+  page.appendChild(desk);
+  const layers = h("section", "architecture-strip");
+  layers.innerHTML = `<div><span>HOST</span><b>AI APP</b></div><i>→</i><div><span>CONTRACT</span><b>QUICKSPIN SDK</b></div><i>→</i><div><span>EXPERIENCE</span><b>RUNNER / ORBIT</b></div><i>→</i><div><span>EVIDENCE</span><b>WAIT RECEIPT</b></div>`;
+  page.appendChild(layers);
+  return page;
+}
+
+function renderJudges(): HTMLElement {
+  const page = h("div", "page judges-page");
+  const intro = h("section", "page-intro frame");
+  intro.innerHTML = `
+    <div>${eyebrow("04", "JUDGE BRIEF")}
+      <h1>One story.<br/><em>Every claim mapped.</em></h1>
+      <p>QuickSpin is designed for the “Make Waiting for AI Fun” rubric, but the evidence layer prevents the submission from claiming more than the build proves.</p>
+    </div>
+    <div class="judge-stamp"><span>BUILD</span><b>CANDIDATE<br/>READY</b><small>WITH LIMITATIONS</small></div>
+  `;
+  page.appendChild(intro);
+
+  const cycle = h("section", "judge-cycle");
+  cycle.innerHTML = `<span>RUBRIC</span><i>→</i><span>PAIN</span><i>→</i><span>PROBLEM</span><i>→</i><span>DIFFERENTIATOR</span><i>→</i><span>EXECUTION</span><i>→</i><span>EVIDENCE</span><i>→</i><span>STORY</span><i>→</i><span>DEMO</span><i>→</i><span>Q&A</span>`;
+  page.appendChild(cycle);
+
+  const matrix = h("section", "judge-matrix");
+  matrix.innerHTML = `
+    <div class="matrix-row head"><span>RUBRIC</span><span>QUICKSPIN ANSWER</span><span>VISIBLE PROOF</span></div>
+    <div class="matrix-row"><b>Waiting experience</b><span>Optional playable layer + anti-flash + receipt</span><span>/lab/ + /proof/</span></div>
+    <div class="matrix-row"><b>Originality</b><span>Execution becomes game content, not decorative copy</span><span>Signal tokens + phase intensity</span></div>
+    <div class="matrix-row"><b>AI-native fit</b><span>Host phases and evidence-bearing signals</span><span>SDK contract</span></div>
+    <div class="matrix-row"><b>Repeatability</b><span>Reusable runtime, two games, multiple bundles</span><span>/sdk/</span></div>
+    <div class="matrix-row"><b>Execution</b><span>33 tests, CI Node 22/24, CodeQL, 0 npm audit</span><span>Repository evidence</span></div>
+  `;
+  page.appendChild(matrix);
+
+  const boundaries = h("section", "claim-boundaries");
+  boundaries.innerHTML = `
+    <article><small>WE CLAIM</small><h3>AI waiting can become a truthful interaction state.</h3><p>Phases, observed execution, explicit failure and signed perception are implemented and evidenced.</p></article>
+    <article><small>WE REFUSE</small><h3>“QuickSpin makes models faster.”</h3><p>Provider latency is out of scope. The product changes the waiting experience, not the underlying model speed.</p></article>
+    <article><small>WE KEEP UNKNOWN</small><h3>Unsupported execution evidence.</h3><p>No evidence reference means no confident gameplay signal. The system abstains.</p></article>
+  `;
+  page.appendChild(boundaries);
+  return page;
+}
+
 function logEvents(root: HTMLElement): WaitEventHandler {
-  return (e) => {
-    const line = el(
-      "div",
-      "",
-      `[${new Date().toLocaleTimeString()}] ${e.type}${e.data ? " " + JSON.stringify(e.data) : ""}`
-    );
+  return (event) => {
+    const line = h("div", `event-line event-${event.type}`);
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${event.type}${event.data ? ` ${JSON.stringify(event.data)}` : ""}`;
     root.appendChild(line);
     root.scrollTop = root.scrollHeight;
   };
 }
 
-function main(): void {
-  const app = document.getElementById("app");
-  if (!app) return;
-  app.appendChild(buildPage());
+function controlledProviderFailure(): Promise<never> {
+  return new Promise((_, reject) =>
+    window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400)
+  );
+}
 
-  const heroCanvas = app.querySelector<HTMLCanvasElement>(".hero-canvas");
-  if (heroCanvas) mountHeroDemo(heroCanvas);
-
-  const mount = app.querySelector<HTMLElement>("#qs-mount")!;
-  const logEl = app.querySelector<HTMLElement>("#event-log")!;
-  const classicPanel = app.querySelector<HTMLElement>("#classic-panel")!;
-  const qsPanel = app.querySelector<HTMLElement>("#qs-panel")!;
+function initLab(app: HTMLElement): void {
+  const mount = app.querySelector<HTMLElement>("#qs-mount");
+  const logEl = app.querySelector<HTMLElement>("#event-log");
+  const classicPanel = app.querySelector<HTMLElement>("#classic-panel");
+  const qsPanel = app.querySelector<HTMLElement>("#qs-panel");
+  const runBtn = app.querySelector<HTMLButtonElement>("#run-demo");
+  const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure");
+  const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats");
+  const phaseEl = app.querySelector<HTMLElement>("#qs-phase");
   const segBtns = Array.from(app.querySelectorAll<HTMLButtonElement>(".seg button"));
-  const runBtn = app.querySelector<HTMLButtonElement>("#run-demo")!;
-  const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure")!;
-  const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats")!;
-  const phaseEl = app.querySelector<HTMLElement>("#qs-phase")!;
-  const classicPhase = app.querySelector<HTMLElement>("#classic-phase")!;
+  if (
+    !mount ||
+    !logEl ||
+    !classicPanel ||
+    !qsPanel ||
+    !runBtn ||
+    !failureBtn ||
+    !resetBtn ||
+    !phaseEl
+  )
+    return;
 
-  let ctrl: QuickSpinController | null = createQuickSpin({
+  let controller: QuickSpinController = createQuickSpin({
     target: mount,
-    delayMs: 0, // demo: show immediately; production defaults to a 650ms anti-flash threshold
+    delayMs: 0,
+    theme: LAB_THEME,
     onEvent: logEvents(logEl),
   });
   let mode: "classic" | "quickspin" = "quickspin";
   let running = false;
 
-  const setMode = (m: "classic" | "quickspin") => {
-    mode = m;
-    for (const b of segBtns)
-      b.setAttribute("aria-pressed", m === b.dataset.mode ? "true" : "false");
-    classicPanel.style.display = m === "classic" ? "" : "none";
-    qsPanel.style.display = m === "quickspin" ? "" : "none";
+  const appendBubble = (label: string, role: "user" | "ai") => {
+    const panel = mode === "classic" ? classicPanel : qsPanel;
+    const chat = panel.querySelector<HTMLElement>(".chat");
+    if (!chat) return;
+    const bubble = h("div", `bubble ${role}`, label);
+    chat.appendChild(bubble);
   };
 
-  const appendBubble = (label: string, cls: "user" | "ai"): void => {
-    const chat = (mode === "classic" ? classicPanel : qsPanel).querySelector<HTMLElement>(".chat")!;
-    const b = el("div", "bubble " + cls, label);
-    chat.appendChild(b);
-    b.scrollIntoView({ block: "nearest" });
+  const setMode = (next: "classic" | "quickspin") => {
+    mode = next;
+    classicPanel.hidden = next !== "classic";
+    qsPanel.hidden = next !== "quickspin";
+    for (const button of segBtns)
+      button.setAttribute("aria-pressed", String(button.dataset.mode === next));
+  };
+
+  const refreshStats = () => {
+    const set = (id: string, value: string) => {
+      const node = app.querySelector<HTMLElement>(`#${id} .num`);
+      if (node) node.textContent = value;
+    };
+    set("stat-sessions", String(totalSessions()));
+    set("stat-wait", `${Math.round(totalWaitTurnedToPlayMs() / 1000)}s`);
+    set("stat-best", bestLabel("runner") ?? "—");
+    const perceived = perceivedWaitStats();
+    set("stat-felt", perceived.samples ? `${Math.round(perceived.avgRatio * 100)}%` : "—");
+    set("stat-streak", String(currentDayStreak()));
   };
 
   const runClassic = async () => {
-    classicPhase.innerHTML = "";
-    const chat = classicPanel.querySelector<HTMLElement>(".chat")!;
-    const track = chat.querySelector<HTMLElement>(".thinking")!;
-    const fill = chat.querySelector<HTMLElement>(".fill") as HTMLElement;
-    const label = chat.querySelector<HTMLElement>(".progress-label")!;
-    track.style.display = "flex";
-    track.querySelector<HTMLElement>(".spinner-label")!.textContent = PHASES[0].status;
-    for (const { status, progress: p, ms } of PHASES) {
-      track.querySelector<HTMLElement>(".spinner-label")!.textContent = status;
-      fill.style.width = `${Math.round(p * 100)}%`;
-      label.textContent = `${Math.round(p * 100)}%`;
-      await sleep(ms);
+    const thinking = classicPanel.querySelector<HTMLElement>(".thinking");
+    const fill = classicPanel.querySelector<HTMLElement>(".fill");
+    const label = classicPanel.querySelector<HTMLElement>(".progress-label");
+    const phase = classicPanel.querySelector<HTMLElement>(".spinner-label");
+    if (!thinking || !fill || !label || !phase) return;
+    thinking.hidden = false;
+    let elapsed = 0;
+    for (const item of PHASES) {
+      phase.textContent = item.status;
+      elapsed += item.ms;
+      fill.style.width = `${Math.round((elapsed / 12000) * 100)}%`;
+      label.textContent = `${Math.round((elapsed / 12000) * 100)}%`;
+      await sleep(item.ms);
     }
-    fill.style.width = "100%";
-    label.textContent = "100%";
-    track.style.display = "none";
+    thinking.hidden = true;
     appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
   };
 
   const runQuickSpin = async () => {
-    phaseEl.innerHTML = "Phase: <strong>" + PHASES[0].status + "</strong>";
-    const session = ctrl!.start({ status: PHASES[0].status });
-    // No fake percentage: phase changes themselves drive honest game intensity.
+    const session = controller.start({ status: PHASES[0].status });
     session.setProgress();
-    for (const { status, ms, signal } of PHASES) {
-      session.setPhase(status);
-      session.signal(signal);
-      phaseEl.innerHTML =
-        "Phase: <strong>" +
-        status +
-        "</strong> · live signal: <strong>" +
-        signal.kind +
-        "</strong> — " +
-        signal.label;
-      await sleep(ms);
+    for (const item of PHASES) {
+      session.setPhase(item.status);
+      session.signal(item.signal);
+      phaseEl.innerHTML = `Phase: <strong>${item.status.toUpperCase()}</strong> · ${item.signal.kind.toUpperCase()} / ${item.signal.label}`;
+      await sleep(item.ms);
     }
     session.complete();
-    phaseEl.innerHTML = "Phase: <strong>Done</strong> — response ready; inspect the Wait Receipt.";
+    phaseEl.innerHTML = `Phase: <strong>COMPLETE</strong> · inspect the Wait Receipt.`;
     appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
     refreshStats();
   };
@@ -190,426 +486,87 @@ function main(): void {
     running = true;
     runBtn.disabled = true;
     failureBtn.disabled = true;
-    runBtn.textContent = "Generating…";
     appendBubble("Where should five friends eat tonight in Austin?", "user");
     if (mode === "classic") await runClassic();
     else await runQuickSpin();
     running = false;
     runBtn.disabled = false;
     failureBtn.disabled = false;
-    runBtn.textContent = "Run demo generation";
   };
 
-  const runFailureProof = async (): Promise<void> => {
+  const runFailure = async () => {
     if (running) return;
     running = true;
     setMode("quickspin");
     runBtn.disabled = true;
     failureBtn.disabled = true;
-    failureBtn.textContent = "Running real failure…";
     appendBubble(
       "Find dinner options, but preserve failure truth if the provider rejects.",
       "user"
     );
-
-    const session = ctrl!.start({ status: "Calling restaurant search provider…" });
+    const session = controller.start({ status: "Calling provider" });
     session.setProgress();
-    session.setPhase("Calling restaurant search provider…");
-    phaseEl.innerHTML =
-      "Negative path: <strong>provider call in flight</strong> — no success has been assumed.";
-
+    session.setPhase("Calling provider");
+    phaseEl.innerHTML = `Negative path: <strong>PROVIDER CALL IN FLIGHT</strong> · success not assumed.`;
     try {
       await controlledProviderFailure();
-    } catch (err) {
-      const failure = err instanceof Error ? err : new Error(String(err));
+    } catch (error) {
+      const failure = error instanceof Error ? error : new Error(String(error));
       session.signal({
         kind: "warning",
         label: "Provider request rejected",
         evidenceRef: "demo:negative-path:promise-rejection",
       });
       session.fail(failure);
-      phaseEl.innerHTML =
-        `Negative path: <strong>FAILED</strong> — ${failure.message}. ` +
-        "No AI answer was fabricated; the failed outcome remains in local evidence.";
+      phaseEl.innerHTML = `Negative path: <strong>FAILED / ${failure.message}</strong> · no AI answer fabricated.`;
       refreshStats();
     }
-
     running = false;
     runBtn.disabled = false;
     failureBtn.disabled = false;
-    failureBtn.textContent = "Run negative-path proof";
   };
 
-  const refreshStats = (): void => {
-    const set = (id: string, v: string) => {
-      const n = app.querySelector<HTMLElement>(`#${id} .num`);
-      if (n) n.textContent = v;
-    };
-    set("stat-sessions", String(totalSessions()));
-    set("stat-wait", formatMs(totalWaitTurnedToPlayMs()));
-    set("stat-best", bestLabel("runner") ?? "—");
-    const ps = perceivedWaitStats();
-    set("stat-felt", ps.samples > 0 ? `${Math.round(ps.avgRatio * 100)}%` : "—");
-    set("stat-streak", String(currentDayStreak()));
-  };
-
-  runBtn.addEventListener("click", runDemo);
-  failureBtn.addEventListener("click", () => void runFailureProof());
+  runBtn.addEventListener("click", () => void runDemo());
+  failureBtn.addEventListener("click", () => void runFailure());
   resetBtn.addEventListener("click", () => {
-    ctrl!.destroy();
+    controller.destroy();
     mount.innerHTML = "";
-    ctrl = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents(logEl) });
+    logEl.innerHTML = "";
     resetAll();
-    app.querySelector<HTMLElement>("#event-log")!.innerHTML = "";
+    controller = createQuickSpin({
+      target: mount,
+      delayMs: 0,
+      theme: LAB_THEME,
+      onEvent: logEvents(logEl),
+    });
     refreshStats();
   });
-
-  for (const b of segBtns) {
-    b.addEventListener("click", () => {
-      if (running) return;
-      setMode((b.dataset.mode as "classic" | "quickspin") ?? "quickspin");
+  for (const button of segBtns) {
+    button.addEventListener("click", () => {
+      if (!running) setMode(button.dataset.mode === "classic" ? "classic" : "quickspin");
     });
   }
-
   setMode("quickspin");
   refreshStats();
 }
 
-function formatMs(ms: number): string {
-  const s = Math.round(ms / 1000);
-  return `${s}s`;
-}
-
-function renderPlans(root: HTMLElement): void {
-  const grid = el("div", "plans");
-  for (const plan of PLANS) {
-    const card = el("div", "plan" + (plan.highlighted ? " hot" : ""));
-    card.appendChild(el("div", "plan-name", plan.name + (plan.highlighted ? " · PILOT" : "")));
-    card.appendChild(el("div", "plan-price", `$${plan.priceUsd} <small>${plan.cadence}</small>`));
-    const ul = el("ul");
-    for (const f of plan.features) {
-      const li = el(
-        "li",
-        "",
-        typeof f === "string"
-          ? f
-          : `${f.text} <span class="note amber">(after the hackathon)</span>`
-      );
-      ul.appendChild(li);
-    }
-    card.appendChild(ul);
-    const buy = el(
-      "button",
-      "btn " + (plan.highlighted ? "primary" : "ghost"),
-      plan.priceUsd === 0
-        ? "Use the SDK"
-        : plan.highlighted && LIVE_PAYMENTS
-          ? "Choose Team Pilot — pay with Stripe"
-          : "Choose Team Pilot — checkout preview"
-    );
-    buy.type = "button";
-    buy.addEventListener("click", () => void choosePlan(plan, buy));
-    card.appendChild(buy);
-    grid.appendChild(card);
-  }
-  root.appendChild(grid);
-}
-
-let checkoutBox: { open(): void; close(): void; destroy(): void } | null = null;
-
-async function choosePlan(plan: PlanOption, btn: HTMLButtonElement): Promise<void> {
-  if (plan.priceUsd === 0) {
-    btn.textContent = "SDK active";
-    btn.disabled = true;
-    return;
-  }
-  checkoutBox = createCheckoutFlow(
-    (_planId) => sleep(900).then(() => ({ ok: true, paymentId: `preview_${Date.now()}` })),
-    { paymentLinks: STRIPE_LINKS }
-  );
-  checkoutBox.open();
-}
-
-function buildPage(): HTMLElement {
-  const page = el("div", "");
-
-  const nav = el("nav", "nav");
-  nav.appendChild(
-    el(
-      "div",
-      "wrap",
-      `<div class="logo"><img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2096%2096'%3E%3Cdefs%3E%3ClinearGradient%20id='chip'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%238b7cff'/%3E%3Cstop%20offset='1'%20stop-color='%236658e8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x='6'%20y='6'%20width='84'%20height='84'%20rx='24'%20fill='url(%23chip)'/%3E%3Cpath%20d='M%2048%2020%20A%2028%2028%200%201%200%2048%2076%20A%2028%2028%200%201%200%2048%2020%20Z%20M%2048%2034%20A%2014%2014%200%201%201%2048%2062%20A%2014%2014%200%201%201%2048%2034%20Z'%20fill='%23ffffff'%20fill-rule='evenodd'/%3E%3Cpath%20d='M%2060%2062%20Q%2072%2068%2079%2084'%20fill='none'%20stroke='%23ffe06a'%20stroke-width='12'%20stroke-linecap='round'/%3E%3C/svg%3E" width="26" height="26" alt="QuickSpin"/><span>quick</span><span>spin</span></div>
-       <ul class="nav-links">
-         <li><a href="#demo">Product</a></li>
-         <li><a href="#games">Games</a></li>
-         <li><a href="#sdk">SDK</a></li>
-         <li><a href="#pricing">Pricing</a></li>
-         <li><a href="#sdk">Docs</a></li>
-       </ul>`
-    )
-  );
-
-  const hero = el("section", "hero wrap");
-  hero.appendChild(el("div", "hero-badge", "Commonsmade Build · Make Waiting for AI Fun"));
-  hero.appendChild(el("h1", "", `Turn live AI execution into <em>play time.</em>`));
-  hero.appendChild(
-    el(
-      "p",
-      "lead",
-      `QuickSpin is a drop-in waiting runtime for AI apps. Real model phases drive a playable layer while the request runs, ` +
-        `then a Wait Receipt shows actual wait, engaged play time, and whether the wait truly felt shorter.`
-    )
-  );
-
-  const heroDemo = el("div", "hero-demo");
-  const heroCanvas = el("canvas", "hero-canvas");
-  heroCanvas.width = 760;
-  heroCanvas.height = 300;
-  heroCanvas.setAttribute("aria-hidden", "true");
-  heroDemo.appendChild(heroCanvas);
-  hero.appendChild(heroDemo);
-  const ctaRow = el("div", "cta-row");
-  const runBtn = el("button", "btn primary", "Run demo generation");
-  runBtn.id = "run-demo";
-  runBtn.type = "button";
-  const failureBtn = el("button", "btn ghost", "Run negative-path proof");
-  failureBtn.id = "run-failure";
-  failureBtn.type = "button";
-  const resetBtn = el("button", "btn ghost", "Reset stats");
-  resetBtn.id = "reset-stats";
-  resetBtn.type = "button";
-  ctaRow.appendChild(runBtn);
-  ctaRow.appendChild(failureBtn);
-  ctaRow.appendChild(resetBtn);
-  hero.appendChild(ctaRow);
-  hero.appendChild(
-    el(
-      "p",
-      "sub",
-      "Happy-path model work is simulated locally for exactly 12 seconds. The negative-path button runs a real rejected Promise and is explicitly labeled controlled evidence."
-    )
-  );
-
-  const demo = el("section", "demo-section wrap");
-  demo.id = "demo";
-  demo.appendChild(el("div", "hostlabel", "HOST APP — a one-message AI client"));
-  const seg = el("div", "seg");
-  for (const m of ["classic", "quickspin"] as const) {
-    const b = el("button", "", m === "classic" ? "Classic spinner" : "With QuickSpin");
-    b.type = "button";
-    b.dataset.mode = m;
-    seg.appendChild(b);
-  }
-  demo.appendChild(seg);
-  demo.appendChild(
-    el("div", "seg-label hostlabel", "Same 12-second model wait. Two waiting experiences.")
-  );
-
-  const classicPanel = el("div", "");
-  classicPanel.id = "classic-panel";
-  classicPanel.style.display = "none";
-  const classicChat = el("div", "chat");
-  classicChat.innerHTML =
-    `<div class="bubble user">Where should five friends eat tonight in Austin?</div>` +
-    `<div class="thinking"><span class="spinner"></span><span class="spinner-label">Reasoning…</span></div>` +
-    `<div class="progress-track"><div class="fill"></div></div>` +
-    `<div class="progress-label">0%</div>`;
-  const classicPhase = el("div", "qs-phase");
-  classicPhase.id = "classic-phase";
-  classicPanel.appendChild(classicChat);
-  classicPanel.appendChild(classicPhase);
-  demo.appendChild(classicPanel);
-
-  const qsPanel = el("div", "");
-  qsPanel.id = "qs-panel";
-  const qsChat = el("div", "chat");
-  qsChat.innerHTML = `<div class="bubble user">Where should five friends eat tonight in Austin?</div>`;
-  const qsMount = el("div", "qs-mount");
-  qsMount.id = "qs-mount";
-  const qsPhase = el("div", "qs-phase");
-  qsPhase.id = "qs-phase";
-  qsPanel.appendChild(qsChat);
-  qsPanel.appendChild(qsMount);
-  qsPanel.appendChild(qsPhase);
-  demo.appendChild(qsPanel);
-
-  const eventLog = el("div", "event-log");
-  eventLog.id = "event-log";
-  demo.appendChild(eventLog);
-
-  const stats = el("section", "wrap stats-grid");
-  stats.innerHTML =
-    `<div class="stat" id="stat-wait"><div class="num">—</div><div class="lbl">time actually played during AI wait</div></div>` +
-    `<div class="stat" id="stat-sessions"><div class="num">—</div><div class="lbl">sessions on this device</div></div>` +
-    `<div class="stat" id="stat-best"><div class="num">—</div><div class="lbl">best wait-run score</div></div>` +
-    `<div class="stat" id="stat-felt"><div class="num">—</div><div class="lbl">average felt / actual wait</div></div>` +
-    `<div class="stat" id="stat-streak"><div class="num">—</div><div class="lbl">day streak</div></div>`;
-
-  const games = el("section", "section wrap");
-  games.id = "games";
-  games.appendChild(el("h2", "", "Games driven by the wait"));
-  games.appendChild(
-    el(
-      "p",
-      "",
-      "Real phase changes raise game intensity, and observed host execution events become collectible or catchable gameplay signals."
-    )
-  );
-  const gameList = el("div", "game-list");
-  gameList.innerHTML =
-    `<div class="game"><div class="name">Wait Runner</div><div class="tag">Jump the obstacle, outrun the wait. <kbd>Space</kbd> or tap to jump.</div></div>` +
-    `<div class="game"><div class="name">Orbit Catch</div><div class="tag">Catch the glow target. Tap/click, or focus the canvas and use <kbd>Space</kbd>/<kbd>Enter</kbd>.</div></div>` +
-    `<div class="game"><div class="name">Execution signals</div><div class="tag">Retrievals, tools, artifacts, and warnings become scorable game events only when the host actually sends them.</div></div>`;
-  games.appendChild(gameList);
-
-  const sdk = el("section", "section wrap");
-  sdk.id = "sdk";
-  sdk.appendChild(el("h2", "", "Drop-in SDK"));
-  sdk.appendChild(
-    el(
-      "p",
-      "",
-      `Mount it once, feed it real model phases plus observed execution signals, and complete the session when the actual response resolves. ` +
-        `Fast responses below the default 650ms threshold never flash the game UI.`
-    )
-  );
-  const code = el("div", "code");
-  code.appendChild(
-    el(
-      "pre",
-      "",
-      `<span class="tok-cmt">// npm install quickspin</span>
-<span class="tok-kw">import</span> { createQuickSpin } <span class="tok-kw">from</span> <span class="tok-str">"quickspin"</span>;
-
-<span class="tok-kw">const</span> quickSpin = createQuickSpin({
-  target: <span class="tok-str">"#quickspin"</span>,
-  game: <span class="tok-str">"runner"</span>,
-  delayMs: 650,                     <span class="tok-cmt">// no UI flash for fast replies</span>
-  onEvent: (e) => analytics.observe(e),
-});
-
-<span class="tok-kw">const</span> session = quickSpin.start({ status: <span class="tok-str">"Reasoning…"</span> });
-session.setProgress();               <span class="tok-cmt">// indeterminate: do not fake a %</span>
-session.setPhase(<span class="tok-str">"Searching the web…"</span>); <span class="tok-cmt">// real phase drives game intensity</span>
-session.signal({ kind: <span class="tok-str">"retrieval"</span>, label: <span class="tok-str">"Retrieved 12 sources"</span>, evidenceRef: <span class="tok-str">"run_123:retrieval_4"</span> });
-session.setPhase(<span class="tok-str">"Drafting…"</span>);
-session.signal({ kind: <span class="tok-str">"artifact"</span>, label: <span class="tok-str">"Draft assembled"</span>, evidenceRef: <span class="tok-str">"run_123:artifact_1"</span> });
-
-<span class="tok-kw">const</span> response = <span class="tok-kw">await</span> modelRequest();
-session.complete();                  <span class="tok-cmt">// receipt + handoff</span>
-
-<span class="tok-cmt">// or wrap the entire promise:</span>
-<span class="tok-kw">const</span> answer = <span class="tok-kw">await</span> quickSpin.track(aiRun(prompt));`
-    )
-  );
-  sdk.appendChild(code);
-  sdk.appendChild(
-    el(
-      "p",
-      "sub",
-      `Declarative mounting supports both <code>&lt;div data-quickspin&gt;</code> and <code>&lt;div id="quickspin"&gt;</code>. ` +
-        `The widget lives in Shadow DOM, and React ships at <code>quickspin/react</code>.`
-    )
-  );
-
-  const pricing = el("section", "section wrap");
-  pricing.id = "pricing";
-  pricing.appendChild(el("h2", "", "Open SDK, paid team pilot"));
-  pricing.appendChild(
-    el(
-      "p",
-      "",
-      LIVE_PAYMENTS
-        ? `The SDK capabilities shown above stay available in Free. Team Pilot is a service layer for branded setup and integration support; ` +
-            `its live button opens a real Stripe Payment Link. Hosted analytics and extra packs remain explicitly roadmap items.`
-        : `The SDK capabilities shown above stay available in Free. Team Pilot is a service layer for branded setup and integration support. ` +
-            `This checkout is a labeled preview; set <code>VITE_STRIPE_PRO_LINK</code> to use a real Stripe Payment Link.`
-    )
-  );
-  const plansBox = el("div", "");
-  renderPlans(plansBox);
-  pricing.appendChild(plansBox);
-
-  const thesis = buildThesis();
-  const footer = el(
-    "footer",
-    "footer wrap",
-    `QuickSpin — an entry for the Commonsmade “Make Waiting for AI Fun” build challenge.`
-  );
-  page.appendChild(nav);
-  page.appendChild(buildStripeToastIfNeeded());
-  page.appendChild(hero);
-  page.appendChild(demo);
-  page.appendChild(thesis);
-  page.appendChild(stats);
-  page.appendChild(games);
-  page.appendChild(sdk);
-  page.appendChild(pricing);
-  page.appendChild(footer);
-
-  return page;
-}
-
-function buildThesis(): HTMLElement {
-  const t = el("section", "section wrap");
-  t.id = "thesis";
-  t.appendChild(el("h2", "", `Don't guess whether the wait felt better. Measure it.`));
-  t.appendChild(
-    el(
-      "p",
-      "",
-      `A spinner gives the user nothing to do and gives the host almost no evidence about the experience. ` +
-        `QuickSpin turns real execution phases into play, records actual engaged play time, and asks the user how long the wait felt. ` +
-        `The result can be positive, neutral, or negative — the receipt does not force a success story.`
-    )
-  );
-  t.appendChild(
-    el(
-      "table",
-      "rot-table",
-      `<tr><th></th><th class="qs">Classic “thinking…”</th><th class="qs">With QuickSpin</th></tr>` +
-        `<tr><td>During a real wait</td><td>Passive spinner</td><td>Optional play after a short anti-flash delay</td></tr>` +
-        `<tr><td>AI state</td><td>Usually a label</td><td>Real phases can drive game intensity</td></tr>` +
-        `<tr><td>Handoff</td><td>Response appears</td><td>Response ready + explicit handoff</td></tr>` +
-        `<tr><td>Evidence</td><td>Elapsed time at best</td><td>Actual · played · engaged · felt</td></tr>` +
-        `<tr><td>Truthfulness</td><td>Often fake progress %</td><td>Indeterminate mode works without invented progress</td></tr>`
-    )
-  );
-  t.appendChild(el("div", "steps-hostlabel", "WHY THIS REPEATS"));
-  const steps = el("div", "steps");
-  steps.innerHTML =
-    `<div class="step"><div class="n">01</div><div class="t">Embed once</div>` +
-    `<div class="d"><code>#quickspin</code>, data attribute, or React wrapper.</div></div>` +
-    `<div class="step"><div class="n">02</div><div class="t">Drive it with real AI phases</div>` +
-    `<div class="d">No trustworthy percentage required; phase changes become gameplay intensity.</div></div>` +
-    `<div class="step"><div class="n">03</div><div class="t">Inspect the receipt</div>` +
-    `<div class="d">Measure what actually happened instead of claiming that every game makes every wait better.</div></div>`;
-  t.appendChild(steps);
-  return t;
-}
-
-function buildStripeToastIfNeeded(): HTMLElement {
-  const params = new URLSearchParams(window.location.search);
-  const viaStripe =
-    params.has("payment_intent") ||
-    params.has("payment_intent_client_secret") ||
-    params.has("redirect_status");
-  if (!viaStripe) return el("div", "");
-  const toast = el("div", "toast");
-  toast.appendChild(
-    el(
-      "span",
-      "",
-      `Stripe returned you here after checkout. QuickSpin does not infer payment success from the URL — ` +
-        `confirm the charge in Stripe, which remains the payment source of truth.`
-    )
-  );
-  const close = el("button", "", "\u00d7");
-  close.type = "button";
-  close.setAttribute("aria-label", "Dismiss");
-  close.addEventListener("click", () => toast.remove());
-  toast.appendChild(close);
-  return toast;
+function main(): void {
+  const app = document.getElementById("app");
+  if (!app) return;
+  const route = currentRoute();
+  document.documentElement.dataset.page = route;
+  const page =
+    route === "lab"
+      ? renderLab()
+      : route === "proof"
+        ? renderProof()
+        : route === "sdk"
+          ? renderSdk()
+          : route === "judges"
+            ? renderJudges()
+            : renderHome();
+  app.appendChild(pageShell(route, page));
+  if (route === "lab") initLab(app);
 }
 
 main();
