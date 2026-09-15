@@ -55,8 +55,20 @@ export interface InterventionResult {
   evidenceRef?: string;
 }
 
+/** Persisted intervention metadata deliberately excludes arbitrary host payload. */
+export interface RecordedIntervention {
+  id: string;
+  kind: InterventionKind;
+  label?: string;
+  atMs: number;
+}
+
 export type ExecutionTrailEntryType =
-  "phase" | "signal" | "signal-rejected" | "intervention" | "intervention-result";
+  | "phase"
+  | "signal"
+  | "signal-rejected"
+  | "intervention"
+  | "intervention-result";
 
 /** Portable, post-run evidence. Entries are facts QuickSpin observed from its own contract. */
 export interface ExecutionTrailEntry {
@@ -65,7 +77,7 @@ export interface ExecutionTrailEntry {
   phase?: string;
   signal?: ExecutionSignal;
   reason?: string;
-  intervention?: HostIntervention;
+  intervention?: RecordedIntervention;
   interventionResult?: InterventionResult;
 }
 
@@ -98,6 +110,56 @@ export interface WaitCapsule {
   evidenceCoverage: EvidenceCoverage;
   trail: ExecutionTrailEntry[];
   ts: number;
+}
+
+/**
+ * Redacted share/replay event. Deliberately contains no labels, evidence refs,
+ * prompts, arbitrary payloads, failure details, record ids, or timestamps.
+ */
+export interface WaitGhostEvent {
+  type: ExecutionTrailEntryType;
+  atMs: number;
+  signalKind?: ExecutionSignalKind;
+  interventionKind?: InterventionKind;
+  accepted?: boolean;
+}
+
+/**
+ * Privacy-safe social/replay derivative of a Wait Capsule. It is not live AI,
+ * cryptographic proof, or a substitute for the private evidence bundle.
+ */
+export interface WaitGhost {
+  version: 1;
+  privacy: "redacted";
+  source: "wait-capsule";
+  outcome: SessionOutcome;
+  actualWaitMs: number;
+  engagedPlayMs: number;
+  gameId: string | null;
+  score: number | null;
+  feltWaitMs: number | null;
+  evidenceCoverage: EvidenceCoverage;
+  timeline: WaitGhostEvent[];
+}
+
+export interface WaitGhostReplayStep {
+  index: number;
+  delayMs: number;
+  event: WaitGhostEvent;
+}
+
+/** Signed deltas only — no synthetic winner, trust, or quality score. */
+export interface WaitComparison {
+  actualWaitDeltaMs: number;
+  engagedPlayDeltaMs: number;
+  feltWaitDeltaMs: number | null;
+  scoreDelta: number | null;
+  acceptedSignalsDelta: number;
+  rejectedSignalsDelta: number;
+  uniqueEvidenceRefsDelta: number;
+  outcomeChanged: boolean;
+  fromOutcome: SessionOutcome;
+  toOutcome: SessionOutcome;
 }
 
 export interface GameResult {
