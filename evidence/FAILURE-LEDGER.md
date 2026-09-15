@@ -4,10 +4,12 @@ Failures are retained as evidence. Fixing a failure does not delete the record t
 
 ## F-01 — External production reality
 
-- Event: OpenAI elevated latency/errors, June 2, 2026.
+- Event: OpenAI elevated latency/errors, June 2–3, 2026.
 - Evidence: https://status.openai.com/incidents/01KT5XJ5ATD6RMYP908WS69FVD/write-up
-- Truth: production AI latency and request failures are real states.
-- Product implication: QuickSpin must preserve failure/unknown separately from success.
+- Verified observable impact: affected Responses API traffic took longer than normal to begin generating; Codex requests were incorrectly rejected with HTTP 429; ChatGPT login, authentication and conversation flows partially failed.
+- Truth: production AI latency, rejection, and failed user flows are real states.
+- Product implication: QuickSpin must preserve waiting, failure, cancellation, and UNKNOWN separately from success.
+- Honesty boundary: QuickSpin does not claim it would have prevented the provider incident.
 
 ## F-02 — QuickSpin build failure preserved
 
@@ -74,3 +76,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: demo build remains valid, but no public `page_url` exists yet and `PUBLIC_DEPLOYMENT_PROOF` stays open.
 - Mitigation: keep the reproducible Pages workflow, enable Pages from repository administration, rerun the workflow, then externally fetch the returned URL before promotion.
 - Lesson: a deployment workflow, expected hostname, and successful static build are not equivalent to a live runtime. **No page URL → no live-demo claim.**
+
+## F-09 — Temporary final-patch workflow became non-idempotent noise
+
+- First valid run: `34930139522` succeeded and applied/validated the displayed SDK sample fix.
+- Later examples: `34930293175` and `34930326398` failed after documentation-only pushes because the same one-shot patch workflow retriggered after its target text had already been changed.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34930139522 and subsequent `Final judge patch` runs on the branch.
+- Cause: a migration/patch workflow was incorrectly configured as a persistent `push` workflow instead of a one-shot validation mechanism.
+- Impact: red Actions history that does not represent a product regression, and avoidable ambiguity for reviewers.
+- Mitigation: retain these runs here as orchestration evidence, then remove the temporary workflow. Permanent CI remains the authority for product correctness.
+- Lesson: **one-shot migration machinery must be removed or made idempotent immediately after success. Real failure stays recorded; noisy automation does not stay active.**
