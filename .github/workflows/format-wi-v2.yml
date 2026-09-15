@@ -1,0 +1,31 @@
+name: Format WI V2 SDK files
+
+on:
+  push:
+    branches:
+      - winning-intelligence-v2
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: winning-intelligence-v2
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write src/sdk/types.ts src/sdk/persistence.ts
+      - name: Commit formatting only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sdk/types.ts src/sdk/persistence.ts
+          git diff --cached --quiet || git commit -m "style: format WI v2 SDK contracts"
+          git push origin winning-intelligence-v2
