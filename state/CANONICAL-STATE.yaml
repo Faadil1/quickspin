@@ -3,7 +3,7 @@ canonical_base:
   branch: main
   sha_at_finisher_start: c21eb03bb1cdcb0f18816000624dfaad38ebe965
 candidate:
-  branch: final-judge-package
+  branch: runtime-proof-lock
   head_policy: TRACK_BRANCH_HEAD
 workstream: FINAL_QC_AND_SUBMISSION_FINISHER
 lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
@@ -55,9 +55,9 @@ completed:
   - VIDEO_SHOT_LIST_PREPARED
   - SUBMISSION_PACKAGE_DRAFT_PREPARED
   - SDK_SAMPLE_PROVENANCE_RECONCILED
+  - PUBLIC_DEPLOYMENT_PROOF_VERIFIED_VERCEL
 
 open_blocking_gates:
-  - PUBLIC_DEPLOYMENT_PROOF
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
   - NEGATIVE_PATH_VIDEO_CAPTURE
   - QA_LIVE_REHEARSAL
@@ -69,8 +69,9 @@ open_nonblocking_evidence_gaps:
 closed_risks:
   dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT
   one_shot_patch_workflow_noise: REMOVED_AFTER_FAILURE_RETENTION
+  public_deployment_proof: PASS_VERIFIED_VERCEL_RUNTIME
 
-next_required_gate: PUBLIC_DEPLOYMENT_PROOF
+next_required_gate: FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
 
 terminal_sequence:
   - verification-before-completion
@@ -84,7 +85,9 @@ terminal_sequence:
   - project-complete-only-if-all-blocking-gates-pass
 
 security_gate: PASS_ZERO_NPM_AUDIT
-runtime_gate: PENDING_REPOSITORY_PAGES_ENABLEMENT
+runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME
+runtime_url: https://quickspin-runtime.vercel.app
+runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
 visual_gate: PASS_WITH_CONDITIONS_PENDING_RUNTIME_INSPECTION
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
