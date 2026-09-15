@@ -75,23 +75,25 @@ const required = {
   ],
   "state/CANONICAL-STATE.yaml": [
     "workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK",
-    "current_main_sha: cb3b322907197e37518e85ddb377def2053edcc3",
     "branch: main",
-    "status: MERGED_AND_PUBLIC_RUNTIME_VERIFIED",
-    "post_merge_main_ci_run: 35006274961",
-    "post_merge_main_codeql_run: 35006274850",
+    "trace_visual_jury_v1:",
+    "status: MERGED_CODE_VALIDATED_RUNTIME_REFRESH_PENDING",
+    "merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056",
+    "final_pr_ci_run: 35010476926",
+    "final_pr_codeql_run: 35010476921",
     "test_count: 41",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_TRACE_VISUAL",
     "runtime_source_sha: cb3b322907197e37518e85ddb377def2053edcc3",
     "runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
-    "runtime_bundle_asset: /assets/index-CRyhx7en.js",
-    "next_required_gate: FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION",
+    "runtime_trace_visual_v1: NOT_YET_DEPLOYED_NOT_CLAIMED",
+    "next_required_gate: TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF",
     "project_complete: false",
   ],
   "state/HANDOVER.yaml": [
     "workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK",
-    "source_main_sha: cb3b322907197e37518e85ddb377def2053edcc3",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA",
+    "trace_visual_jury_v1_merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056",
+    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_TRACE_VISUAL",
+    "trace_visual_runtime_deployed: false",
     "feature_scope: FROZEN_AFTER_WINNING_INTELLIGENCE_3_OF_3",
     "project_complete: false",
     "rollback",
@@ -146,6 +148,7 @@ for (const [path, needles] of Object.entries(required)) {
 }
 
 const canonical = loaded.get("state/CANONICAL-STATE.yaml");
+const handover = loaded.get("state/HANDOVER.yaml");
 const hackathon = loaded.get("HACKATHON-STATE.yaml");
 const claims = loaded.get("evidence/CLAIM-LEDGER.md");
 const runtime = loaded.get("evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md");
@@ -160,13 +163,16 @@ for (const [name, text] of [
 }
 
 if (canonical.includes("runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3")) {
-  throw new Error("canonical state regressed to pre-V3 runtime after exact V3 production proof");
+  throw new Error("canonical state regressed to pre-V3 runtime");
 }
 if (canonical.includes("runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58")) {
   throw new Error("canonical state regressed to the pre-V3 runtime source SHA");
 }
-if (canonical.includes("WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF")) {
-  throw new Error("canonical state still lists the closed V3 runtime proof as an open blocker");
+if (canonical.includes("runtime_trace_visual_v1: DEPLOYED_VERIFIED") || handover.includes("trace_visual_runtime_deployed: true")) {
+  throw new Error("TRACE visual runtime cannot be promoted before exact c34012a deployment evidence is locked");
+}
+if (!canonical.includes("merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056")) {
+  throw new Error("canonical state is missing the TRACE Visual Jury V1 merge SHA");
 }
 if (hackathon.includes("public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3")) {
   throw new Error("hackathon state regressed public runtime to pre-V3");
@@ -194,5 +200,5 @@ if (!orchestration.includes("UNKNOWN_IN_REPO")) {
 }
 
 console.log(
-  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + exact V3 runtime provenance + final-gate invariants`
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + V3 runtime provenance + TRACE visual runtime-proof lock + final-gate invariants`
 );
