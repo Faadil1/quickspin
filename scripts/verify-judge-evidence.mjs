@@ -17,6 +17,8 @@ const required = {
     "F-08",
     "F-09",
     "F-10",
+    "F-11",
+    "F-12",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -78,8 +80,9 @@ const required = {
   "evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md": [
     "PASS / PUBLIC_DEPLOYMENT_PROOF CLOSED",
     "https://quickspin-runtime.vercel.app",
-    "83da2b807e2072bde30a76c72937c3cbe74ff389",
-    "HTTP status: **200 OK**",
+    "27de7b3b4119b6499eda79effccadf262028de58",
+    "dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL",
+    "All five routes returned **HTTP 200 OK**",
   ],
   "evidence/security/SECURITY-GATE.md": ["PASS", "0 vulnerabilities"],
   "evidence/security/SUPPLY-CHAIN-REVIEW.md": [
@@ -97,7 +100,9 @@ const required = {
     "REAL_FAILURE_GT_FAKE_SUCCESS",
     "project_complete: false",
     "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME",
+    "runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58",
     "runtime_url: https://quickspin-runtime.vercel.app",
+    "visual_architecture: FUTURE_CLASSIC_MULTI_PAGE",
   ],
   "state/HANDOVER.yaml": ["FINAL_QC_AND_SUBMISSION_FINISHER", "project_complete: false", "rollback"],
   ".pbpd/state/ACTIVITY-TRACE.yaml": [
@@ -144,6 +149,7 @@ const handoff = loaded.get("HACKATHON-HANDOFF.yaml");
 const reconciliation = loaded.get("evidence/RECONCILIATION.md");
 const claims = loaded.get("evidence/CLAIM-LEDGER.md");
 const orchestration = loaded.get("evidence/ORCHESTRATION-JPA.md");
+const runtime = loaded.get("evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md");
 
 for (const [name, text] of [
   ["state/CANONICAL-STATE.yaml", canonical],
@@ -164,6 +170,9 @@ if (reconciliation.includes("Dependency audit open")) {
 }
 if (claims.includes("public judge runtime is live | UNKNOWN / NOT_CLAIMED")) {
   throw new Error("claim ledger still describes the now-verified public runtime as unknown");
+}
+if (runtime.includes("83da2b807e2072bde30a76c72937c3cbe74ff389")) {
+  throw new Error("runtime evidence still points at the pre-future-classic production SHA");
 }
 if (existsSync(".github/workflows/final-judge-patch.yml")) {
   throw new Error("one-shot final judge patch workflow must not remain active after successful migration");

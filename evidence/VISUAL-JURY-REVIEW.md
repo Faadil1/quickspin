@@ -1,43 +1,82 @@
 # Visual / Jury Review
 
-Status: **IMPLEMENTED — PENDING RENDERED RUNTIME VERIFICATION**
+Status: **FUTURE-CLASSIC MULTI-PAGE IMPLEMENTED — FINAL PIXEL-LEVEL DESKTOP/MOBILE INSPECTION STILL OPEN**
 
 ## Baseline finding
 
-The pre-finisher demo was functional and clear, but the surrounding landing surface leaned toward a familiar SaaS vocabulary: pale gray canvas, soft violet/teal accents, rounded white cards, pill controls, and diffuse shadows. That presentation under-signaled QuickSpin's strongest differentiators: time, observable execution, receipts, and failure truth.
+The earlier demo was functionally strong but visually compressed too much product truth into one long SaaS-like page. The main risks were:
 
-The risk was not usability failure. The risk was **jury compression failure**: a judge could understand “polished SDK landing page” before understanding “playable execution state with an evidence receipt.”
+- judge compression failure: proof, demo, SDK and narrative competed for the same scroll;
+- generic AI/SaaS visual associations: pale gray, violet/teal accents, rounded cards and diffuse shadows;
+- insufficient separation between product thesis, live interaction, evidence and integration proof.
 
-## Implemented jury delta
+## Implemented architecture delta
 
-`src/demo/jury.css` adds a product-native **timing instrument / play receipt** layer without changing SDK behavior:
+QuickSpin is now a **five-surface product experience** rather than one long landing page:
 
-- `WAIT STATE / 00:12 / PLAYABLE` above the fold;
-- hard-edged timing-board geometry instead of default soft-card styling;
-- `SPINNER → PLAY → RECEIPT` framing around the hero animation;
-- `LIVE WAIT LAB` framing around the deterministic comparison;
-- a visibly distinct red negative-path control;
-- `EVIDENCE FEED / OBSERVED EVENTS` treatment around runtime events;
-- receipt-like metric cards with monospaced numbers;
-- stronger visual separation between Runner, Orbit, and Execution Signals;
-- grid/timing texture while retaining the existing QuickSpin purple, teal, and yellow identity;
-- mobile and reduced-motion behavior retained.
+1. `/` — product thesis and memory sentence;
+2. `/lab` — 12-second control vs QuickSpin + real negative path;
+3. `/proof` — Wait Receipt, real-world incident anchor, failure and UNKNOWN evidence;
+4. `/sdk` — lifecycle, provenance-aware integration and repeatability;
+5. `/judges` — rubric / judge-cycle / differentiator compression.
 
-The dark code block remains intentionally local to code/documentation rather than becoming the full product aesthetic.
+This separation gives every judge task one primary surface instead of asking one page to explain everything at once.
 
-## Jury readability acceptance test
+## Visual direction
 
-A rendered runtime must still be checked against these conditions before this gate becomes PASS:
+Canonical palette and material language:
 
-1. **5-second thesis:** above the fold communicates AI wait → play → receipt without narration.
-2. **Primary proof hierarchy:** “Run demo generation” remains primary; negative-path proof is visible but secondary.
-3. **Negative-state distinction:** failure cannot visually resemble success/completion.
-4. **Receipt legibility:** actual / played / engaged / felt evidence is readable at video-capture resolution.
-5. **Evidence visibility:** the event feed is discoverable without dominating gameplay.
-6. **Mobile:** no horizontal overflow or clipped CTA labels at ~390 px width.
-7. **Reduced motion:** the product story still makes sense when motion is reduced.
-8. **No aesthetic overclaim:** visual polish does not imply live AI, live payments, or live provider telemetry where the demo is controlled.
+- **Smoked Pearl / Mineral Silver** — `#d5d6d0` base;
+- **Paper Silver** — light content surfaces;
+- **Graphite** — structure, typography and high-contrast controls;
+- **Oxidized Copper** — editorial/classical accent;
+- **Electric Signal** — verified/live/interactive state accent;
+- controlled danger red for failure only.
 
-## Verdict
+The intended tension is **futuristic × classical × instrumental** rather than cyberpunk, dark AI SaaS or retro-futurism.
 
-**PASS_WITH_CONDITIONS.** The design delta is implemented in source and must be evaluated from the deployed/rendered artifact before promotion to final PASS.
+Typography uses three roles:
+
+- serif display for classical/editorial authority;
+- sans-serif for product UI;
+- mono for receipts, timestamps, states, evidence and instrumentation.
+
+## Product-native visual primitives
+
+The new build emphasizes primitives derived from the product itself:
+
+- timing dials / elapsed-time instrumentation;
+- hard-edged frames and measurement grids;
+- receipt rows and signed evidence states;
+- verification stamps;
+- visible FAILED / UNKNOWN distinction;
+- host-event feeds;
+- execution → play → evidence transitions.
+
+The direction intentionally avoids generic glassmorphism, purple/cyan AI gradients, all-dark dashboards and decorative sci-fi chrome.
+
+## Verification already complete
+
+- CI and CodeQL passed on the multi-page source branch.
+- Production build from canonical SHA `27de7b3b4119b6499eda79effccadf262028de58` reached Vercel `READY`.
+- All five public routes returned HTTP 200.
+- reduced-motion CSS remains present through `prefers-reduced-motion`.
+- mobile breakpoints exist for navigation, hero, evidence grids, lifecycle and judge tables.
+
+## Final pixel-level acceptance test still required
+
+A rendered desktop/mobile pass must still explicitly verify:
+
+1. **5-second thesis:** `/` communicates AI wait → play → truth without narration;
+2. **route comprehension:** Home / Lab / Proof / SDK / Judges each read as a distinct job;
+3. **negative-state distinction:** failure cannot be mistaken for completion or success;
+4. **receipt legibility:** actual / played / engaged / felt values remain readable at video-capture resolution;
+5. **mobile:** no horizontal overflow or clipped CTA labels at ~390 px width;
+6. **reduced motion:** product meaning survives without orbit/spinner animation;
+7. **proof hierarchy:** Electric Signal lime is reserved for verified/live proof rather than becoming decorative noise;
+8. **classical/futuristic balance:** serif/copper editorial cues and instrument geometry feel intentional rather than theme-like;
+9. **no aesthetic overclaim:** visual polish does not imply live model telemetry where the demo uses controlled host events.
+
+## Current verdict
+
+**PASS_WITH_CONDITIONS.** The architectural and visual refactor is implemented, built, merged and deployed. Final promotion to visual PASS requires a pixel-level rendered inspection of the production runtime on desktop and mobile.

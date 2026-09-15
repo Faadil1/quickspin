@@ -15,24 +15,20 @@ Failures are retained as evidence. Fixing a failure does not delete the record t
 
 - Event: GitHub Actions run `34925583311` failed.
 - Evidence: https://github.com/Faadil1/quickspin/actions/runs/34925583311
-- Cause: deterministic day-streak tests mocked `Date.now()`, while implementation used
-  `new Date()` and therefore read the runner wall clock.
+- Cause: deterministic day-streak tests mocked `Date.now()`, while implementation used `new Date()` and therefore read the runner wall clock.
 - Fix: day-streak cursor now starts from `new Date(Date.now())`.
-- Rule applied: the red run remains part of history; later green runs do not rewrite it as if it
-  never happened.
+- Rule applied: the red run remains part of history; later green runs do not rewrite it as if it never happened.
 
 ## F-03 — Controlled runtime negative path
 
 - Trigger: **Run negative-path proof** in the demo.
 - Mechanism: an actual Promise rejects after 1.4 seconds with `DEMO_PROVIDER_TIMEOUT`.
-- Expected evidence: `warning` → `fail`, persisted `outcome: failed`, failure code/message, no AI
-  answer bubble.
+- Expected evidence: `warning` → `fail`, persisted `outcome: failed`, failure code/message, no AI answer bubble.
 - Honesty boundary: controlled test failure, not a claim of a live provider outage.
 
 ## UNKNOWN counter-case
 
-Execution signals without a valid kind, non-empty label, and `evidenceRef` are rejected. The SDK
-emits `signal-rejected` with `UNKNOWN / INSUFFICIENT_EVIDENCE` and does not mutate game state.
+Execution signals without a valid kind, non-empty label, and `evidenceRef` are rejected. The SDK emits `signal-rejected` with `UNKNOWN / INSUFFICIENT_EVIDENCE` and does not mutate game state.
 This is the canonical abstention path: **no evidence → no gameplay claim**.
 
 ## F-04 — Judge-assurance gate rejected its own first pass
@@ -96,3 +92,24 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: correct canonical state was rejected because assurance logic depended on typography rather than semantic markers.
 - Mitigation: validate stable semantic tokens (`Dependency security` and `CLOSED`) independently and keep cross-state assertions for stale-risk detection.
 - Lesson: **assurance should be stricter about truth, not brittle about formatting. A false negative is still a real verifier failure and remains in the record.**
+
+## F-11 — Future-classic production redeploy failed on restored cache state
+
+- Event: first Vercel production redeploy of the multi-page future-classic build failed before checkout completed.
+- Deployment id: `dpl_GScJ5TRx3YD9tbQTMBfanqyunstk`.
+- Exact failure: `fatal: destination path 'source' already exists and is not an empty directory.`
+- Cause: Vercel restored the previous build cache, including the bootstrap `source` directory, while the deployment script assumed a clean filesystem and ran `git clone ... source` directly.
+- Impact: the new visual build did not reach production on the first attempt even though CI and CodeQL were already green.
+- Mitigation: make the deployment bootstrap idempotent with `rm -rf source dist-demo` before cloning and rebuilding the exact canonical SHA.
+- Recovery evidence: deployment `dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL` checked out `27de7b3b4119b6499eda79effccadf262028de58`, completed `npm ci` with 0 vulnerabilities, passed TypeScript + Vite build, reached `READY`, and all five canonical routes returned HTTP 200.
+- Lesson: **a green application build is not the same as an idempotent deployment pipeline. Build cache is state and must be handled explicitly.**
+
+## F-12 — Judge verifier still pinned the pre-refactor production SHA
+
+- Event: PR #10 CI run `34979638351` passed install, formatting, TypeScript typecheck, and all **33 tests** on Node 24, then failed at `npm run judge:verify`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34979638351
+- Exact failure: `evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md missing required marker: 83da2b807e2072bde30a76c72937c3cbe74ff389`.
+- Cause: runtime evidence had correctly moved to future-classic source SHA `27de7b3b4119b6499eda79effccadf262028de58`, but the assurance script still hard-coded the older pre-refactor SHA.
+- Impact: correct new runtime evidence was rejected because verifier provenance had not advanced with the canonical runtime.
+- Mitigation: update `judge:verify` to require the new source SHA, the new READY deployment id, all-five-route HTTP-200 proof, the future-classic state marker, and explicitly fail if the old runtime SHA reappears.
+- Lesson: **provenance locks must move atomically with canonical runtime promotion. A stale verifier is evidence drift, not a reason to weaken verification.**
