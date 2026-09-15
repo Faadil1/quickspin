@@ -133,7 +133,7 @@ export function currentDayStreak(): number {
     p.records.filter((r) => r.completed).map((r) => new Date(r.ts).toDateString())
   );
   let streak = 0;
-  const cursor = new Date();
+  const cursor = new Date(Date.now());
   while (days.has(cursor.toDateString())) {
     streak++;
     cursor.setDate(cursor.getDate() - 1);
