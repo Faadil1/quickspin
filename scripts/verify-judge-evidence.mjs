@@ -35,6 +35,22 @@ const required = {
     "Failure-truth gates",
     "Cross-cutting build gates",
     "Terminal promotion sequence",
+    "Faadil Agent System + Judge Performance Assurance",
+    "HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM",
+    "JUDGE COVERAGE",
+    "CRITICAL-PATH ASSURANCE",
+    "TECHNICAL OWNERSHIP",
+    "SESSION CONTINUITY",
+  ],
+  "evidence/ORCHESTRATION-JPA.md": [
+    "HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM",
+    "UNKNOWN_IN_REPO / LEGACY_IMPORT",
+    "Judge Coverage",
+    "Critical-Path Assurance",
+    "Technical Ownership",
+    "Session Continuity",
+    "DETERMINISTIC",
+    "PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE",
   ],
   "evidence/RUBRIC-TRACEABILITY.md": ["AI-native fit", "Evidence honesty"],
   "evidence/RECONCILIATION.md": [
@@ -54,6 +70,16 @@ const required = {
     "public judge runtime is live",
   ],
   "evidence/security/SECURITY-GATE.md": ["PASS", "0 vulnerabilities"],
+  "evidence/security/SUPPLY-CHAIN-REVIEW.md": [
+    "REVIEWED_WARNING_NONRUNTIME",
+    "esbuild@0.28.2",
+    "not a shipped runtime dependency",
+  ],
+  "submission/VIDEO-SHOT-LOCK.md": [
+    "Canonical narrative mapping",
+    "PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE",
+    "value before technology",
+  ],
   "state/CANONICAL-STATE.yaml": [
     "workstream: FINAL_QC_AND_SUBMISSION_FINISHER",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
@@ -71,6 +97,9 @@ const required = {
     "project_complete: false",
     "concrete_real_negative_event: PASS",
     "handoff_to_finisher: ACTIVE",
+    "HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT",
+    "judge_coverage: PASS",
+    "supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME",
   ],
   "HACKATHON-HANDOFF.yaml": [
     "ACTIVE_WITH_BLOCKING_FINAL_GATES",
@@ -101,6 +130,7 @@ const hackathon = loaded.get("HACKATHON-STATE.yaml");
 const handoff = loaded.get("HACKATHON-HANDOFF.yaml");
 const reconciliation = loaded.get("evidence/RECONCILIATION.md");
 const claims = loaded.get("evidence/CLAIM-LEDGER.md");
+const orchestration = loaded.get("evidence/ORCHESTRATION-JPA.md");
 
 for (const [name, text] of [
   ["state/CANONICAL-STATE.yaml", canonical],
@@ -121,6 +151,12 @@ if (claims.includes("security complete | REFUSED | dependency-vulnerability reco
 }
 if (existsSync(".github/workflows/final-judge-patch.yml")) {
   throw new Error("one-shot final judge patch workflow must not remain active after successful migration");
+}
+if (!orchestration.includes("HUMAN SUBMIT") || !orchestration.includes("POST-MORTEM")) {
+  throw new Error("orchestration trace does not preserve terminal human-submit/post-mortem stages");
+}
+if (!orchestration.includes("UNKNOWN_IN_REPO")) {
+  throw new Error("orchestration trace must preserve missing upstream repo evidence as UNKNOWN_IN_REPO");
 }
 
 console.log(`judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`);
