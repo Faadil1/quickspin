@@ -2,10 +2,11 @@ project: QuickSpin
 canonical_base:
   branch: main
   sha_at_v3_start: 2ee56ce711e6ee495f38908b21767698da9fe394
-current_main_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
 candidate:
   branch: main
-  head_policy: EXACT_MERGE_SHA
+  product_source_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
+  state_head_policy: TRACK_MAIN_HEAD
+  deployment_policy: EXACT_PRODUCT_SOURCE_SHA
 workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK
 lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
@@ -33,6 +34,7 @@ invariants:
   - GHOST_REPLAY_IS_NOT_LIVE_AI
   - SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT
   - VISUAL_IMPLEMENTATION_IS_NOT_RUNTIME_PIXEL_PROOF
+  - MOVING_MAIN_HEAD_IS_NOT_PRODUCT_CANDIDATE_IDENTITY
   - PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION
 
 verified_reality_pattern:
@@ -72,7 +74,8 @@ trace_visual_jury_v1:
   final_pr_ci_run: 35010476926
   final_pr_codeql_run: 35010476921
   post_merge_main_ci_run: 35010625808
-  post_merge_main_codeql_run: PENDING_AT_STATE_WRITE
+  post_merge_main_codeql_run: 35010625877
+  test_count: 41
   scope_lock: DEMO_PRESENTATION_ONLY_NO_SDK_RUNTIME_CONTRACT_CHANGE
   changed_files:
     - index.html
@@ -89,6 +92,7 @@ trace_visual_jury_v1:
     - PR14_FORMAT_GATE_RED_RUN_35009685840
     - PR14_FORMAT_GATE_RED_RUN_35009845739
     - FINAL_FORMAT_RECOVERY_PASS_35010476926
+    - STATE_PROMOTION_STALE_VERIFIER_RUN_35010862486
 
 completed:
   - P0_P1_PRODUCT_PROOF_PASS
@@ -111,6 +115,7 @@ completed:
   - WI_V3_FIVE_ROUTES_HTTP_200
   - WI_V3_BUNDLE_CONTENT_PROOF
   - TRACE_VISUAL_JURY_V1_PR_CI_CODEQL_PASS_AND_MERGE
+  - TRACE_VISUAL_JURY_V1_POST_MERGE_CI_CODEQL_PASS
 
 open_blocking_gates:
   - TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
@@ -132,7 +137,8 @@ closed_risks:
   wi_v3_product_validation: PASS_CI_CODEQL_41_TESTS
   arbitrary_intervention_payload_persistence: CLOSED_V3_REDACTED_RECORD
   wi_v3_public_runtime_redeploy_and_route_proof: PASS_EXACT_SHA_READY_5_ROUTES_AND_BUNDLE
-  trace_visual_jury_v1_code_validation: PASS_PR_CI_CODEQL
+  trace_visual_jury_v1_code_validation: PASS_PR_AND_POST_MERGE_CI_CODEQL
+  moving_main_head_identity_drift: CLOSED_BY_PRODUCT_SOURCE_SHA_SEPARATION
 
 next_required_gate: TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
 
@@ -164,4 +170,4 @@ visual_gate: CODE_PASS_RUNTIME_PIXEL_PROOF_PENDING
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
 commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF
-submission_gate: DRAFT_READY_PENDING_FINAL_LINKS
+submission_gate: COPY_LOCKED_PENDING_FINAL_TRACE_RUNTIME_VIDEO_AND_COMMONS_LINKS
