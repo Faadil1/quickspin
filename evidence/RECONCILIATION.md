@@ -8,64 +8,80 @@ Current verdict: **BUILD_CANDIDATE_READY_WITH_LIMITATIONS**. `PROJECT_COMPLETE =
 
 ## REQUIREMENTS ↔ EVIDENCE
 
-- Five-part reality pattern: **PASS** — signal/opportunity, real negative event, observable impact, design lesson, mitigation.
-- Real waiting comparison: exact 12-second control/happy-path simulation.
-- Real external negative event: OpenAI June 2–3, 2026 latency/error/rejection incident, verified from primary source.
-- Controlled runtime negative behavior: actual rejected Promise in negative-path harness.
-- Failure truth: explicit persisted terminal failed outcome + structured fail event.
-- UNKNOWN/refusal: execution signal without sufficient evidence reference is rejected and does not mutate gameplay.
-- Measurement honesty: Wait Receipt is signed; “felt longer” is allowed.
-- Security: full npm audit = 0, production audit = 0, CodeQL green, package boundary verified.
+- Five-part reality pattern: **PASS**.
+- Exact 12-second controlled comparison: **PASS_IN_CODE**.
+- Real external negative event: **PASS_PRIMARY_SOURCE**.
+- Controlled runtime negative behavior: **PASS** — actual rejected Promise.
+- Failure truth: **PASS** — failed remains failed.
+- UNKNOWN/refusal: **PASS** — insufficient provenance does not mutate gameplay.
+- Private Evidence Capsule: **PASS**.
+- Privacy-safe Wait Ghost derivative: **PASS_PERMANENT_TESTS**.
+- Historical replay truth: **PASS** — replay is not live AI.
+- Wait-to-wait signed deltas: **PASS** — no synthetic winner/quality score.
+- Security: **CLOSED** — npm audits 0, CodeQL green, package boundary verified.
+- Public V3 runtime: **CLOSED / PASS_VERIFIED_PUBLIC_RUNTIME_V3**.
 
 ## EVIDENCE ↔ ARTIFACTS
 
-- `evidence/REALITY-ANCHOR.md` — five-part external production + HCI grounding.
-- `evidence/FAILURE-LEDGER.md` — external, internal CI, deployment, orchestration, and controlled runtime failures retained.
-- `evidence/CLAIM-LEDGER.md` — claim status and refusal/UNKNOWN boundaries.
-- `evidence/CYCLE-GATE-MATRIX.md` — anti-omission matrix for core and transverse gates.
+- `evidence/REALITY-ANCHOR.md` — external production grounding.
+- `evidence/FAILURE-LEDGER.md` — F-01 through F-18 retained.
+- `evidence/CLAIM-LEDGER.md` — claim/refusal/UNKNOWN boundaries.
+- `evidence/CYCLE-GATE-MATRIX.md` — anti-omission gate matrix.
 - `evidence/RUBRIC-TRACEABILITY.md` — challenge/judge mapping.
-- `evidence/security/*` — clean dependency/package-boundary evidence.
-- `demo.md` + source — judge narrative and executable negative path.
-- `src/sdk/*` — runtime truth.
-- GitHub Actions — build/test/CodeQL/deployment-attempt evidence.
+- `evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md` — exact V3 deployment + route + served-bundle proof.
+- `evidence/security/*` — dependency/package-boundary evidence.
+- `src/sdk/*` + `src/demo/*` — actual runtime implementation.
+- GitHub Actions — PR and post-merge CI/CodeQL evidence.
 
 ## RISKS / OPEN GATES
 
 ### Closed
 
-1. **Dependency security:** CLOSED — Vite 7.3.6 + Vitest 5, full and production npm audit = 0, package dry-run shows no dev-tool leakage.
-2. **CI runtime compatibility:** CLOSED — Node 22/24 candidate CI green.
-3. **One-shot patch automation noise:** CLOSED — failure retained as F-09; temporary workflow removed.
+1. **Dependency security:** CLOSED — full and production npm audit = 0.
+2. **CI runtime compatibility:** CLOSED — Node 22/24, 41 tests, SDK/demo builds green.
+3. **Winning Intelligence V3 validation:** CLOSED — final PR CI `35006098609`, CodeQL `35006098565`.
+4. **Post-merge main validation:** CLOSED — CI `35006274961`, CodeQL `35006274850`.
+5. **Public V3 deployment proof:** CLOSED — exact merge SHA `cb3b322907197e37518e85ddb377def2053edcc3`, deployment `dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG` READY.
+6. **Five-route proof:** CLOSED — `/`, `/lab`, `/proof`, `/sdk`, `/judges` returned HTTP 200.
+7. **V3 served-bundle proof:** CLOSED — `/assets/index-CRyhx7en.js` contains Wait Ghost share/replay/diff mechanisms and truth boundaries.
 
 ### Blocking before PROJECT_COMPLETE
 
-1. **Public deployment proof:** OPEN. First Pages attempt (`34929705731`) passed candidate verification then stopped because Pages is not enabled/configured. No returned `page_url` exists yet.
-2. **Final runtime visual inspection:** OPEN until the actual public candidate is inspected on desktop + mobile/reduced-motion paths.
-3. **Demo/video capture:** OPEN. Happy path, Wait Receipt, negative-path proof, and UNKNOWN explanation must be captured from final candidate.
-4. **Q&A live rehearsal:** OPEN. Rehearsal pack exists; delivery must be tested against the Claim Ledger.
-5. **Submission package lock:** OPEN. Draft exists; runtime/video/final asset URLs remain unlocked.
-6. **Terminal final QC:** OPEN until all preceding blocking gates close.
+1. **Final runtime visual inspection:** OPEN — desktop, mobile and reduced-motion jury inspection.
+2. **Demo/video capture:** OPEN — Capsule → Ghost → replay → diff plus negative/UNKNOWN paths must be captured from final candidate.
+3. **Q&A live rehearsal:** OPEN — delivery must be tested against Claim Ledger.
+4. **Commons submission lock:** OPEN — publish/attach/submit proof requires human platform evidence.
+5. **Submission package link/asset lock:** OPEN — final video/assets/copy links not all locked.
+6. **Terminal final QC:** OPEN until the preceding gates close.
 
-### Non-blocking evidence gap
+### Non-blocking evidence gaps
 
-- **Broader user validation:** OPEN_NONBLOCKING. Wait Receipt is measurement infrastructure, not proof that every user prefers QuickSpin or perceives shorter waits.
+- Broader user validation of perceived-wait effect.
+- Exhaustive Commonsmade gallery coverage.
+- Live provider integration beyond controlled demo.
+- Exclusivity of the observed Wait Ghost open-space hypothesis.
 
 ## PROJECT STATE ↔ ACTUAL BUILD
 
-Canonical state now points to `FINAL_QC_AND_SUBMISSION_FINISHER`, with dependency security removed from open risks and public runtime/capture/rehearsal/submission as the remaining blockers.
+Canonical state now points to `FINAL_RUNTIME_VISUAL_PROOF_LOCK` and exact main SHA `cb3b322907197e37518e85ddb377def2053edcc3`.
 
 The build may claim:
 
 - product/runtime mechanisms verified by code/tests;
-- real external latency/rejection/failure conditions verified by primary source;
-- clean dependency audit and package boundary;
-- controlled failure and UNKNOWN/refusal behavior.
+- V3 main CI + CodeQL green;
+- exact V3 Vercel deployment READY;
+- all five canonical routes reachable;
+- served production bundle contains Wait Ghost share/replay/diff implementation;
+- real external latency/rejection/failure conditions verified from primary source;
+- clean dependency audit and explicit failure/UNKNOWN behavior.
 
 The build may **not** claim:
 
 - provider latency reduction;
 - universal perceived-wait improvement;
-- a live public runtime before returned/fetched deployment evidence;
+- Wait Ghost replay is live AI;
+- Wait Ghost is cryptographically signed/tamper-proof;
+- wait diff determines a winner;
 - npm publication without registry evidence;
 - absolute security completeness;
 - `PROJECT_COMPLETE` before terminal gates pass.
