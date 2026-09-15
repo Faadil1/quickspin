@@ -10,6 +10,18 @@ export type SessionStatus =
 
 export type EndReason = "ai-complete" | "player-failed" | "cancelled";
 
+export type ExecutionSignalKind = "retrieval" | "tool" | "artifact" | "warning";
+
+/**
+ * A real execution event supplied by the host app. QuickSpin never invents
+ * these events: hosts opt in only when they have an observed tool/retrieval/
+ * artifact/warning event they can truthfully expose.
+ */
+export interface ExecutionSignal {
+  kind: ExecutionSignalKind;
+  label: string;
+}
+
 export interface GameResult {
   /** Actual gameplay score — never fabricated. */
   score: number;
@@ -33,6 +45,7 @@ export interface WaitEvent {
     | "session-start"
     | "phase"
     | "progress"
+    | "signal"
     | "game-start"
     | "score"
     | "session-complete"
@@ -71,6 +84,11 @@ export interface WaitSession {
    * derives gameplay intensity from real phase changes instead of inventing a percentage.
    */
   setProgress(value?: number): void;
+  /**
+   * Feed one observed host execution event into gameplay. The event must come
+   * from the host's real runtime; QuickSpin does not infer or fabricate signals.
+   */
+  signal(signal: ExecutionSignal): void;
   /** Mark the AI wait over and hand off to the response. */
   complete(): void;
   cancel(): void;
@@ -124,6 +142,8 @@ export interface GameInstance {
   start(): void;
   /** Called by the controller's single animation loop (not a game-owned RAF). */
   tick(time: number, delta: number): void;
+  /** Feed a truthful host execution event into the current game, if supported. */
+  signal?(signal: ExecutionSignal): void;
   /** Finalize a result for the reason given, always from live game state. */
   finish(reason: EndReason): GameResult;
   pause(): void;

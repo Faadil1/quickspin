@@ -33,10 +33,11 @@ Let the answer land.
 Switch to **With QuickSpin** and run again. Choose **Play while you wait** and play Wait Runner.
 
 > “Same twelve seconds. QuickSpin starts in a real waiting state. This demo deliberately leaves
-> progress indeterminate, so the host’s real phase changes drive game intensity instead: reasoning,
-> search, drafting, polishing.”
+> progress indeterminate, so the host’s phase changes drive game intensity. The host also sends
+> explicit execution signals — retrievals, tools, and artifacts — and those become real game events.”
 
-Point briefly at the phase label as the pace changes.
+Point at the phase label and event log, then collect at least one signal token. Clarify that these are
+deterministic demo-host events, not AI state invented by QuickSpin.
 
 ## 1:15 — Response ready + Wait Receipt
 
@@ -67,10 +68,11 @@ Collapse and reopen once if pacing allows.
 Scroll to the SDK block.
 
 > “Production integration has one important guardrail: QuickSpin waits 650 milliseconds by default,
-> so fast AI responses don’t flash a game UI. Mount it once, pass real phases, keep progress
-> indeterminate when you don’t know it, and call complete when the real response resolves.”
+> so fast AI responses don’t flash a game UI. Mount it once, pass real phases, and when your runtime
+> genuinely observes a retrieval, tool call, artifact, or warning, pass that event too. If you don’t
+> know progress, leave it indeterminate.”
 
-Point to `delayMs`, `setProgress()`, `setPhase()`, and `complete()`.
+Point to `delayMs`, `setProgress()`, `setPhase()`, `signal()`, and `complete()`.
 
 ## 2:35 — Packaging / business model
 
@@ -91,6 +93,6 @@ Return to the hero or hold on the Wait Receipt.
 
 - Never claim npm availability unless the package has actually been published.
 - Never claim every user experiences a shorter wait; show the signed receipt instead.
-- Never call the demo’s simulated model phases “live production AI.”
+- Never call the demo’s simulated model phases or execution signals “live production AI.”
 - Do not claim hosted analytics or extra game packs exist yet.
 - If Stripe is not configured, say “checkout preview,” not “payment.”
