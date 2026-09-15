@@ -64,3 +64,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Cause: the Actions token was not permitted to update `.github/workflows/ci.yml` without GitHub `workflows` permission.
 - Mitigation: separate product/security changes from workflow-governance changes. The bot commits only package/test/evidence state; workflow updates are applied through the authorized GitHub connection.
 - Lesson: evidence generation and repository governance are separate authority surfaces; passing evidence does not grant permission to mutate CI policy.
+
+## F-08 — First public-runtime attempt stopped at Pages authority boundary
+
+- Event: GitHub Actions run `34929705731` passed install, the full QuickSpin quality gate, all 33 tests, judge verification, and SDK build, then failed at `actions/configure-pages@v6`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929705731
+- Exact failure: `Get Pages site failed ... repository has Pages enabled and configured to build using GitHub Actions ... Not Found`.
+- Cause: GitHub Pages is not enabled/configured for this repository; the workflow token cannot turn an absent Pages site into runtime evidence.
+- Impact: demo build remains valid, but no public `page_url` exists yet and `PUBLIC_DEPLOYMENT_PROOF` stays open.
+- Mitigation: keep the reproducible Pages workflow, enable Pages from repository administration, rerun the workflow, then externally fetch the returned URL before promotion.
+- Lesson: a deployment workflow, expected hostname, and successful static build are not equivalent to a live runtime. **No page URL → no live-demo claim.**
