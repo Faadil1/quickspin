@@ -25,6 +25,7 @@ jobs:
           cat .quickspin-apply/part* > /tmp/quickspin-overlay.b64
           base64 --decode /tmp/quickspin-overlay.b64 > /tmp/quickspin-overlay.tar.gz
           tar -xzf /tmp/quickspin-overlay.tar.gz -C .
+          sed -i 's/const cursor = new Date();/const cursor = new Date(Date.now());/' src/sdk/persistence.ts
 
       - name: Install dependencies
         run: npm ci
