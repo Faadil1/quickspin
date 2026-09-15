@@ -56,11 +56,7 @@ export interface InterventionResult {
 }
 
 export type ExecutionTrailEntryType =
-  | "phase"
-  | "signal"
-  | "signal-rejected"
-  | "intervention"
-  | "intervention-result";
+  "phase" | "signal" | "signal-rejected" | "intervention" | "intervention-result";
 
 /** Portable, post-run evidence. Entries are facts QuickSpin observed from its own contract. */
 export interface ExecutionTrailEntry {
@@ -215,9 +211,7 @@ export interface CreateQuickSpinOptions {
    */
   delayMs?: number;
   /** Host authority for waiting-surface intervention intents. */
-  onIntervention?: (
-    intent: HostIntervention
-  ) => InterventionResult | Promise<InterventionResult>;
+  onIntervention?: (intent: HostIntervention) => InterventionResult | Promise<InterventionResult>;
   /** Called with the chosen plan when a host page asks the user to check out. */
   onCheckout?: (planId: string) => Promise<{ ok: boolean; paymentId?: string }>;
 }

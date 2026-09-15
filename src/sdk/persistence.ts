@@ -1,9 +1,4 @@
-import type {
-  EvidenceCoverage,
-  ExecutionTrailEntry,
-  SessionOutcome,
-  WaitCapsule,
-} from "./types";
+import type { EvidenceCoverage, ExecutionTrailEntry, SessionOutcome, WaitCapsule } from "./types";
 
 export type { SessionOutcome } from "./types";
 
