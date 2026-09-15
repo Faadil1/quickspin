@@ -1,15 +1,16 @@
 project: QuickSpin
-workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
-source_main_sha: 54421421a0903ebdf3431204aca43706c9a267af
-candidate_branch: winning-intelligence-v2
+workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE
+source_main_sha: 2ee56ce711e6ee495f38908b21767698da9fe394
+candidate_branch: winning-intelligence-v3-open-space
 objective: >-
-  Strengthen QuickSpin's judge-visible differentiation before the next UI/UX pass by
-  turning observed execution provenance into a portable Evidence Capsule, preserving
-  UNKNOWN/failure truth, adding a host-observation bridge and host-acknowledged
-  intervention contract, then revalidating all canonical gates.
+  Exploit the remaining observed challenge-relevant open space before the next UI/UX pass:
+  preserve the private Evidence Capsule, derive a privacy-safe shareable/replayable Wait Ghost,
+  add wait-to-wait signed-delta comparison, and stop feature expansion after independent proof.
 
 current_truth:
   upstream_opeblow_contains_previous_handoff: true
+  wi_v2_merged_to_fork_main: true
+  wi_v2_merge_sha: 98c87f409c8b4b9586ef398812fb4d995fd1b5da
   candidate_is_isolated_on_branch: true
   branch_requires_independent_ci_and_codeql_before_merge: true
   project_complete: false
@@ -18,11 +19,14 @@ current_truth:
   real_external_negative_event: PASS_PRIMARY_SOURCE
   runtime_negative_path: PASS
   unknown_abstention: PASS
-  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME
-  winning_intelligence_v2: IMPLEMENTED_PENDING_INDEPENDENT_PR_CI_CODEQL
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3
+  winning_intelligence_v3: IMPLEMENTED_TRANSIENT_PASS_PENDING_INDEPENDENT_PR_CI_CODEQL
+  transient_validation: github-actions:35003001488
+  transient_tests: 41
 
 proof_paths:
   - evidence/WINNING-INTELLIGENCE-V2.md
+  - evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
   - evidence/REALITY-ANCHOR.md
   - evidence/FAILURE-LEDGER.md
   - evidence/CLAIM-LEDGER.md
@@ -37,22 +41,27 @@ proof_paths:
   - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
-  - demo.md
 
-product_deltas:
-  - persistent_execution_trail
-  - Evidence_Capsule_v1
-  - transparent_evidence_coverage_counts
-  - host_observe_bridge_without_inference
-  - host_intervention_intent_with_explicit_ack_or_reject
-  - capsule_json_export
-  - demo_signature_path_accepted_signal_unknown_intervention_capsule
+v3_product_deltas:
+  - Wait_Ghost_redacted_derivative
+  - URL_hash_share_without_backend_upload
+  - deterministic_historical_replay_not_live_AI
+  - wait_to_wait_signed_delta_comparison_without_winner_score
+  - malformed_share_token_fail_closed
+  - persisted_host_intervention_payload_removed
+  - lab_copy_share_replay_compare_flow
+
+privacy_boundary:
+  private_capsule_can_include_provenance: true
+  wait_ghost_excludes_labels_refs_payloads_record_id_timestamp_failure_details: true
+  ghost_replay_emits_live_execution_signals: false
 
 blocking_open_items:
-  - validate_wi_v2_pr_ci_and_codeql
-  - deploy_wi_v2_candidate_and_reverify_routes
+  - validate_wi_v3_pr_ci_node22_node24_and_codeql
+  - merge_wi_v3_exact_head
+  - deploy_exact_wi_v3_merge_sha_and_reverify_five_routes
   - inspect_final_runtime_desktop_mobile_and_reduced_motion
-  - capture_wait_receipt_capsule_and_negative_path_video
+  - capture_capsule_to_ghost_replay_compare_and_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
   - obtain_commonsmade_publish_attach_submit_proof
   - lock_final_submission_urls_assets_copy
@@ -62,13 +71,13 @@ nonblocking_open_items:
   - broader_user_validation_of_perceived_wait_effect
   - exhaustive_commons_submission_gallery_not_publicly_indexable
   - live_provider_integration_not_claimed
+  - exclusivity_of_open_space_not_claimed
 
 next_action: >-
-  Open the WI V2 PR and require independent CI + CodeQL. If green, merge to the fork,
-  deploy/reverify the public candidate, prepare a frozen Opeyemi handoff, then resume
-  TRACE/UI work only after the product distinction gate is stable.
+  Complete canonical V3 reconciliation, open the V3 PR, require permanent CI + CodeQL,
+  merge only if green, redeploy one final candidate, verify routes, then freeze the product
+  surface and move to TRACE / next-level visual-jury work.
 
 rollback: >-
-  Close winning-intelligence-v2 and keep the previous future-classic runtime as the
-  production fallback if the P0 differentiation changes fail verification or create
-  unacceptable scope risk.
+  Close winning-intelligence-v3-open-space and keep fork main at the V2 product tree plus
+  the existing verified future-classic Vercel runtime if V3 fails independent validation.
