@@ -17,6 +17,7 @@ const required = {
     "F-08",
     "F-09",
     "F-10",
+    "F-11",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -167,6 +168,9 @@ if (claims.includes("public judge runtime is live | UNKNOWN / NOT_CLAIMED")) {
 }
 if (existsSync(".github/workflows/final-judge-patch.yml")) {
   throw new Error("one-shot final judge patch workflow must not remain active after successful migration");
+}
+if (existsSync(".github/workflows/format-multipage.yml")) {
+  throw new Error("one-shot multi-page formatter must not remain active after successful normalization");
 }
 if (!orchestration.includes("HUMAN SUBMIT") || !orchestration.includes("POST-MORTEM")) {
   throw new Error("orchestration trace does not preserve terminal human-submit/post-mortem stages");
