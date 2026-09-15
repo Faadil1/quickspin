@@ -11,6 +11,10 @@ const required = {
   "evidence/CLAIM-LEDGER.md": ["REFUSED", "UNKNOWN / NOT_CLAIMED"],
   "state/CANONICAL-STATE.yaml": ["REAL_FAILURE_GT_FAKE_SUCCESS", "project_complete: false"],
   "state/HANDOVER.yaml": ["main_untouched_by_this_workstream: true", "rollback"],
+  ".pbpd/state/ACTIVITY-TRACE.yaml": ["verification-before-completion", "handoff-to-finisher", "PROJECT_COMPLETE is forbidden"],
+  "HACKATHON-STATE.yaml": ["BUILD_CANDIDATE_READY_WITH_LIMITATIONS", "project_complete: false"],
+  "HACKATHON-HANDOFF.yaml": ["NOT_READY_FOR_FINAL_FINISHER_YET", "forbidden_claims"],
+  "HACKATHON-OPERATING-GATES.yaml": ["REALITY_AND_PAIN", "UNKNOWN_ABSTENTION", "SUBMISSION_PACKAGE"],
 };
 
 for (const [path, needles] of Object.entries(required)) {

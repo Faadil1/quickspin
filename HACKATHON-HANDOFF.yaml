@@ -1,0 +1,43 @@
+project: QuickSpin
+framework: HACKATHON_HANDOFF
+from: judge-assurance-negative-path
+to: FINAL_QC_AND_SUBMISSION_FINISHER
+handoff_status: NOT_READY_FOR_FINAL_FINISHER_YET
+readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+project_complete: false
+
+what_is_verified:
+  - exact_12_second_control_and_quickspin_happy_path
+  - explicit_failed_outcome_persistence
+  - controlled_real_promise_rejection_negative_path
+  - unknown_insufficient_evidence_signal_rejection
+  - execution_signal_gameplay_tests
+  - signed_wait_receipt
+  - typecheck_format_tests_sdk_build_demo_build
+
+canonical_evidence:
+  - evidence/REALITY-ANCHOR.md
+  - evidence/FAILURE-LEDGER.md
+  - evidence/RUBRIC-TRACEABILITY.md
+  - evidence/RECONCILIATION.md
+  - evidence/GATE-REPORT.md
+  - evidence/JUDGE-QA.md
+  - evidence/CLAIM-LEDGER.md
+  - .pbpd/state/ACTIVITY-TRACE.yaml
+
+must_finish_before_project_complete:
+  - reconcile_npm_dependency_vulnerabilities_without_force_fix
+  - lock_public_runtime_and_deployment_evidence
+  - capture_negative_path_demo_video
+  - rehearse_QA_against_claim_ledger
+  - lock_submission_package_links_assets_and_copy
+  - final_visual_jury_polish_review
+
+forbidden_claims:
+  - QuickSpin reduces provider latency
+  - every wait feels shorter
+  - controlled demo failure is a live provider outage
+  - security complete while dependency reconciliation is open
+  - PROJECT_COMPLETE before handoff-to-finisher and final QC
+
+rollback: This branch can be closed/deleted without changing main.
