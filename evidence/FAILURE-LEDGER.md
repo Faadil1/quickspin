@@ -133,3 +133,30 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: WI V2 remained non-mergeable despite functional checks passing.
 - Mitigation: run a disposable formatter only on the two flagged SDK files, commit the formatting, remove the formatter workflow, then require a fresh full PR CI + CodeQL run.
 - Lesson: **a quality gate is conjunctive. Functional correctness does not erase a formatting failure, and a temporary migration workflow must not accidentally define the final merge standard.**
+
+## F-15 — V2 state promotion exposed a stale verifier assertion
+
+- Event: CI run `35000815478` failed after V2 had been promoted from `IMPLEMENTED_PENDING_PR_VALIDATION` to a validated state.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/35000815478
+- Exact problem: `judge:verify` still required the old marker `evidence_capsule: IMPLEMENTED_PENDING_PR_VALIDATION` while canonical state had correctly moved the gate forward.
+- Impact: the assurance layer rejected a truthful state transition even though the product delta itself had already passed the prior functional gates. The failure was retained rather than bypassed.
+- Mitigation: update verifier markers and cross-state checks to follow the promoted semantic state, then rerun the complete permanent gate.
+- Recovery evidence: final V2 CI `35001906327` and CodeQL `35001906289` both passed before merge.
+- Lesson: **state promotion and verifier provenance must advance atomically; an assurance system can itself become stale.**
+
+## F-16 — Accidental placeholder write landed on main and was immediately removed
+
+- Event: commit `679860f0afc987bc024f5fbbd55d25bb716825f2` accidentally created `evidence/placeholder` on `main` with commit message `temp` while preparing the V3 branch.
+- Parent truth: the last intended product merge was V2 squash SHA `98c87f409c8b4b9586ef398812fb4d995fd1b5da`.
+- Recovery: commit `2ee56ce711e6ee495f38908b21767698da9fe394` immediately removed the placeholder before V3 branching.
+- Impact: no product/runtime source file changed and the net tree after removal matched the intended V2 product tree, but main history contains the accidental write and therefore it is retained here.
+- Mitigation: create/isolate the candidate branch before any new contents write and verify main diff after corrective deletion.
+- Lesson: **repository authority matters even for harmless files. “Net no-op” is not permission to erase the mutation from history.**
+
+## F-17 — V3 diff gate caught an overbroad widget replacement before candidate validation
+
+- Event: commit `31a494459baf0dd907130578e7997641ef468078` attempted a privacy hardening change but replaced far more of `src/sdk/widget.ts` than intended.
+- Observable signal: compare showed roughly **845 changed lines** (344 additions / 501 deletions) for a change whose intended product delta was only to stop persisting arbitrary intervention payloads.
+- Impact: the edit was considered scope drift and was not accepted as the V3 candidate despite being syntactically plausible.
+- Recovery: commit `944781484a592028c65367a68503daafc1ac95d5` restored the exact previously validated widget blob, then run `35003001488` applied only surgical V3 patches and passed TypeScript plus **41 tests**.
+- Lesson: **diff size and shape are an assurance gate. An overbroad edit should be discarded before CI can normalize it into false confidence.**
