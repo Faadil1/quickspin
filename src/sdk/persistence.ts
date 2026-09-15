@@ -1,12 +1,19 @@
-const STORAGE_KEY = "quickspin:sessions:v1";
+import type {
+  EvidenceCoverage,
+  ExecutionTrailEntry,
+  SessionOutcome,
+  WaitCapsule,
+} from "./types";
 
-export type SessionOutcome = "completed" | "cancelled" | "failed" | "unknown";
+export type { SessionOutcome } from "./types";
+
+const STORAGE_KEY = "quickspin:sessions:v1";
 
 export interface SessionRecord {
   id: string;
   gameId: string | null;
   score: number | null;
-  /** Time from session.start() to session.complete() — the real AI wait. */
+  /** Time from session.start() to terminal outcome — the real AI wait. */
   actualWaitMs: number;
   /** Time the player was actively in a running game during the wait. */
   engagedPlayMs: number;
@@ -17,6 +24,10 @@ export interface SessionRecord {
   outcome: SessionOutcome;
   failureCode: string | null;
   failureMessage: string | null;
+  /** Portable evidence trail. Missing on older v1 records and normalized on read. */
+  trail?: ExecutionTrailEntry[];
+  /** Transparent event counts, not a synthetic trust score. */
+  evidenceCoverage?: EvidenceCoverage;
   ts: number;
 }
 
@@ -26,6 +37,39 @@ interface Persisted {
 }
 
 const CAP = 1000;
+
+function emptyCoverage(): EvidenceCoverage {
+  return {
+    phaseChanges: 0,
+    acceptedSignals: 0,
+    rejectedSignals: 0,
+    uniqueEvidenceRefs: 0,
+    interventions: 0,
+    acceptedInterventions: 0,
+    rejectedInterventions: 0,
+  };
+}
+
+export function evidenceCoverageFromTrail(trail: ExecutionTrailEntry[]): EvidenceCoverage {
+  const refs = new Set<string>();
+  const coverage = emptyCoverage();
+  for (const entry of trail) {
+    if (entry.type === "phase") coverage.phaseChanges += 1;
+    if (entry.type === "signal") {
+      coverage.acceptedSignals += 1;
+      if (entry.signal?.evidenceRef) refs.add(entry.signal.evidenceRef);
+    }
+    if (entry.type === "signal-rejected") coverage.rejectedSignals += 1;
+    if (entry.type === "intervention") coverage.interventions += 1;
+    if (entry.type === "intervention-result") {
+      if (entry.interventionResult?.accepted) coverage.acceptedInterventions += 1;
+      else coverage.rejectedInterventions += 1;
+      if (entry.interventionResult?.evidenceRef) refs.add(entry.interventionResult.evidenceRef);
+    }
+  }
+  coverage.uniqueEvidenceRefs = refs.size;
+  return coverage;
+}
 
 export function loadStorage(): Persisted {
   try {
@@ -67,13 +111,22 @@ export function recordSession(input: {
   outcome?: SessionOutcome;
   failureCode?: string | null;
   failureMessage?: string | null;
-}): { id: string; isHighScore: boolean; dayStreak: number; sessionStreak: number } {
+  trail?: ExecutionTrailEntry[];
+  evidenceCoverage?: EvidenceCoverage;
+}): {
+  id: string;
+  isHighScore: boolean;
+  dayStreak: number;
+  sessionStreak: number;
+  record: SessionRecord;
+} {
   const p = loadStorage();
   const previousBest = input.gameId ? bestScore(input.gameId) : 0;
   const isHighScore = input.completed && !!input.gameId && (input.score ?? 0) > previousBest;
   const id = (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)) as string;
-
-  p.records.push({
+  const trail = (input.trail ?? []).map((entry) => ({ ...entry }));
+  const evidenceCoverage = input.evidenceCoverage ?? evidenceCoverageFromTrail(trail);
+  const record: SessionRecord = {
     id,
     gameId: input.gameId,
     score: input.completed ? input.score : null,
@@ -84,8 +137,12 @@ export function recordSession(input: {
     outcome: input.outcome ?? (input.completed ? "completed" : "unknown"),
     failureCode: input.failureCode ?? null,
     failureMessage: input.failureMessage ?? null,
+    trail,
+    evidenceCoverage,
     ts: Date.now(),
-  });
+  };
+
+  p.records.push(record);
   if (p.records.length > CAP) p.records = p.records.slice(-CAP);
   save(p);
 
@@ -94,6 +151,7 @@ export function recordSession(input: {
     isHighScore,
     dayStreak: currentDayStreak(),
     sessionStreak: sessionStreak(p.records),
+    record: { ...record, trail: [...trail], evidenceCoverage: { ...evidenceCoverage } },
   };
 }
 
@@ -105,6 +163,41 @@ export function updateSessionPerception(id: string, feltWaitMs: number): Session
   record.feltWaitMs = feltWaitMs;
   save(p);
   return { ...record };
+}
+
+export function getSessionRecord(id: string): SessionRecord | null {
+  const record = loadStorage().records.find((r) => r.id === id);
+  return record ? { ...record, trail: [...(record.trail ?? [])] } : null;
+}
+
+export function latestSessionRecord(): SessionRecord | null {
+  const records = loadStorage().records;
+  const record = records[records.length - 1];
+  return record ? { ...record, trail: [...(record.trail ?? [])] } : null;
+}
+
+export function sessionRecordToCapsule(record: SessionRecord): WaitCapsule {
+  const trail = [...(record.trail ?? [])];
+  return {
+    version: 1,
+    recordId: record.id,
+    outcome: record.outcome ?? (record.completed ? "completed" : "unknown"),
+    actualWaitMs: record.actualWaitMs,
+    engagedPlayMs: record.engagedPlayMs,
+    gameId: record.gameId,
+    score: record.score,
+    feltWaitMs: record.feltWaitMs ?? null,
+    failureCode: record.failureCode ?? null,
+    failureMessage: record.failureMessage ?? null,
+    evidenceCoverage: record.evidenceCoverage ?? evidenceCoverageFromTrail(trail),
+    trail,
+    ts: record.ts,
+  };
+}
+
+export function latestWaitCapsule(): WaitCapsule | null {
+  const record = latestSessionRecord();
+  return record ? sessionRecordToCapsule(record) : null;
 }
 
 export function bestScore(gameId: string): number {
