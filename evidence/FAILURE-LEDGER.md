@@ -113,3 +113,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: correct new runtime evidence was rejected because verifier provenance had not advanced with the canonical runtime.
 - Mitigation: update `judge:verify` to require the new source SHA, the new READY deployment id, all-five-route HTTP-200 proof, the future-classic state marker, and explicitly fail if the old runtime SHA reappears.
 - Lesson: **provenance locks must move atomically with canonical runtime promotion. A stale verifier is evidence drift, not a reason to weaken verification.**
+
+## F-13 — Winning Intelligence V2 migration script failed before product mutation
+
+- Events: GitHub Actions runs `34999196264` and `34999366553` failed during the temporary migration workflow.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34999196264 and https://github.com/Faadil1/quickspin/actions/runs/34999366553
+- First exact failure: Node rejected the one-shot migration script with `SyntaxError: missing ) after argument list` because a generated TypeScript template literal was nested unescaped inside the migration script's own template literal.
+- Impact: no product files from that migration were committed; typecheck/tests were correctly never treated as passed for the attempted mutation.
+- Mitigation: replace the migration with a parse-safe idempotent script, rerun format + TypeScript + tests + judge verification, then remove all one-shot migration machinery after the successful commit.
+- Recovery evidence: run `34999396864` passed migration, formatting, TypeScript, tests, judge verification and committed the P0 deltas.
+- Lesson: **automation that writes assurance-sensitive product code must itself be parseable, deterministic and disposable. A failed migration attempt remains evidence even when no product mutation escaped it.**
