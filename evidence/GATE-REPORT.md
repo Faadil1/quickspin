@@ -8,6 +8,7 @@
 | NAMING / comprehension | PASS | QuickSpin maps directly to wait/play behavior |
 | UX/UI product path | PASS_WITH_CONDITIONS | functional/accessibility proof strong; final visual jury review still separate |
 | BUILD / correctness | PASS | prior CI + CodeQL green; this branch re-runs check/build |
+| DEPENDENCY SECURITY | PASS | Vite 7.3.6 + Vitest 5; full + production npm audit = 0; package boundary verified |
 | NEGATIVE PATH | PASS | actual Promise rejection, no fabricated answer, persisted failure |
 | UNKNOWN / abstention | PASS | insufficient execution evidence rejected |
 | JUDGE COVERAGE | PASS | rubric trace exists |

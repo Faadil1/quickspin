@@ -25,7 +25,6 @@ activities:
       - evidence/GATE-REPORT.md
       - state/CANONICAL-STATE.yaml
     open_risks:
-      - DEPENDENCY_VULNERABILITY_RECONCILIATION
       - PUBLIC_DEPLOYMENT_PROOF
       - NEGATIVE_PATH_VIDEO_CAPTURE
       - FINAL_SUBMISSION_PACKAGE
@@ -53,3 +52,12 @@ invariants:
   - UNKNOWN_IS_A_VALID_OUTCOME
   - FAILURE_IS_NOT_COMPLETION
   - IMPLEMENTATION_PRESENCE_IS_NOT_EXECUTION_EVIDENCE
+
+  - id: A-005
+    stage: dependency-security-reconciliation
+    outcome: PASS_ZERO_NPM_AUDIT
+    evidence:
+      - evidence/security/SECURITY-GATE.md
+      - evidence/security/npm-audit-post-upgrade.json
+      - evidence/security/npm-audit-production.json
+      - evidence/security/npm-pack-dry-run.json

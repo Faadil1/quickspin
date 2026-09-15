@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { SessionStateMachine } from "./state-machine";
-import type { SessionStatus } from "./types";
+import type { SessionStatus, WaitEvent } from "./types";
 
-function make(onEvent?: ReturnType<typeof vi.fn>) {
-  const emit = onEvent ?? vi.fn();
+function make() {
+  const emit = vi.fn<(event: WaitEvent) => void>();
   return { machine: new SessionStateMachine(emit), emit };
 }
 
@@ -81,8 +81,7 @@ describe("SessionStateMachine", () => {
   });
 
   it("emits phase {from,to} and progress events", () => {
-    const emit = vi.fn();
-    const { machine } = make(emit);
+    const { machine, emit } = make();
     machine.transition("waiting");
     expect(emit).toHaveBeenCalledWith({
       type: "phase",
