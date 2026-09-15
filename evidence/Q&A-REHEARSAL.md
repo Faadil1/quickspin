@@ -14,6 +14,12 @@ Evidence: `src/sdk/widget.ts`, Runner/Orbit signal tests, Wait Receipt.
 
 QuickSpin consumes states an AI host actually observes: phases, optional real progress, retrieval/tool/artifact/warning signals, completion, cancellation, and failure. It does not infer fake progress. Execution signals require a host-owned `evidenceRef`.
 
+## “Give me one concrete real-world failure that justifies this build.”
+
+On June 2–3, 2026, OpenAI officially reported elevated errors and latency across Responses API, Codex, and ChatGPT. Affected Responses API traffic took longer than normal to begin generating, Codex requests were incorrectly rejected with HTTP 429, and ChatGPT login/authentication/conversation flows degraded. QuickSpin does **not** claim it could prevent that provider incident; the design implication is that a waiting UI must not fake progress or assume success, and must preserve failure/UNKNOWN as first-class outcomes.
+
+Primary evidence: `evidence/REALITY-ANCHOR.md` → OpenAI status incident write-up.
+
 ## “Can QuickSpin prove the host is telling the truth?”
 
 No SDK can cryptographically prove an arbitrary host is honest. QuickSpin makes that trust boundary explicit: the host must provide provenance, and missing provenance is rejected as `UNKNOWN / INSUFFICIENT_EVIDENCE`. The SDK refuses to turn an unsupported claim into gameplay.
@@ -68,11 +74,11 @@ No. The happy path is deterministic by design so the before/after comparison use
 
 ## “Is your negative path a real provider outage?”
 
-No. It is a real runtime Promise rejection induced in the controlled harness. The external June 2, 2026 OpenAI incident is separate evidence that latency/failure states occur in production; we do not conflate the two.
+No. It is a real runtime Promise rejection induced in the controlled harness. The external June 2–3, 2026 OpenAI incident is separate primary-source evidence that latency/rejection/failure states occur in production; we do not conflate the two.
 
 ## “What failed while you built this?”
 
-Several things, and they remain in `evidence/FAILURE-LEDGER.md`: a deterministic date test, the first judge-assurance typecheck, a Vitest 5 typing migration, Vite 8/Rolldown TSX incompatibility, workflow permission boundaries, and the first Pages deployment attempt. Each failure has cause, mitigation, and design/operational lesson.
+Several things, and they remain in `evidence/FAILURE-LEDGER.md`: a deterministic date test, the first judge-assurance typecheck, a Vitest 5 typing migration, Vite 8/Rolldown TSX incompatibility, workflow permission boundaries, the first Pages deployment attempt, and a non-idempotent one-shot patch workflow. Each failure has cause, mitigation, and an operational/design lesson.
 
 ## “What is still incomplete?”
 
@@ -83,10 +89,11 @@ The public runtime is blocked until GitHub Pages is enabled for the repo; the fi
 Before submission, rehearse at least these adversarial prompts without looking at this file:
 
 1. “This is just a game overlay — prove me wrong.”
-2. “Your host could lie about signals — why should I trust this?”
-3. “Show me what happens when the AI fails.”
-4. “Prove users think it is faster.”
-5. “Why is this better as infrastructure than a polished one-off game?”
-6. “What did you actually fail at during the build?”
+2. “Give me one real event that proves this problem exists.”
+3. “Your host could lie about signals — why should I trust this?”
+4. “Show me what happens when the AI fails.”
+5. “Prove users think it is faster.”
+6. “Why is this better as infrastructure than a polished one-off game?”
+7. “What did you actually fail at during the build?”
 
 PASS requires answers to preserve the claim boundaries above; improvisation may add context but may not upgrade UNKNOWN into VERIFIED.
