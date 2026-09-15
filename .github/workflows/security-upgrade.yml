@@ -25,26 +25,10 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Upgrade vulnerable development toolchain
+      - name: Upgrade supported development toolchain
         run: npm install --save-dev vite@7.3.6 vitest@5.0.0
 
-      - name: Align CI with supported Node and current GitHub actions
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          for p in Path('.github/workflows').glob('*.yml'):
-              text = p.read_text(encoding='utf-8')
-              text = text.replace('actions/checkout@v4', 'actions/checkout@v7')
-              text = text.replace('actions/setup-node@v4', 'actions/setup-node@v7')
-              if p.name == 'ci.yml':
-                  text = text.replace('node: [18, 20, 22]', 'node: [22, 24]')
-                  text = text.replace('node-version: 20\n', 'node-version: 22\n')
-              if p.name == 'release.yml':
-                  text = text.replace('node-version: 20\n', 'node-version: 22\n')
-              p.write_text(text, encoding='utf-8')
-          PY
-
-      - name: Adapt tests and preserve failed migration evidence
+      - name: Adapt tests and preserve migration failures
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -54,18 +38,25 @@ jobs:
           text = text.replace('import type { SessionStatus } from "./types";', 'import type { SessionStatus, WaitEvent } from "./types";')
           old = '''function make(onEvent?: ReturnType<typeof vi.fn>) {\n  const emit = onEvent ?? vi.fn();\n  return { machine: new SessionStateMachine(emit), emit };\n}'''
           new = '''function make() {\n  const emit = vi.fn<(event: WaitEvent) => void>();\n  return { machine: new SessionStateMachine(emit), emit };\n}'''
-          if old not in text:
-              raise SystemExit('state-machine mock helper marker not found')
-          text = text.replace(old, new, 1)
-          text = text.replace('''  it("emits phase {from,to} and progress events", () => {\n    const emit = vi.fn();\n    const { machine } = make(emit);''', '''  it("emits phase {from,to} and progress events", () => {\n    const { machine, emit } = make();''')
+          if old in text:
+              text = text.replace(old, new, 1)
+              text = text.replace('''  it("emits phase {from,to} and progress events", () => {\n    const emit = vi.fn();\n    const { machine } = make(emit);''', '''  it("emits phase {from,to} and progress events", () => {\n    const { machine, emit } = make();''')
           p.write_text(text, encoding='utf-8')
 
           ledger = Path('evidence/FAILURE-LEDGER.md')
           current = ledger.read_text(encoding='utf-8')
-          if '## F-05 — Secure toolchain migration first pass failed' not in current:
-              current += '''\n## F-05 — Secure toolchain migration first pass failed\n\n- Event: GitHub Actions run `34928931640` failed during `npm run typecheck`.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34928931640\n- Cause: Vitest 5 tightened `vi.fn()` typing; the test helper passed an untyped generic mock where `WaitEventHandler` was required.\n- Mitigation: the test now creates an explicitly typed `(event: WaitEvent) => void` mock.\n- Lesson: dependency security upgrades must pass the actual compiler/test contract; a zero-vulnerability install alone is not sufficient evidence.\n'''
-          if '## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility' not in current:
-              current += '''\n## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility\n\n- Event: GitHub Actions run `34929036325` passed typecheck and all 33 Vitest 5 tests, then failed in the SDK library build.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929036325\n- Cause: Vite 8 switched the production bundler to Rolldown, which rejected the existing React TSX library entry without additional parser migration.\n- Decision: do not expand hackathon scope into a Rolldown migration when the supported Vite 7.3 security line can close the advisories while retaining the proven Rollup build path.\n- Lesson: latest-major adoption is not itself a quality gate; choose the smallest supported change that removes the verified risk without creating unrelated migration risk.\n'''
+          entries = [
+          '''\n## F-05 — Secure toolchain migration first pass failed\n\n- Event: GitHub Actions run `34928931640` failed during `npm run typecheck`.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34928931640\n- Cause: Vitest 5 tightened `vi.fn()` typing; the test helper passed an untyped generic mock where `WaitEventHandler` was required.\n- Mitigation: the test now creates an explicitly typed `(event: WaitEvent) => void` mock.\n- Lesson: dependency security upgrades must pass the actual compiler/test contract; a zero-vulnerability install alone is not sufficient evidence.\n''',
+          '''\n## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility\n\n- Event: GitHub Actions run `34929036325` passed typecheck and all 33 Vitest 5 tests, then failed in the SDK library build.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929036325\n- Cause: Vite 8 switched the production bundler to Rolldown, which rejected the existing React TSX library entry without additional parser migration.\n- Decision: use the supported Vite 7.3 security line, retaining the proven Rollup build path while closing the advisories.\n- Lesson: latest-major adoption is not itself a quality gate; choose the smallest supported change that removes verified risk.\n''',
+          '''\n## F-07 — Security gate passed but workflow mutation push was refused\n\n- Event: GitHub Actions run `34929187191` passed build, 33 tests, judge verification, full audit, production audit, and package-boundary checks, then failed only while pushing the commit.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929187191\n- Cause: the Actions token was not permitted to update `.github/workflows/ci.yml` without GitHub `workflows` permission.\n- Mitigation: separate product/security changes from workflow-governance changes. The bot commits only package/test/evidence state; workflow updates are applied through the authorized GitHub connection.\n- Lesson: evidence generation and repository governance are separate authority surfaces; passing evidence does not grant permission to mutate CI policy.\n''']
+          markers = [
+            '## F-05 — Secure toolchain migration first pass failed',
+            '## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility',
+            '## F-07 — Security gate passed but workflow mutation push was refused',
+          ]
+          for marker, entry in zip(markers, entries):
+              if marker not in current:
+                  current += entry
           ledger.write_text(current, encoding='utf-8')
           PY
 
@@ -77,87 +68,72 @@ jobs:
           npm run check
           npm run build
 
-      - name: Require clean dependency audit
+      - name: Require clean audits
         run: |
           mkdir -p evidence/security
           npm audit --json > evidence/security/npm-audit-post-upgrade.json
           npm audit --omit=dev --json > evidence/security/npm-audit-production.json
 
-      - name: Capture published-package boundary
+      - name: Capture package boundary
         run: npm pack --dry-run --json > evidence/security/npm-pack-dry-run.json
 
-      - name: Write security gate evidence
+      - name: Write security evidence and canonical state
         run: |
           node <<'NODE'
           const fs = require('fs');
           const full = JSON.parse(fs.readFileSync('evidence/security/npm-audit-post-upgrade.json','utf8'));
           const prod = JSON.parse(fs.readFileSync('evidence/security/npm-audit-production.json','utf8'));
           const pack = JSON.parse(fs.readFileSync('evidence/security/npm-pack-dry-run.json','utf8'));
-          const fullCounts = full.metadata?.vulnerabilities || {};
-          const prodCounts = prod.metadata?.vulnerabilities || {};
+          const fullTotal = full.metadata?.vulnerabilities?.total || 0;
+          const prodTotal = prod.metadata?.vulnerabilities?.total || 0;
           const files = pack?.[0]?.files?.map(x => x.path) || [];
           const forbidden = files.filter(p => p.startsWith('node_modules/') || p.includes('vite') || p.includes('vitest'));
-          if ((fullCounts.total || 0) !== 0) throw new Error(`full audit still has ${fullCounts.total} vulnerabilities`);
-          if ((prodCounts.total || 0) !== 0) throw new Error(`production audit still has ${prodCounts.total} vulnerabilities`);
-          if (forbidden.length) throw new Error(`dev-tool files leaked into package: ${forbidden.join(', ')}`);
-          const md = `# Dependency Security Gate — PASS\n\n` +
-            `Validated on ${new Date().toISOString()}.\n\n` +
-            `- Vite: 7.3.6 (supported security line)\n- Vitest: 5.0.0\n- Build/test Node floor: 22.12+\n` +
-            `- Full npm audit: **0 vulnerabilities**\n- Production-only npm audit: **0 vulnerabilities**\n` +
-            `- npm pack dry-run: **no Vite/Vitest/node_modules files shipped**\n` +
-            `- Existing typecheck, 33 tests, judge verification, SDK build, and demo build: **PASS**\n\n` +
-            `The previous 5-vulnerability audit and failed Vite 8 migration remain preserved as evidence. No force fix was used.\n`;
-          fs.writeFileSync('evidence/security/SECURITY-GATE.md', md);
+          if (fullTotal !== 0 || prodTotal !== 0 || forbidden.length) {
+            throw new Error(`security gate failed: full=${fullTotal}, prod=${prodTotal}, forbidden=${forbidden.join(',')}`);
+          }
+          fs.writeFileSync('evidence/security/SECURITY-GATE.md', `# Dependency Security Gate — PASS\n\nValidated on ${new Date().toISOString()}.\n\n- Vite: 7.3.6 (supported security line)\n- Vitest: 5.0.0\n- Build/test Node floor: 22.12+\n- Full npm audit: **0 vulnerabilities**\n- Production-only npm audit: **0 vulnerabilities**\n- npm pack dry-run: **no Vite/Vitest/node_modules files shipped**\n- Typecheck, 33 tests, judge verification, SDK build, and demo build: **PASS**\n\nThe original 5-vulnerability audit and all failed migration runs remain preserved. No force fix was used.\n`);
           NODE
-
-      - name: Update canonical risk state
-        run: |
           python3 - <<'PY'
           from pathlib import Path
 
           p = Path('state/CANONICAL-STATE.yaml')
-          text = p.read_text(encoding='utf-8')
-          text = text.replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
+          text = p.read_text(encoding='utf-8').replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
           if 'security_gate: PASS_ZERO_NPM_AUDIT' not in text:
               text += '\nsecurity_gate: PASS_ZERO_NPM_AUDIT\n'
           p.write_text(text, encoding='utf-8')
 
           p = Path('HACKATHON-STATE.yaml')
-          text = p.read_text(encoding='utf-8')
-          text = text.replace('  dependency_security_reconciliation: OPEN', '  dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT')
+          text = p.read_text(encoding='utf-8').replace('  dependency_security_reconciliation: OPEN', '  dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT')
           p.write_text(text, encoding='utf-8')
 
           p = Path('evidence/RECONCILIATION.md')
           text = p.read_text(encoding='utf-8')
           old = '1. **Dependency audit open:** prior `npm ci` reported 5 vulnerabilities (3 moderate, 1 high, 1\n       critical). Exploitability in the shipped browser bundle has not yet been reconciled. This blocks\n       any “security-complete” claim; it does not get silently ignored.\n2. **Live deployment proof:**'
-          new = '1. **Dependency security CLOSED:** Vite 7.3.6 + Vitest 5 pass a clean full and production npm audit; package dry-run confirms the dev toolchain is not shipped. See `evidence/security/SECURITY-GATE.md`.\n2. **Live deployment proof:**'
+          new = '1. **Dependency security CLOSED:** Vite 7.3.6 + Vitest 5 pass clean full and production npm audits; package dry-run confirms the dev toolchain is not shipped. See `evidence/security/SECURITY-GATE.md`.\n2. **Live deployment proof:**'
           text = text.replace(old, new)
           p.write_text(text, encoding='utf-8')
 
           p = Path('evidence/GATE-REPORT.md')
           text = p.read_text(encoding='utf-8')
           marker = '| BUILD / correctness | PASS | prior CI + CodeQL green; this branch re-runs check/build |'
-          replacement = marker + '\n| DEPENDENCY SECURITY | PASS | Vite 7.3.6 + Vitest 5; full + production npm audit = 0; package boundary verified |'
           if '| DEPENDENCY SECURITY |' not in text:
-              text = text.replace(marker, replacement)
+              text = text.replace(marker, marker + '\n| DEPENDENCY SECURITY | PASS | Vite 7.3.6 + Vitest 5; full + production npm audit = 0; package boundary verified |')
           p.write_text(text, encoding='utf-8')
 
           p = Path('.pbpd/state/ACTIVITY-TRACE.yaml')
-          text = p.read_text(encoding='utf-8')
-          text = text.replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
+          text = p.read_text(encoding='utf-8').replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
           if 'stage: dependency-security-reconciliation' not in text:
               text += '\n  - id: A-005\n    stage: dependency-security-reconciliation\n    outcome: PASS_ZERO_NPM_AUDIT\n    evidence:\n      - evidence/security/SECURITY-GATE.md\n      - evidence/security/npm-audit-post-upgrade.json\n      - evidence/security/npm-audit-production.json\n      - evidence/security/npm-pack-dry-run.json\n'
           p.write_text(text, encoding='utf-8')
           PY
 
-      - name: Re-run evidence verifier after state update
+      - name: Verify canonical evidence after closure
         run: npm run judge:verify
 
-      - name: Commit validated security closure
+      - name: Commit product and evidence changes only
         run: |
-          rm .github/workflows/security-upgrade.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add package.json package-lock.json src/sdk/state-machine.test.ts evidence state HACKATHON-STATE.yaml .pbpd/state/ACTIVITY-TRACE.yaml
           git commit -m "fix: close dependency security gate"
           git push origin finalization-security-runtime
