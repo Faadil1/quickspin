@@ -51,7 +51,10 @@ export function mountPage(page: SitePage, body: string): HTMLElement {
   return app;
 }
 
-export function statusMark(label: string, tone: "live" | "warn" | "fail" | "unknown" = "live"): string {
+export function statusMark(
+  label: string,
+  tone: "live" | "warn" | "fail" | "unknown" = "live"
+): string {
   return `<span class="status-mark status-${tone}"><i></i>${label}</span>`;
 }
 

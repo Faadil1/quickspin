@@ -1,8 +1,17 @@
-import { createQuickSpin, bestLabel, currentDayStreak, perceivedWaitStats, resetAll, totalSessions, totalWaitTurnedToPlayMs } from "../sdk/index";
+import {
+  createQuickSpin,
+  bestLabel,
+  currentDayStreak,
+  perceivedWaitStats,
+  resetAll,
+  totalSessions,
+  totalWaitTurnedToPlayMs,
+} from "../sdk/index";
 import type { ExecutionSignal, QuickSpinController, WaitEventHandler } from "../sdk/types";
 import { mountPage, statusMark } from "./shell";
 
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => window.setTimeout(resolve, ms));
 
 interface DemoPhase {
   status: string;
@@ -12,10 +21,38 @@ interface DemoPhase {
 }
 
 const PHASES: DemoPhase[] = [
-  { status: "Reasoning…", progress: 0.12, ms: 2600, signal: { kind: "tool", label: "Planned constraints", evidenceRef: "demo:phase:reasoning" } },
-  { status: "Searching the web…", progress: 0.32, ms: 3100, signal: { kind: "retrieval", label: "Retrieved Austin dinner options", evidenceRef: "demo:phase:retrieval" } },
-  { status: "Drafting…", progress: 0.62, ms: 3400, signal: { kind: "artifact", label: "Ranked five candidate spots", evidenceRef: "demo:phase:draft" } },
-  { status: "Polishing…", progress: 0.88, ms: 2900, signal: { kind: "artifact", label: "Final answer assembled", evidenceRef: "demo:phase:final" } },
+  {
+    status: "Reasoning…",
+    progress: 0.12,
+    ms: 2600,
+    signal: { kind: "tool", label: "Planned constraints", evidenceRef: "demo:phase:reasoning" },
+  },
+  {
+    status: "Searching the web…",
+    progress: 0.32,
+    ms: 3100,
+    signal: {
+      kind: "retrieval",
+      label: "Retrieved Austin dinner options",
+      evidenceRef: "demo:phase:retrieval",
+    },
+  },
+  {
+    status: "Drafting…",
+    progress: 0.62,
+    ms: 3400,
+    signal: {
+      kind: "artifact",
+      label: "Ranked five candidate spots",
+      evidenceRef: "demo:phase:draft",
+    },
+  },
+  {
+    status: "Polishing…",
+    progress: 0.88,
+    ms: 2900,
+    signal: { kind: "artifact", label: "Final answer assembled", evidenceRef: "demo:phase:final" },
+  },
 ];
 
 const body = `
@@ -119,13 +156,18 @@ const logEvents: WaitEventHandler = (event) => {
   logEl.scrollTop = logEl.scrollHeight;
 };
 
-let controller: QuickSpinController = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents });
+let controller: QuickSpinController = createQuickSpin({
+  target: mount,
+  delayMs: 0,
+  onEvent: logEvents,
+});
 let mode: "classic" | "quickspin" = "quickspin";
 let running = false;
 
 function setMode(next: "classic" | "quickspin"): void {
   mode = next;
-  for (const button of segBtns) button.setAttribute("aria-pressed", button.dataset.mode === next ? "true" : "false");
+  for (const button of segBtns)
+    button.setAttribute("aria-pressed", button.dataset.mode === next ? "true" : "false");
   classicPanel.hidden = next !== "classic";
   qsPanel.hidden = next !== "quickspin";
 }
@@ -202,13 +244,20 @@ async function runFailureProof(): Promise<void> {
   const session = controller.start({ status: "Calling restaurant search provider…" });
   session.setProgress();
   session.setPhase("Calling restaurant search provider…");
-  phaseEl.innerHTML = "Negative path: <strong>provider call in flight</strong> — no success assumed.";
+  phaseEl.innerHTML =
+    "Negative path: <strong>provider call in flight</strong> — no success assumed.";
 
   try {
-    await new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400));
+    await new Promise<never>((_, reject) =>
+      window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400)
+    );
   } catch (error) {
     const failure = error instanceof Error ? error : new Error(String(error));
-    session.signal({ kind: "warning", label: "Provider request rejected", evidenceRef: "demo:negative-path:promise-rejection" });
+    session.signal({
+      kind: "warning",
+      label: "Provider request rejected",
+      evidenceRef: "demo:negative-path:promise-rejection",
+    });
     session.fail(failure);
     phaseEl.innerHTML = `Negative path: <strong>FAILED</strong> — ${failure.message}. No AI answer was fabricated.`;
     refreshStats();
