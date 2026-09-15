@@ -86,3 +86,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: red Actions history that does not represent a product regression, and avoidable ambiguity for reviewers.
 - Mitigation: retain these runs here as orchestration evidence, then remove the temporary workflow. Permanent CI remains the authority for product correctness.
 - Lesson: **one-shot migration machinery must be removed or made idempotent immediately after success. Real failure stays recorded; noisy automation does not stay active.**
+
+## F-10 — Canonical verifier produced a formatting-sensitive false negative
+
+- Event: PR #5 CI run `34958656629` passed dependency install, format, TypeScript typecheck, and all 33 tests, then failed at `npm run judge:verify`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34958656629
+- Exact failure: `evidence/RECONCILIATION.md missing required marker: Dependency security: CLOSED`.
+- Cause: the verifier matched one exact presentation string while the canonical document represented the same fact as Markdown (`**Dependency security:** CLOSED`).
+- Impact: correct canonical state was rejected because assurance logic depended on typography rather than semantic markers.
+- Mitigation: validate stable semantic tokens (`Dependency security` and `CLOSED`) independently and keep cross-state assertions for stale-risk detection.
+- Lesson: **assurance should be stricter about truth, not brittle about formatting. A false negative is still a real verifier failure and remains in the record.**
