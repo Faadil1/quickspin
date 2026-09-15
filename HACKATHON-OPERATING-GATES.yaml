@@ -14,6 +14,15 @@ required_core_cycle:
   - DEMO
   - QA
 
+winning_intelligence_cycle:
+  - QUALIFY
+  - DECIDE
+  - DISTINCTION_GATE
+  - DESIGN
+  - DELIVER
+  - AUDIT
+  - EXPAND
+
 reality_anchor_pattern:
   - SIGNAL_POSITIVE_OPPORTUNITY
   - REAL_NEGATIVE_EVENT
@@ -26,6 +35,7 @@ terminal_sequence:
   - REQUIREMENTS_EVIDENCE_ARTIFACTS_RISKS_PROJECT_STATE_ACTUAL_BUILD_RECONCILIATION
   - RUNTIME_VISUAL_PROOF_LOCK
   - DEMO_VIDEO_QA_LOCK
+  - COMMONS_PUBLISH_ATTACH_SUBMISSION_LOCK
   - SUBMISSION_PACKAGE_LOCK
   - BUILD_READINESS
   - HANDOFF_TO_FINISHER
@@ -78,8 +88,8 @@ gates:
   - id: G08
     name: DISTINCTION
     pass_when: Differentiator is execution-coupled rather than a cosmetic spinner replacement.
-    status: PASS
-    evidence: evidence/RUBRIC-TRACEABILITY.md
+    status: PASS_STRENGTHENED_BY_WI_V2
+    evidence: evidence/WINNING-INTELLIGENCE-V2.md
 
   - id: G09
     name: CLAIM_EVIDENCE_RECONCILIATION
@@ -90,8 +100,7 @@ gates:
   - id: G10
     name: BUILD_CORRECTNESS
     pass_when: Typecheck, formatting, tests, judge evidence verifier, SDK build, and demo build pass.
-    status: PASS
-    evidence: github-actions:34929604542
+    status: PASS_PENDING_WI_V2_INDEPENDENT_PR_REVALIDATION
 
   - id: G11
     name: SECURITY_AND_PACKAGE_BOUNDARY
@@ -111,8 +120,8 @@ gates:
 
   - id: G14
     name: STATE_PERSISTENCE_INTEGRITY
-    pass_when: completed/failed/cancelled outcomes and engaged-play metrics remain semantically distinct.
-    status: PASS
+    pass_when: completed/failed/cancelled outcomes, execution trail, evidence coverage, and engaged-play metrics remain semantically distinct.
+    status: PASS_IMPLEMENTED_PENDING_WI_V2_PR_VALIDATION
 
   - id: G15
     name: UX_UI_AND_DOMAIN_NATIVE_VISUAL
@@ -123,13 +132,13 @@ gates:
   - id: G16
     name: PUBLIC_RUNTIME
     pass_when: Deployment returns a real page URL and that URL is externally fetched/exercised.
-    status: PENDING_REPOSITORY_PAGES_ENABLEMENT
-    evidence: github-actions:34929705731
+    status: PASS_VERIFIED_VERCEL_RUNTIME
+    evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
 
   - id: G17
     name: DEMO_PATH
-    pass_when: Happy path, Wait Receipt, negative path, and UNKNOWN rule are demonstrable from the candidate runtime.
-    status: PASS_PENDING_CAPTURE_AND_PUBLIC_RUNTIME
+    pass_when: Happy path, Evidence Capsule, Wait Receipt, negative path, UNKNOWN rule, and host intervention acknowledgement are demonstrable from the candidate runtime.
+    status: IMPLEMENTED_PENDING_WI_V2_RUNTIME_DEPLOY_AND_CAPTURE
 
   - id: G18
     name: VIDEO
@@ -169,13 +178,27 @@ gates:
     pass_when: All blocking final gates pass; only then may readiness promote beyond BUILD_CANDIDATE_READY_WITH_LIMITATIONS and PROJECT_COMPLETE become true.
     status: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 
+  - id: G25
+    name: WINNING_INTELLIGENCE_V2_DISTINCTION
+    pass_when: Judge memory sentence, product metaphor, signature behavior, public competitor differentiation, anti-slop kill list, and evidence-capsule moat are explicit and implemented.
+    status: IMPLEMENTED_PENDING_INDEPENDENT_PR_CI_CODEQL
+    evidence: evidence/WINNING-INTELLIGENCE-V2.md
+
+  - id: G26
+    name: COMMONS_SUBMISSION_LOCK
+    pass_when: The project is visibly published/attached/submitted through the required Commonsmade hackathon flow and final links match the verified candidate.
+    status: PENDING_HUMAN_PLATFORM_PROOF
+
 blocking_final_gates:
-  - PUBLIC_RUNTIME
+  - WI_V2_PRODUCT_DELTA_PR_VALIDATION
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
   - VIDEO_CAPTURE
   - QA_LIVE_REHEARSAL
+  - COMMONS_SUBMISSION_LOCK
   - SUBMISSION_PACKAGE_FINAL_LINK_LOCK
   - TERMINAL_RECONCILIATION_AND_FINAL_QC
 
 nonblocking_evidence_gap:
   - BROADER_USER_VALIDATION_OF_PERCEIVED_WAIT_EFFECT
+  - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
+  - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED

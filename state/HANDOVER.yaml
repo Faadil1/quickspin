@@ -1,24 +1,28 @@
 project: QuickSpin
-workstream: FINAL_QC_AND_SUBMISSION_FINISHER
-source_main_sha: c21eb03bb1cdcb0f18816000624dfaad38ebe965
-candidate_branch: final-judge-package
+workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
+source_main_sha: 54421421a0903ebdf3431204aca43706c9a267af
+candidate_branch: winning-intelligence-v2
 objective: >-
-  Finish runtime proof, visual inspection, demo/video capture, live Q&A rehearsal,
-  submission lock, and terminal reconciliation without changing product truth.
+  Strengthen QuickSpin's judge-visible differentiation before the next UI/UX pass by
+  turning observed execution provenance into a portable Evidence Capsule, preserving
+  UNKNOWN/failure truth, adding a host-observation bridge and host-acknowledged
+  intervention contract, then revalidating all canonical gates.
 
 current_truth:
-  main_is_last_merged_canonical_base: true
-  final_candidate_is_isolated_on_branch: true
-  branch_requires_ci_before_merge: true
+  upstream_opeblow_contains_previous_handoff: true
+  candidate_is_isolated_on_branch: true
+  branch_requires_independent_ci_and_codeql_before_merge: true
   project_complete: false
   readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
   security_gate: PASS_ZERO_NPM_AUDIT
   real_external_negative_event: PASS_PRIMARY_SOURCE
   runtime_negative_path: PASS
   unknown_abstention: PASS
-  public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME
+  winning_intelligence_v2: IMPLEMENTED_PENDING_INDEPENDENT_PR_CI_CODEQL
 
 proof_paths:
+  - evidence/WINNING-INTELLIGENCE-V2.md
   - evidence/REALITY-ANCHOR.md
   - evidence/FAILURE-LEDGER.md
   - evidence/CLAIM-LEDGER.md
@@ -30,26 +34,41 @@ proof_paths:
   - evidence/JUDGE-QA.md
   - evidence/Q&A-REHEARSAL.md
   - evidence/VISUAL-JURY-REVIEW.md
+  - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
   - demo.md
 
+product_deltas:
+  - persistent_execution_trail
+  - Evidence_Capsule_v1
+  - transparent_evidence_coverage_counts
+  - host_observe_bridge_without_inference
+  - host_intervention_intent_with_explicit_ack_or_reject
+  - capsule_json_export
+  - demo_signature_path_accepted_signal_unknown_intervention_capsule
+
 blocking_open_items:
-  - enable_and_verify_public_runtime
+  - validate_wi_v2_pr_ci_and_codeql
+  - deploy_wi_v2_candidate_and_reverify_routes
   - inspect_final_runtime_desktop_mobile_and_reduced_motion
-  - capture_wait_receipt_and_negative_path_video
+  - capture_wait_receipt_capsule_and_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
+  - obtain_commonsmade_publish_attach_submit_proof
   - lock_final_submission_urls_assets_copy
   - rerun_terminal_reconciliation_and_final_qc
 
-nonblocking_open_item:
+nonblocking_open_items:
   - broader_user_validation_of_perceived_wait_effect
+  - exhaustive_commons_submission_gallery_not_publicly_indexable
+  - live_provider_integration_not_claimed
 
 next_action: >-
-  Obtain a real public runtime URL first. Do not use an expected hostname as evidence.
-  Then inspect rendering, capture the final demo, rehearse Q&A, lock submission links,
-  run canonical verification, and only then decide whether PROJECT_COMPLETE may promote.
+  Open the WI V2 PR and require independent CI + CodeQL. If green, merge to the fork,
+  deploy/reverify the public candidate, prepare a frozen Opeyemi handoff, then resume
+  TRACE/UI work only after the product distinction gate is stable.
 
 rollback: >-
-  Close/delete final-judge-package and keep main at c21eb03bb1cdcb0f18816000624dfaad38ebe965
-  if finalizer changes fail or create unacceptable scope risk.
+  Close winning-intelligence-v2 and keep the previous future-classic runtime as the
+  production fallback if the P0 differentiation changes fail verification or create
+  unacceptable scope risk.

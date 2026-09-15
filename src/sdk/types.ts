@@ -9,6 +9,7 @@ export type SessionStatus =
   | "destroyed";
 
 export type EndReason = "ai-complete" | "player-failed" | "cancelled";
+export type SessionOutcome = "completed" | "cancelled" | "failed" | "unknown";
 
 export type ExecutionSignalKind = "retrieval" | "tool" | "artifact" | "warning";
 
@@ -22,6 +23,81 @@ export interface ExecutionSignal {
   label: string;
   /** Host-owned trace/provenance reference. Missing evidence is rejected as UNKNOWN. */
   evidenceRef: string;
+}
+
+export interface HostObservation {
+  /** Optional host-observed phase. QuickSpin does not derive this value. */
+  phase?: string;
+  /** Optional host-observed execution signal with provenance. */
+  signal?: ExecutionSignal;
+}
+
+export type InterventionKind = "cancel" | "retry" | "refine" | "custom";
+
+/** An intent raised from the waiting surface. It is not an executed action yet. */
+export interface InterventionIntent {
+  kind: InterventionKind;
+  label?: string;
+  payload?: unknown;
+}
+
+/** The host-visible form of an intervention request. */
+export interface HostIntervention extends InterventionIntent {
+  id: string;
+  atMs: number;
+}
+
+/** Only the host can acknowledge whether an intervention was actually accepted. */
+export interface InterventionResult {
+  id: string;
+  accepted: boolean;
+  reason?: string;
+  evidenceRef?: string;
+}
+
+export type ExecutionTrailEntryType =
+  "phase" | "signal" | "signal-rejected" | "intervention" | "intervention-result";
+
+/** Portable, post-run evidence. Entries are facts QuickSpin observed from its own contract. */
+export interface ExecutionTrailEntry {
+  type: ExecutionTrailEntryType;
+  atMs: number;
+  phase?: string;
+  signal?: ExecutionSignal;
+  reason?: string;
+  intervention?: HostIntervention;
+  interventionResult?: InterventionResult;
+}
+
+/** Transparent counts only. This is not a synthetic quality/confidence score. */
+export interface EvidenceCoverage {
+  phaseChanges: number;
+  acceptedSignals: number;
+  rejectedSignals: number;
+  uniqueEvidenceRefs: number;
+  interventions: number;
+  acceptedInterventions: number;
+  rejectedInterventions: number;
+}
+
+/**
+ * A portable post-run record of the wait. “Capsule” means evidence bundle,
+ * not a cryptographic signature.
+ */
+export interface WaitCapsule {
+  version: 1;
+  recordId: string;
+  outcome: SessionOutcome;
+  actualWaitMs: number;
+  engagedPlayMs: number;
+  gameId: string | null;
+  score: number | null;
+  feltWaitMs: number | null;
+  failureCode: string | null;
+  failureMessage: string | null;
+  evidenceCoverage: EvidenceCoverage;
+  trail: ExecutionTrailEntry[];
+  ts: number;
 }
 
 export interface GameResult {
@@ -49,11 +125,14 @@ export interface WaitEvent {
     | "progress"
     | "signal"
     | "signal-rejected"
+    | "intervention"
+    | "intervention-result"
     | "game-start"
     | "score"
     | "session-complete"
     | "perceived-wait"
     | "receipt"
+    | "capsule"
     | "cancel"
     | "fail";
   data?: unknown;
@@ -92,6 +171,13 @@ export interface WaitSession {
    * from the host's real runtime; QuickSpin does not infer or fabricate signals.
    */
   signal(signal: ExecutionSignal): boolean;
+  /** Convenience bridge for events the host already observed. No inference is added. */
+  observe(observation: HostObservation): boolean;
+  /**
+   * Raise an intent to the host. QuickSpin records the request but never claims
+   * it executed unless the host explicitly acknowledges it.
+   */
+  intervene(intent: InterventionIntent): Promise<InterventionResult>;
   /** Mark the AI wait over and hand off to the response. */
   complete(): void;
   cancel(): void;
@@ -107,6 +193,10 @@ export interface QuickSpinController {
   hide(): void;
   destroy(): void;
   on(handler: WaitEventHandler): () => void;
+  /** Last terminal Evidence Capsule created by this controller. */
+  getLastCapsule(): WaitCapsule | null;
+  /** JSON export of the last capsule, or null before a terminal outcome. */
+  exportLastCapsule(): string | null;
   readonly status: SessionStatus;
 }
 
@@ -120,6 +210,8 @@ export interface CreateQuickSpinOptions {
    * before this threshold without flashing game UI. Defaults to 650ms.
    */
   delayMs?: number;
+  /** Host authority for waiting-surface intervention intents. */
+  onIntervention?: (intent: HostIntervention) => InterventionResult | Promise<InterventionResult>;
   /** Called with the chosen plan when a host page asks the user to check out. */
   onCheckout?: (planId: string) => Promise<{ ok: boolean; paymentId?: string }>;
 }

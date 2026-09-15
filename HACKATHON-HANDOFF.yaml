@@ -1,8 +1,8 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: JUDGE_ASSURANCE_NEGATIVE_PATH
-to: FINAL_QC_AND_SUBMISSION_FINISHER
-handoff_status: ACTIVE_WITH_BLOCKING_FINAL_GATES
+from: FINAL_QC_AND_SUBMISSION_FINISHER
+to: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
+handoff_status: ACTIVE_WITH_BLOCKING_WI_V2_AND_FINAL_GATES
 readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
@@ -14,16 +14,21 @@ what_is_verified:
   - controlled_real_promise_rejection_negative_path
   - unknown_insufficient_evidence_signal_rejection
   - execution_signal_gameplay_tests
-  - signed_wait_receipt
+  - truthful_wait_receipt_with_signed_delta_direction_not_crypto_signature
   - dependency_security_zero_full_and_production_audit
   - package_boundary_no_dev_toolchain_leak
-  - node_22_24_ci_green
-  - codeql_green
-  - typecheck_format_tests_sdk_build_demo_build
-  - qa_bank_and_rehearsal_pack_prepared
-  - submission_copy_draft_prepared
+  - node_22_24_ci_green_pre_wi_v2
+  - codeql_green_pre_wi_v2
+  - future_classic_multi_page_runtime_live
+  - five_public_routes_http_200
+  - public_competitor_scan_vibequest_mochi_with_non_exhaustive_boundary
+  - winning_intelligence_v2_distinction_assets_created
+  - evidence_capsule_product_delta_implemented_pending_independent_pr_validation
+  - host_observe_bridge_implemented_pending_independent_pr_validation
+  - host_intervention_ack_contract_implemented_pending_independent_pr_validation
 
 canonical_evidence:
+  - evidence/WINNING-INTELLIGENCE-V2.md
   - evidence/REALITY-ANCHOR.md
   - evidence/FAILURE-LEDGER.md
   - evidence/RUBRIC-TRACEABILITY.md
@@ -34,25 +39,32 @@ canonical_evidence:
   - evidence/JUDGE-QA.md
   - evidence/Q&A-REHEARSAL.md
   - evidence/CLAIM-LEDGER.md
+  - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
-  - enable_and_verify_public_runtime_returned_page_url
-  - inspect_final_runtime_desktop_and_mobile
-  - capture_negative_path_and_wait_receipt_demo_video
+  - validate_wi_v2_with_independent_pr_ci_and_codeql
+  - redeploy_wi_v2_and_verify_public_routes
+  - inspect_final_runtime_desktop_mobile_and_reduced_motion
+  - capture_evidence_capsule_negative_path_and_wait_receipt_demo_video
   - perform_live_qa_rehearsal_against_claim_ledger
+  - obtain_commonsmade_publish_attach_submit_proof
   - lock_submission_runtime_repo_video_copy_and_evidence_links
   - run_terminal_reconciliation_and_final_qc
 
 nonblocking_followup:
   - broader_user_validation_of_perceived_wait_effect
+  - exhaustive_commons_submission_gallery_not_publicly_indexable
+  - live_provider_integration_not_claimed
 
 forbidden_claims:
   - QuickSpin reduces provider latency
   - every wait feels shorter
   - controlled demo failure is a live provider outage
-  - expected_pages_hostname_is_a_verified_runtime
+  - Evidence Capsule is cryptographically signed
+  - host intervention intent means the host executed the action without acknowledgement
+  - public competitor scan covers every Commonsmade applicant
   - npm package is published without registry evidence
   - hosted analytics exist today
   - absolute_security_complete
@@ -64,4 +76,4 @@ failure_policy:
   preserve_red_runs: true
   unknown_policy: NO_EVIDENCE_NO_CLAIM
 
-rollback: Finalization stays isolated on final-judge-package until final checks are green; main remains the last merged canonical base.
+rollback: Close winning-intelligence-v2 and keep the prior future-classic Vercel runtime as the verified fallback if the WI V2 deltas fail independent validation or create unacceptable scope risk.

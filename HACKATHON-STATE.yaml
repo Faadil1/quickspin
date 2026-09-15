@@ -1,25 +1,18 @@
 project: QuickSpin
 framework: HACKATHON_STATE
-canonical_main_sha: c21eb03bb1cdcb0f18816000624dfaad38ebe965
-candidate_branch: final-judge-package
+canonical_main_sha: 54421421a0903ebdf3431204aca43706c9a267af
+candidate_branch: winning-intelligence-v2
 candidate_head_policy: TRACK_BRANCH_HEAD
 state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
 orchestration_route:
-  canonical_sequence:
-    - HOI
-    - CHIEF_OF_STAFF
-    - PROJECT_AUTHORIZATION
-    - PBPD
-    - PROJECT_FINISHER
-    - HUMAN_SUBMIT
-    - POST_MORTEM
+  canonical_sequence: [HOI, CHIEF_OF_STAFF, PROJECT_AUTHORIZATION, PBPD, PROJECT_FINISHER, HUMAN_SUBMIT, POST_MORTEM]
   HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT
   CHIEF_OF_STAFF: UNKNOWN_IN_REPO_LEGACY_IMPORT
   PROJECT_AUTHORIZATION: VERIFIED_EXTERNAL_CONTEXT_NOT_REPO_LOCAL
   PBPD: ACTIVE_PASS_WITH_CONDITIONS
-  PROJECT_FINISHER: ACTIVE
+  PROJECT_FINISHER: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
   HUMAN_SUBMIT: PENDING_HUMAN_ACTION
   POST_MORTEM: PENDING_AFTER_SUBMISSION
 
@@ -27,12 +20,21 @@ cycle:
   RUBRIC: PASS
   PAIN: PASS
   PROBLEM: PASS
-  DIFFERENTIATOR: PASS
-  EXECUTION: PASS
+  DIFFERENTIATOR: PASS_STRENGTHENED_WI_V2
+  EXECUTION: PASS_INDEPENDENT_PR_CI_CODEQL
   EVIDENCE: PASS_WITH_LIMITATIONS
-  STORY: PASS
-  DEMO: PASS_PENDING_CAPTURE_AND_LIVE_RUNTIME
+  STORY: PASS_STRENGTHENED_WI_V2
+  DEMO: IMPLEMENTED_PENDING_WI_V2_DEPLOY_AND_CAPTURE
   QA: PREPARED_PENDING_LIVE_REHEARSAL
+
+winning_intelligence_cycle:
+  QUALIFY: PASS
+  DECIDE: PASS
+  DISTINCTION_GATE: PASS_VALIDATED
+  DESIGN: PASS_PRODUCT_CONTRACT_DELTA
+  DELIVER: PASS_INDEPENDENT_PR_CI_CODEQL
+  AUDIT: PASS_PRODUCT_DELTA_PENDING_RUNTIME_REFRESH
+  EXPAND: STOP_AFTER_VALIDATION_UNLESS_NEW_HIGH_SIGNAL_EVIDENCE
 
 reality_pattern:
   signal_positive_opportunity: PASS
@@ -52,13 +54,17 @@ judge_performance_assurance:
 gates:
   eligibility_and_rubric_fit: PASS
   pain_reality_grounding: PASS
+  concrete_real_negative_event: PASS
   real_negative_event: PASS_PRIMARY_SOURCE
   observable_impact: PASS
   design_implication: PASS
   mitigation_scope_honesty: PASS
   real_failure_gt_fake_success: PASS
   unknown_abstention: PASS
-  distinction: PASS
+  distinction: PASS_STRENGTHENED_BY_WI_V2
+  evidence_capsule: PASS_IMPLEMENTED_AND_TESTED
+  host_observation_bridge: PASS_IMPLEMENTED_AND_TYPECHECKED
+  host_intervention_ack_contract: PASS_IMPLEMENTED_AND_TYPECHECKED
   judge_coverage: PASS
   critical_path_assurance: PASS_WITH_RUNTIME_RENDER_PROOF_PENDING
   technical_ownership: PASS_WITH_REHEARSAL_PENDING
@@ -66,8 +72,8 @@ gates:
   claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
   security_dependency: PASS_ZERO_NPM_AUDIT
   supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME
-  code_correctness: PASS
-  codeql: PASS
+  code_correctness: PASS_CI_35000563352_NODE_22_24_35_TESTS
+  codeql: PASS_35000563920
   package_boundary: PASS
   accessibility_input_parity: PASS_WITH_EXISTING_TEST_AND_IMPLEMENTATION_EVIDENCE
   reduced_motion: PASS_IN_IMPLEMENTATION_PENDING_RUNTIME_INSPECTION
@@ -75,29 +81,33 @@ gates:
   failure_persistence: PASS
   rollback_recoverability: PASS_BRANCH_AND_LEDGER_MODEL
   ux_ui: PASS_WITH_CONDITIONS_PENDING_RUNTIME_INSPECTION
-  public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT
-  demo_path: PASS_PENDING_CAPTURE_AND_PUBLIC_RUNTIME
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_WI_V2
+  demo_path: IMPLEMENTED_PENDING_WI_V2_DEPLOY_AND_CAPTURE
   video: PENDING_CAPTURE
   qa_rehearsal: PREPARED_PENDING_LIVE_REHEARSAL
+  commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF
   submission_package: DRAFT_READY_PENDING_FINAL_LINKS
   license_ip_third_party_claims: PASS_WITH_NO_NEW_UNVERIFIED_ASSET_CLAIMS
   broader_user_validation: OPEN_NONBLOCKING
   verification_before_completion: PASS_WITH_CONDITIONS
   build_readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
-  handoff_to_finisher: ACTIVE
-  final_qc: ACTIVE
+  handoff_to_finisher: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
+  final_qc: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
   project_complete_gate: BLOCKED_UNTIL_ALL_BLOCKING_GATES_PASS
 
 blocking_remaining:
-  - PUBLIC_DEPLOYMENT_PROOF
+  - WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
   - NEGATIVE_PATH_VIDEO_CAPTURE
   - QA_LIVE_REHEARSAL
+  - COMMONS_SUBMISSION_LOCK
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
 
 nonblocking_open_items:
   - BROADER_USER_VALIDATION
   - STRICT_INSTALL_SCRIPT_POLICY_OPTIONAL_HARDENING
   - UPSTREAM_ORCHESTRATION_PROVENANCE_NOT_REPO_LOCAL
+  - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
+  - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED
 
-next_decision: Enable and verify the public runtime, then lock visual proof, capture, live Q&A rehearsal, and submission links before any PROJECT_COMPLETE promotion.
+next_decision: Merge the independently validated WI V2 candidate, redeploy the exact merge SHA, and reverify public routes before returning to the next-level visual polish pass.

@@ -1,6 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 
 const required = {
+  "evidence/WINNING-INTELLIGENCE-V2.md": [
+    "Distinction Gate",
+    "Evidence Capsule",
+    "Flight recorder for playable AI waiting",
+    "COMMONS_SUBMISSION_LOCK",
+    "Maximum 3 product-differentiation iterations",
+  ],
   "evidence/REALITY-ANCHOR.md": [
     "Signal positif / opportunité",
     "Événement négatif concret, réel et vérifiable",
@@ -19,6 +26,11 @@ const required = {
     "F-10",
     "F-11",
     "F-12",
+    "F-13",
+    "F-14",
+    "34999196264",
+    "34999396864",
+    "35000339670",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -96,38 +108,64 @@ const required = {
     "value before technology",
   ],
   "state/CANONICAL-STATE.yaml": [
-    "workstream: FINAL_QC_AND_SUBMISSION_FINISHER",
+    "workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
+    "winning_intelligence_cycle:",
+    "status: PASS_INDEPENDENT_PR_CI_CODEQL",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
+    "EVIDENCE_CAPSULE_IS_NOT_A_CRYPTOGRAPHIC_SIGNATURE",
+    "HOST_INTERVENTION_INTENT_IS_NOT_EXECUTION_UNTIL_ACKNOWLEDGED",
     "project_complete: false",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_WI_V2",
     "runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58",
     "runtime_url: https://quickspin-runtime.vercel.app",
     "visual_architecture: FUTURE_CLASSIC_MULTI_PAGE",
+    "commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF",
   ],
-  "state/HANDOVER.yaml": ["FINAL_QC_AND_SUBMISSION_FINISHER", "project_complete: false", "rollback"],
+  "state/HANDOVER.yaml": [
+    "WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
+    "Evidence_Capsule_v1",
+    "commonsmade_publish_attach_submit_proof",
+    "project_complete: false",
+    "rollback",
+  ],
   ".pbpd/state/ACTIVITY-TRACE.yaml": [
-    "workstream: FINAL_QC_AND_SUBMISSION_FINISHER",
-    "handoff-to-finisher",
+    "workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
+    "winning-intelligence-v2-distinction-gate",
+    "winning-intelligence-v2-migration-assurance",
+    "COMMONS_SUBMISSION_LOCK",
     "PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION",
   ],
   "HACKATHON-STATE.yaml": [
     "BUILD_CANDIDATE_READY_WITH_LIMITATIONS",
     "project_complete: false",
+    "winning_intelligence_cycle:",
     "concrete_real_negative_event: PASS",
-    "handoff_to_finisher: ACTIVE",
+    "distinction: PASS_STRENGTHENED_BY_WI_V2",
+    "evidence_capsule: PASS_IMPLEMENTED_AND_TESTED",
+    "host_observation_bridge: PASS_IMPLEMENTED_AND_TYPECHECKED",
+    "host_intervention_ack_contract: PASS_IMPLEMENTED_AND_TYPECHECKED",
+    "code_correctness: PASS_CI_35000563352_NODE_22_24_35_TESTS",
+    "codeql: PASS_35000563920",
+    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_WI_V2",
+    "commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF",
     "HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT",
     "judge_coverage: PASS",
     "supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME",
   ],
   "HACKATHON-HANDOFF.yaml": [
-    "ACTIVE_WITH_BLOCKING_FINAL_GATES",
-    "forbidden_claims",
+    "WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
+    "ACTIVE_WITH_BLOCKING_WI_V2_AND_FINAL_GATES",
+    "Evidence Capsule is cryptographically signed",
+    "public competitor scan covers every Commonsmade applicant",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
   ],
   "HACKATHON-OPERATING-GATES.yaml": [
     "REAL_NEGATIVE_EVENT",
     "UNKNOWN_ABSTENTION",
     "PUBLIC_RUNTIME",
+    "PASS_VERIFIED_VERCEL_RUNTIME",
+    "WINNING_INTELLIGENCE_V2_DISTINCTION",
+    "COMMONS_SUBMISSION_LOCK",
     "SUBMISSION_PACKAGE",
     "PROJECT_COMPLETE",
   ],
@@ -150,6 +188,7 @@ const reconciliation = loaded.get("evidence/RECONCILIATION.md");
 const claims = loaded.get("evidence/CLAIM-LEDGER.md");
 const orchestration = loaded.get("evidence/ORCHESTRATION-JPA.md");
 const runtime = loaded.get("evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md");
+const operatingGates = loaded.get("HACKATHON-OPERATING-GATES.yaml");
 
 for (const [name, text] of [
   ["state/CANONICAL-STATE.yaml", canonical],
@@ -165,6 +204,18 @@ if (canonical.includes("DEPENDENCY_VULNERABILITY_RECONCILIATION")) {
 if (canonical.includes("PUBLIC_DEPLOYMENT_PROOF\n")) {
   throw new Error("canonical state still lists public deployment proof as an open blocker");
 }
+if (canonical.includes("candidate_branch: final-judge-package")) {
+  throw new Error("canonical state still points to the pre-WI-v2 candidate branch");
+}
+if (hackathon.includes("evidence_capsule: IMPLEMENTED_PENDING_PR_VALIDATION")) {
+  throw new Error("hackathon state regressed Evidence Capsule to its pre-validation state");
+}
+if (hackathon.includes("public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT")) {
+  throw new Error("hackathon state regressed the verified Vercel runtime to the historical Pages blocker");
+}
+if (operatingGates.includes("status: PENDING_REPOSITORY_PAGES_ENABLEMENT")) {
+  throw new Error("operating gates still treat the historical Pages failure as the current runtime state");
+}
 if (reconciliation.includes("Dependency audit open")) {
   throw new Error("reconciliation still describes the closed dependency audit as open");
 }
@@ -177,6 +228,18 @@ if (runtime.includes("83da2b807e2072bde30a76c72937c3cbe74ff389")) {
 if (existsSync(".github/workflows/final-judge-patch.yml")) {
   throw new Error("one-shot final judge patch workflow must not remain active after successful migration");
 }
+if (existsSync(".github/workflows/apply-wi-v2.yml")) {
+  throw new Error("one-shot Winning Intelligence migration workflow must be removed after success");
+}
+if (existsSync(".github/workflows/format-wi-v2.yml")) {
+  throw new Error("one-shot Winning Intelligence formatter must be removed after success");
+}
+if (
+  existsSync("scripts/apply-winning-intelligence-v2.mjs") ||
+  existsSync("scripts/apply-winning-intelligence-v2-fixed.mjs")
+) {
+  throw new Error("temporary Winning Intelligence migration scripts must not ship in the candidate");
+}
 if (!orchestration.includes("HUMAN SUBMIT") || !orchestration.includes("POST-MORTEM")) {
   throw new Error("orchestration trace does not preserve terminal human-submit/post-mortem stages");
 }
@@ -184,4 +247,6 @@ if (!orchestration.includes("UNKNOWN_IN_REPO")) {
   throw new Error("orchestration trace must preserve missing upstream repo evidence as UNKNOWN_IN_REPO");
 }
 
-console.log(`judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`);
+console.log(
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`
+);
