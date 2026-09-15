@@ -38,7 +38,7 @@ function enhanceHome(app: HTMLElement): void {
     const memory = document.createElement("div");
     memory.className = "jury-memory-line";
     memory.innerHTML =
-      '<span>01 / PLAY</span><span>02 / VERIFY</span><strong>Verify afterward.</strong>';
+      "<span>01 / PLAY</span><span>02 / VERIFY</span><strong>Verify afterward.</strong>";
     display.insertAdjacentElement("afterend", memory);
   }
 
@@ -80,13 +80,13 @@ function enhanceLab(app: HTMLElement): void {
 
     const primary = document.createElement("div");
     primary.className = "lab-action-group lab-action-primary";
-    primary.innerHTML = '<span class="lab-action-label">RUN</span>';
+    primary.innerHTML = "<span class=\"lab-action-label\">RUN</span>";
     if (run) primary.appendChild(run);
     if (failure) primary.appendChild(failure);
 
     const proof = document.createElement("div");
     proof.className = "lab-action-group lab-action-proof";
-    proof.innerHTML = '<span class="lab-action-label">AFTER THE WAIT</span>';
+    proof.innerHTML = "<span class=\"lab-action-label\">AFTER THE WAIT</span>";
     if (capsule) proof.appendChild(capsule);
     if (ghost) proof.appendChild(ghost);
     if (replay) proof.appendChild(replay);
