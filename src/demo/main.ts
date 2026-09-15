@@ -491,9 +491,9 @@ function buildPage(): HTMLElement {
 <span class="tok-kw">const</span> session = quickSpin.start({ status: <span class="tok-str">"Reasoning…"</span> });
 session.setProgress();               <span class="tok-cmt">// indeterminate: do not fake a %</span>
 session.setPhase(<span class="tok-str">"Searching the web…"</span>); <span class="tok-cmt">// real phase drives game intensity</span>
-session.signal({ kind: <span class="tok-str">"retrieval"</span>, label: <span class="tok-str">"Retrieved 12 sources"</span> });
+session.signal({ kind: <span class="tok-str">"retrieval"</span>, label: <span class="tok-str">"Retrieved 12 sources"</span>, evidenceRef: <span class="tok-str">"run_123:retrieval_4"</span> });
 session.setPhase(<span class="tok-str">"Drafting…"</span>);
-session.signal({ kind: <span class="tok-str">"artifact"</span>, label: <span class="tok-str">"Draft assembled"</span> });
+session.signal({ kind: <span class="tok-str">"artifact"</span>, label: <span class="tok-str">"Draft assembled"</span>, evidenceRef: <span class="tok-str">"run_123:artifact_1"</span> });
 
 <span class="tok-kw">const</span> response = <span class="tok-kw">await</span> modelRequest();
 session.complete();                  <span class="tok-cmt">// receipt + handoff</span>
