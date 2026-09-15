@@ -103,3 +103,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Mitigation: make the deployment bootstrap idempotent with `rm -rf source dist-demo` before cloning and rebuilding the exact canonical SHA.
 - Recovery evidence: deployment `dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL` checked out `27de7b3b4119b6499eda79effccadf262028de58`, completed `npm ci` with 0 vulnerabilities, passed TypeScript + Vite build, reached `READY`, and all five canonical routes returned HTTP 200.
 - Lesson: **a green application build is not the same as an idempotent deployment pipeline. Build cache is state and must be handled explicitly.**
+
+## F-12 — Judge verifier still pinned the pre-refactor production SHA
+
+- Event: PR #10 CI run `34979638351` passed install, formatting, TypeScript typecheck, and all **33 tests** on Node 24, then failed at `npm run judge:verify`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34979638351
+- Exact failure: `evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md missing required marker: 83da2b807e2072bde30a76c72937c3cbe74ff389`.
+- Cause: runtime evidence had correctly moved to future-classic source SHA `27de7b3b4119b6499eda79effccadf262028de58`, but the assurance script still hard-coded the older pre-refactor SHA.
+- Impact: correct new runtime evidence was rejected because verifier provenance had not advanced with the canonical runtime.
+- Mitigation: update `judge:verify` to require the new source SHA, the new READY deployment id, all-five-route HTTP-200 proof, the future-classic state marker, and explicitly fail if the old runtime SHA reappears.
+- Lesson: **provenance locks must move atomically with canonical runtime promotion. A stale verifier is evidence drift, not a reason to weaken verification.**
