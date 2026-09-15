@@ -1,7 +1,7 @@
 project: QuickSpin
 framework: HACKATHON_STATE
-canonical_main_sha: 54421421a0903ebdf3431204aca43706c9a267af
-candidate_branch: winning-intelligence-v2
+canonical_main_sha_at_v3_start: 2ee56ce711e6ee495f38908b21767698da9fe394
+candidate_branch: winning-intelligence-v3-open-space
 candidate_head_policy: TRACK_BRANCH_HEAD
 state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
@@ -12,7 +12,7 @@ orchestration_route:
   CHIEF_OF_STAFF: UNKNOWN_IN_REPO_LEGACY_IMPORT
   PROJECT_AUTHORIZATION: VERIFIED_EXTERNAL_CONTEXT_NOT_REPO_LOCAL
   PBPD: ACTIVE_PASS_WITH_CONDITIONS
-  PROJECT_FINISHER: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
+  PROJECT_FINISHER: PAUSED_FOR_WI_V3_RUNTIME_REFRESH
   HUMAN_SUBMIT: PENDING_HUMAN_ACTION
   POST_MORTEM: PENDING_AFTER_SUBMISSION
 
@@ -20,21 +20,22 @@ cycle:
   RUBRIC: PASS
   PAIN: PASS
   PROBLEM: PASS
-  DIFFERENTIATOR: PASS_STRENGTHENED_WI_V2
+  DIFFERENTIATOR: PASS_STRENGTHENED_WI_V3_OPEN_SPACE
   EXECUTION: PASS_INDEPENDENT_PR_CI_CODEQL
   EVIDENCE: PASS_WITH_LIMITATIONS
-  STORY: PASS_STRENGTHENED_WI_V2
-  DEMO: IMPLEMENTED_PENDING_WI_V2_DEPLOY_AND_CAPTURE
+  STORY: PASS_STRENGTHENED_WI_V3
+  DEMO: V3_IMPLEMENTED_PENDING_DEPLOY_AND_CAPTURE
   QA: PREPARED_PENDING_LIVE_REHEARSAL
 
 winning_intelligence_cycle:
+  iteration: 3_OF_3
   QUALIFY: PASS
   DECIDE: PASS
-  DISTINCTION_GATE: PASS_VALIDATED
-  DESIGN: PASS_PRODUCT_CONTRACT_DELTA
+  DISTINCTION_GATE: PASS_OPEN_SPACE_HYPOTHESIS_IMPLEMENTED
+  DESIGN: PASS_CAPSULE_GHOST_REPLAY_DIFF_CONTRACT
   DELIVER: PASS_INDEPENDENT_PR_CI_CODEQL
   AUDIT: PASS_PRODUCT_DELTA_PENDING_RUNTIME_REFRESH
-  EXPAND: STOP_AFTER_VALIDATION_UNLESS_NEW_HIGH_SIGNAL_EVIDENCE
+  EXPAND: STOP_AFTER_V3_PROOF_UNLESS_NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE
 
 reality_pattern:
   signal_positive_opportunity: PASS
@@ -46,59 +47,51 @@ reality_pattern:
 
 judge_performance_assurance:
   judge_coverage: PASS
-  critical_path_assurance: PASS_WITH_RUNTIME_RENDER_PROOF_PENDING
+  critical_path_assurance: PASS_WITH_V3_RUNTIME_RENDER_PROOF_PENDING
   technical_ownership: PASS_WITH_REHEARSAL_PENDING
   session_continuity: PASS
-  source: evidence/ORCHESTRATION-JPA.md
 
 gates:
   eligibility_and_rubric_fit: PASS
-  pain_reality_grounding: PASS
   concrete_real_negative_event: PASS
-  real_negative_event: PASS_PRIMARY_SOURCE
-  observable_impact: PASS
-  design_implication: PASS
-  mitigation_scope_honesty: PASS
-  real_failure_gt_fake_success: PASS
   unknown_abstention: PASS
-  distinction: PASS_STRENGTHENED_BY_WI_V2
-  evidence_capsule: PASS_IMPLEMENTED_AND_TESTED
-  host_observation_bridge: PASS_IMPLEMENTED_AND_TYPECHECKED
-  host_intervention_ack_contract: PASS_IMPLEMENTED_AND_TYPECHECKED
-  judge_coverage: PASS
-  critical_path_assurance: PASS_WITH_RUNTIME_RENDER_PROOF_PENDING
-  technical_ownership: PASS_WITH_REHEARSAL_PENDING
-  session_continuity: PASS
-  claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
+  distinction: PASS_STRENGTHENED_BY_WI_V3_OPEN_SPACE
+  evidence_capsule: PASS_MERGED_V2
+  wait_ghost_redaction: PASS_IMPLEMENTED_AND_TESTED
+  wait_ghost_share: PASS_URL_HASH_NO_BACKEND_UPLOAD
+  wait_ghost_replay: PASS_HISTORICAL_NOT_LIVE_AI
+  wait_regression_diff: PASS_SIGNED_DELTAS_NO_WINNER_SCORE
+  intervention_payload_persistence: PASS_REDACTED
+  malformed_ghost_token: PASS_FAIL_CLOSED
   security_dependency: PASS_ZERO_NPM_AUDIT
   supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME
-  code_correctness: PASS_CI_35000563352_NODE_22_24_35_TESTS
-  codeql: PASS_35000563920
-  package_boundary: PASS
+  v2_code_correctness: PASS_FINAL_CI_35001906327
+  v2_codeql: PASS_FINAL_35001906289
+  v3_code_correctness: PASS_CI_35004024452_NODE_22_24_41_TESTS
+  v3_codeql: PASS_35004024601
   accessibility_input_parity: PASS_WITH_EXISTING_TEST_AND_IMPLEMENTATION_EVIDENCE
-  reduced_motion: PASS_IN_IMPLEMENTATION_PENDING_RUNTIME_INSPECTION
+  reduced_motion: PASS_IN_IMPLEMENTATION_PENDING_FINAL_RUNTIME_INSPECTION
   fast_response_anti_flash: PASS_IN_IMPLEMENTATION
   failure_persistence: PASS
   rollback_recoverability: PASS_BRANCH_AND_LEDGER_MODEL
-  ux_ui: PASS_WITH_CONDITIONS_PENDING_RUNTIME_INSPECTION
-  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_WI_V2
-  demo_path: IMPLEMENTED_PENDING_WI_V2_DEPLOY_AND_CAPTURE
+  ux_ui: PASS_WITH_CONDITIONS_PENDING_V3_RUNTIME_INSPECTION
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3
+  demo_path: V3_IMPLEMENTED_PENDING_DEPLOY_AND_CAPTURE
   video: PENDING_CAPTURE
   qa_rehearsal: PREPARED_PENDING_LIVE_REHEARSAL
   commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF
   submission_package: DRAFT_READY_PENDING_FINAL_LINKS
-  license_ip_third_party_claims: PASS_WITH_NO_NEW_UNVERIFIED_ASSET_CLAIMS
-  broader_user_validation: OPEN_NONBLOCKING
+  claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
   verification_before_completion: PASS_WITH_CONDITIONS
   build_readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
-  handoff_to_finisher: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
-  final_qc: PAUSED_FOR_WI_V2_RUNTIME_REFRESH
+  handoff_to_finisher: PAUSED_FOR_WI_V3_RUNTIME_REFRESH
+  final_qc: PAUSED_FOR_WI_V3_RUNTIME_REFRESH
   project_complete_gate: BLOCKED_UNTIL_ALL_BLOCKING_GATES_PASS
 
 blocking_remaining:
-  - WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
-  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
-  - NEGATIVE_PATH_VIDEO_CAPTURE
+  - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
+  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
+  - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
@@ -109,5 +102,6 @@ nonblocking_open_items:
   - UPSTREAM_ORCHESTRATION_PROVENANCE_NOT_REPO_LOCAL
   - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
   - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED
+  - WAIT_GHOST_OPEN_SPACE_EXCLUSIVITY_NOT_CLAIMED
 
-next_decision: Merge the independently validated WI V2 candidate, redeploy the exact merge SHA, and reverify public routes before returning to the next-level visual polish pass.
+next_decision: Merge the independently validated V3 candidate, deploy the exact merge SHA once, reverify five routes, then freeze product scope for TRACE visual-jury work.

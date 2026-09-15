@@ -1,33 +1,21 @@
 project: QuickSpin
 canonical_base:
   branch: main
-  sha_at_finisher_start: c21eb03bb1cdcb0f18816000624dfaad38ebe965
+  sha_at_v3_start: 2ee56ce711e6ee495f38908b21767698da9fe394
 candidate:
-  branch: winning-intelligence-v2
+  branch: winning-intelligence-v3-open-space
   head_policy: TRACK_BRANCH_HEAD
-workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
+workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE
 lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
-core_cycle:
-  - RUBRIC
-  - PAIN
-  - PROBLEM
-  - DIFFERENTIATOR
-  - EXECUTION
-  - EVIDENCE
-  - STORY
-  - DEMO
-  - QA
+core_cycle: [RUBRIC, PAIN, PROBLEM, DIFFERENTIATOR, EXECUTION, EVIDENCE, STORY, DEMO, QA]
 
 winning_intelligence_cycle:
-  - QUALIFY
-  - DECIDE
-  - DISTINCTION_GATE
-  - DESIGN
-  - DELIVER
-  - AUDIT
-  - EXPAND
+  iteration: 3
+  max_iterations: 3
+  stages: [QUALIFY, DECIDE, DISTINCTION_GATE, DESIGN, DELIVER, AUDIT, EXPAND]
+  expansion_policy: STOP_AFTER_V3_PROOF_UNLESS_NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE
 
 invariants:
   - REAL_FAILURE_GT_FAKE_SUCCESS
@@ -40,6 +28,9 @@ invariants:
   - EXPECTED_URL_IS_NOT_RUNTIME_EVIDENCE
   - EVIDENCE_CAPSULE_IS_NOT_A_CRYPTOGRAPHIC_SIGNATURE
   - HOST_INTERVENTION_INTENT_IS_NOT_EXECUTION_UNTIL_ACKNOWLEDGED
+  - FULL_CAPSULE_IS_PRIVATE_EVIDENCE_WAIT_GHOST_IS_REDACTED_DERIVATIVE
+  - GHOST_REPLAY_IS_NOT_LIVE_AI
+  - SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT
   - PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION
 
 verified_reality_pattern:
@@ -51,17 +42,32 @@ verified_reality_pattern:
   evidence: evidence/REALITY-ANCHOR.md
 
 winning_intelligence_v2:
-  status: PASS_INDEPENDENT_PR_CI_CODEQL
+  status: MERGED_AFTER_INDEPENDENT_CI_CODEQL
+  merge_sha: 98c87f409c8b4b9586ef398812fb4d995fd1b5da
   evidence: evidence/WINNING-INTELLIGENCE-V2.md
-  ci_run: 35000563352
-  codeql_run: 35000563920
+  final_ci_run: 35001906327
+  final_codeql_run: 35001906289
   test_count: 35
   judge_memory_sentence: QuickSpin turns AI waiting into a game you can verify afterward.
   product_metaphor: Flight recorder for playable AI waiting.
-  signature_path: OBSERVED_SIGNAL_TO_PLAY_TO_EVIDENCE_CAPSULE
-  counter_path: NO_EVIDENCE_TO_UNKNOWN_TO_NO_GAMEPLAY_CLAIM
+
+winning_intelligence_v3:
+  status: PASS_INDEPENDENT_PR_CI_CODEQL
+  evidence: evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
+  transient_validation_run: 35003001488
+  permanent_ci_run: 35004024452
+  permanent_codeql_run: 35004024601
+  test_count: 41
+  supporting_phrase: Private Capsule. Shareable Ghost. Comparable wait.
+  open_space_hypothesis: PRIVACY_SAFE_WAIT_REPLAY_SHARE_AND_REGRESSION_DIFF
   competitor_scan_scope: PUBLIC_WEB_OBSERVED_NOT_EXHAUSTIVE
-  max_iterations: 3
+  product_deltas:
+    - WAIT_GHOST_REDACTED_DERIVATIVE
+    - URL_HASH_SHARE_TOKEN_WITHOUT_BACKEND_UPLOAD
+    - DETERMINISTIC_HISTORICAL_REPLAY
+    - WAIT_TO_WAIT_SIGNED_DELTA_COMPARISON
+    - PERSISTED_INTERVENTION_PAYLOAD_REDACTION
+    - INVALID_SHARE_TOKEN_FAIL_CLOSED
 
 completed:
   - P0_P1_PRODUCT_PROOF_PASS
@@ -83,19 +89,19 @@ completed:
   - FUTURE_CLASSIC_MULTI_PAGE_ARCHITECTURE
   - ROUTES_HOME_LAB_PROOF_SDK_JUDGES_HTTP_200
   - FUTURE_CLASSIC_BUILD_CI_AND_CODEQL_GREEN
-  - WI_V2_PUBLIC_COMPETITOR_SCAN
-  - WI_V2_DISTINCTION_GATE
-  - EVIDENCE_CAPSULE_IMPLEMENTED
-  - EVIDENCE_COVERAGE_COUNTS_IMPLEMENTED
-  - HOST_OBSERVE_BRIDGE_IMPLEMENTED
-  - HOST_INTERVENTION_ACK_CONTRACT_IMPLEMENTED
-  - CAPSULE_JSON_EXPORT_IMPLEMENTED
-  - WI_V2_PRODUCT_DELTA_PR_CI_CODEQL_PASS
+  - WI_V2_PRODUCT_DELTA_PR_CI_CODEQL_PASS_AND_MERGE
+  - WI_V3_OPEN_SPACE_SCAN
+  - WAIT_GHOST_IMPLEMENTED
+  - WAIT_GHOST_PRIVACY_REDACTION_TESTS
+  - WAIT_GHOST_REPLAY_IMPLEMENTED
+  - WAIT_DIFF_IMPLEMENTED
+  - INTERVENTION_PAYLOAD_PERSISTENCE_REDACTED
+  - WI_V3_PRODUCT_DELTA_PR_CI_CODEQL_PASS
 
 open_blocking_gates:
-  - WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
-  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
-  - NEGATIVE_PATH_VIDEO_CAPTURE
+  - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
+  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
+  - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
@@ -104,15 +110,17 @@ open_nonblocking_evidence_gaps:
   - BROADER_USER_VALIDATION_OF_PERCEIVED_WAIT_EFFECT
   - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
   - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED
+  - EXCLUSIVITY_OF_WAIT_GHOST_OPEN_SPACE_NOT_CLAIMED
 
 closed_risks:
   dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT
-  one_shot_patch_workflow_noise: REMOVED_AFTER_FAILURE_RETENTION
-  public_deployment_proof: PASS_VERIFIED_VERCEL_RUNTIME
+  public_deployment_proof_pre_v3: PASS_VERIFIED_VERCEL_RUNTIME
   single_page_jury_compression_risk: MITIGATED_BY_MULTI_PAGE_ARCHITECTURE
   wi_v2_product_validation: PASS_CI_CODEQL_35_TESTS
+  wi_v3_product_validation: PASS_CI_CODEQL_41_TESTS
+  arbitrary_intervention_payload_persistence: CLOSED_V3_REDACTED_RECORD
 
-next_required_gate: WI_V2_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
+next_required_gate: WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
 
 terminal_sequence:
   - verification-before-completion
@@ -127,20 +135,15 @@ terminal_sequence:
   - project-complete-only-if-all-blocking-gates-pass
 
 security_gate: PASS_ZERO_NPM_AUDIT
-runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_WI_V2
+runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3
 runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58
 runtime_deployment_id: dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL
 runtime_url: https://quickspin-runtime.vercel.app
-runtime_routes_verified:
-  - /
-  - /lab
-  - /proof
-  - /sdk
-  - /judges
+runtime_routes_verified: [/, /lab, /proof, /sdk, /judges]
 runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
 visual_direction: SMOKED_PEARL_GRAPHITE_OXIDIZED_COPPER_ELECTRIC_SIGNAL
 visual_architecture: FUTURE_CLASSIC_MULTI_PAGE
-visual_gate: PASS_WITH_CONDITIONS_PENDING_PIXEL_LEVEL_DESKTOP_MOBILE_INSPECTION
+visual_gate: PASS_WITH_CONDITIONS_PENDING_V3_PIXEL_LEVEL_DESKTOP_MOBILE_INSPECTION
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
 commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF

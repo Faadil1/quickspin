@@ -1003,7 +1003,12 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       executionTrail.push({
         type: "intervention",
         atMs: hostIntent.atMs,
-        intervention: hostIntent,
+        intervention: {
+          id: hostIntent.id,
+          kind: hostIntent.kind,
+          label: hostIntent.label,
+          atMs: hostIntent.atMs,
+        },
       });
       emit({ type: "intervention", data: hostIntent });
       let result: InterventionResult;

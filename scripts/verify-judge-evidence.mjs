@@ -2,18 +2,19 @@ import { existsSync, readFileSync } from "node:fs";
 
 const required = {
   "evidence/WINNING-INTELLIGENCE-V2.md": [
-    "Distinction Gate",
     "Evidence Capsule",
     "Flight recorder for playable AI waiting",
-    "COMMONS_SUBMISSION_LOCK",
-    "Maximum 3 product-differentiation iterations",
+  ],
+  "evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md": [
+    "Private Capsule. Shareable Ghost. Comparable wait.",
+    "FULL CAPSULE IS PRIVATE EVIDENCE. WAIT GHOST IS A REDACTED DERIVATIVE.",
+    "GHOST REPLAY IS NOT LIVE AI.",
+    "SHOW THE DELTA. DO NOT INVENT THE VERDICT.",
+    "differentiation loop **3 / 3**",
+    "observed-open-space hypothesis",
   ],
   "evidence/REALITY-ANCHOR.md": [
-    "Signal positif / opportunité",
     "Événement négatif concret, réel et vérifiable",
-    "Impact observable",
-    "Leçon / implication design",
-    "Réponse / mitigation QuickSpin",
     "June 2–3, 2026",
     "REAL FAILURE > FAKE SUCCESS",
   ],
@@ -21,16 +22,15 @@ const required = {
     "Real failure > fake success",
     "DEMO_PROVIDER_TIMEOUT",
     "UNKNOWN counter-case",
-    "F-08",
-    "F-09",
-    "F-10",
-    "F-11",
-    "F-12",
-    "F-13",
-    "F-14",
-    "34999196264",
-    "34999396864",
-    "35000339670",
+    "F-15",
+    "F-16",
+    "F-17",
+    "F-18",
+    "35000815478",
+    "679860f0afc987bc024f5fbbd55d25bb716825f2",
+    "31a494459baf0dd907130578e7997641ef468078",
+    "35003001488",
+    "35004294002",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -44,129 +44,117 @@ const required = {
     "Q&A",
   ],
   "evidence/CYCLE-GATE-MATRIX.md": [
-    "Core judge/product cycle",
-    "Mandatory reality-anchor pattern",
-    "Failure-truth gates",
-    "Cross-cutting build gates",
-    "Terminal promotion sequence",
+    "Current iteration: **3 / 3**",
+    "V3 privacy/social contract",
+    "GHOST_REPLAY_IS_NOT_LIVE_AI",
+    "WAIT_DIFF_NO_SYNTHETIC_VERDICT",
     "Faadil Agent System + Judge Performance Assurance",
     "HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM",
-    "JUDGE COVERAGE",
-    "CRITICAL-PATH ASSURANCE",
-    "TECHNICAL OWNERSHIP",
-    "SESSION CONTINUITY",
   ],
   "evidence/ORCHESTRATION-JPA.md": [
     "HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM",
     "UNKNOWN_IN_REPO / LEGACY_IMPORT",
-    "Judge Coverage",
-    "Critical-Path Assurance",
-    "Technical Ownership",
-    "Session Continuity",
-    "DETERMINISTIC",
-    "PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE",
   ],
-  "evidence/RUBRIC-TRACEABILITY.md": ["AI-native fit", "Evidence honesty"],
+  "evidence/RUBRIC-TRACEABILITY.md": [
+    "AI-native fit",
+    "Evidence honesty",
+    "Private Capsule. Shareable Ghost. Comparable wait.",
+    "PRIVATE CAPSULE → REDACT → WAIT GHOST",
+  ],
   "evidence/RECONCILIATION.md": [
     "verification-before-completion",
     "BUILD_CANDIDATE_READY_WITH_LIMITATIONS",
     "Dependency security",
     "CLOSED",
-    "Public deployment proof",
   ],
   "evidence/GATE-REPORT.md": [
     "REAL NEGATIVE EVENT",
     "UNKNOWN / ABSTENTION",
-    "PASS_VERIFIED_PUBLIC_RUNTIME",
     "PROJECT_COMPLETE",
   ],
-  "evidence/JUDGE-QA.md": ["What happens if the AI request fails?"],
+  "evidence/JUDGE-QA.md": [
+    "What happens if the AI request fails?",
+    "What exactly is a Wait Ghost?",
+    "When you replay a Ghost, are you replaying the AI?",
+    "What does Compare tell me?",
+  ],
   "evidence/Q&A-REHEARSAL.md": ["Give me one concrete real-world failure", "QuickSpin"],
   "evidence/CLAIM-LEDGER.md": [
-    "REFUSED",
-    "UNKNOWN / NOT_CLAIMED",
-    "dependency-security gate is closed",
-    "public judge runtime is live",
-    "VERIFIED",
+    "Wait Ghost is derived from a full Wait Capsule",
+    "Wait Ghost replay is live AI | REFUSED",
+    "wait-to-wait diff decides a winner | REFUSED",
+    "WI V3 permanent PR CI/CodeQL is green | VERIFIED",
+    "public runtime already contains WI V3 Wait Ghost changes | UNKNOWN / NOT_CLAIMED",
   ],
   "evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md": [
     "PASS / PUBLIC_DEPLOYMENT_PROOF CLOSED",
     "https://quickspin-runtime.vercel.app",
-    "27de7b3b4119b6499eda79effccadf262028de58",
-    "dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL",
     "All five routes returned **HTTP 200 OK**",
   ],
   "evidence/security/SECURITY-GATE.md": ["PASS", "0 vulnerabilities"],
-  "evidence/security/SUPPLY-CHAIN-REVIEW.md": [
-    "REVIEWED_WARNING_NONRUNTIME",
-    "esbuild@0.28.2",
-    "not a shipped runtime dependency",
-  ],
   "submission/VIDEO-SHOT-LOCK.md": [
-    "Canonical narrative mapping",
     "PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE",
-    "value before technology",
   ],
   "state/CANONICAL-STATE.yaml": [
-    "workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
-    "winning_intelligence_cycle:",
+    "workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE",
+    "branch: winning-intelligence-v3-open-space",
+    "iteration: 3",
+    "max_iterations: 3",
+    "FULL_CAPSULE_IS_PRIVATE_EVIDENCE_WAIT_GHOST_IS_REDACTED_DERIVATIVE",
+    "GHOST_REPLAY_IS_NOT_LIVE_AI",
+    "SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT",
     "status: PASS_INDEPENDENT_PR_CI_CODEQL",
-    "REAL_FAILURE_GT_FAKE_SUCCESS",
-    "EVIDENCE_CAPSULE_IS_NOT_A_CRYPTOGRAPHIC_SIGNATURE",
-    "HOST_INTERVENTION_INTENT_IS_NOT_EXECUTION_UNTIL_ACKNOWLEDGED",
+    "transient_validation_run: 35003001488",
+    "permanent_ci_run: 35004024452",
+    "permanent_codeql_run: 35004024601",
+    "test_count: 41",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3",
     "project_complete: false",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_WI_V2",
-    "runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58",
-    "runtime_url: https://quickspin-runtime.vercel.app",
-    "visual_architecture: FUTURE_CLASSIC_MULTI_PAGE",
-    "commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF",
   ],
   "state/HANDOVER.yaml": [
-    "WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
-    "Evidence_Capsule_v1",
-    "commonsmade_publish_attach_submit_proof",
+    "workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE",
+    "candidate_branch: winning-intelligence-v3-open-space",
+    "Wait_Ghost_redacted_derivative",
+    "ghost_replay_emits_live_execution_signals: false",
     "project_complete: false",
     "rollback",
   ],
   ".pbpd/state/ACTIVITY-TRACE.yaml": [
-    "workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
-    "winning-intelligence-v2-distinction-gate",
-    "winning-intelligence-v2-migration-assurance",
-    "COMMONS_SUBMISSION_LOCK",
+    "workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE",
+    "v3-private-capsule-to-redacted-ghost-contract",
+    "v3-historical-replay-truth",
+    "v3-wait-regression-diff",
+    "v3-feature-freeze",
+    "github-actions:35003001488",
     "PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION",
   ],
   "HACKATHON-STATE.yaml": [
-    "BUILD_CANDIDATE_READY_WITH_LIMITATIONS",
+    "candidate_branch: winning-intelligence-v3-open-space",
+    "iteration: 3_OF_3",
+    "wait_ghost_redaction: PASS_IMPLEMENTED_AND_TESTED",
+    "wait_ghost_replay: PASS_HISTORICAL_NOT_LIVE_AI",
+    "wait_regression_diff: PASS_SIGNED_DELTAS_NO_WINNER_SCORE",
+    "v3_code_correctness: PASS_CI_35004024452_NODE_22_24_41_TESTS",
+    "v3_codeql: PASS_35004024601",
+    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3",
     "project_complete: false",
-    "winning_intelligence_cycle:",
-    "concrete_real_negative_event: PASS",
-    "distinction: PASS_STRENGTHENED_BY_WI_V2",
-    "evidence_capsule: PASS_IMPLEMENTED_AND_TESTED",
-    "host_observation_bridge: PASS_IMPLEMENTED_AND_TYPECHECKED",
-    "host_intervention_ack_contract: PASS_IMPLEMENTED_AND_TYPECHECKED",
-    "code_correctness: PASS_CI_35000563352_NODE_22_24_35_TESTS",
-    "codeql: PASS_35000563920",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_WI_V2",
-    "commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF",
-    "HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT",
-    "judge_coverage: PASS",
-    "supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME",
   ],
   "HACKATHON-HANDOFF.yaml": [
-    "WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
-    "ACTIVE_WITH_BLOCKING_WI_V2_AND_FINAL_GATES",
-    "Evidence Capsule is cryptographically signed",
-    "public competitor scan covers every Commonsmade applicant",
+    "to: WINNING_INTELLIGENCE_V3_OPEN_SPACE",
+    "differentiation_iteration: 3_OF_3",
+    "Wait Ghost replay is live AI",
+    "wait diff chooses a winner or quality score",
+    "no other applicant has replay_share_compare",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
   ],
   "HACKATHON-OPERATING-GATES.yaml": [
-    "REAL_NEGATIVE_EVENT",
-    "UNKNOWN_ABSTENTION",
-    "PUBLIC_RUNTIME",
-    "PASS_VERIFIED_VERCEL_RUNTIME",
-    "WINNING_INTELLIGENCE_V2_DISTINCTION",
+    "winning_intelligence_iteration: 3_OF_3",
+    "WINNING_INTELLIGENCE_V3_OPEN_SPACE",
+    "WAIT_GHOST_PRIVACY_REDUCTION",
+    "WAIT_GHOST_REPLAY_TRUTH",
+    "WAIT_DIFF_NO_SYNTHETIC_VERDICT",
+    "V3_FEATURE_FREEZE",
     "COMMONS_SUBMISSION_LOCK",
-    "SUBMISSION_PACKAGE",
     "PROJECT_COMPLETE",
   ],
 };
@@ -184,10 +172,8 @@ for (const [path, needles] of Object.entries(required)) {
 const canonical = loaded.get("state/CANONICAL-STATE.yaml");
 const hackathon = loaded.get("HACKATHON-STATE.yaml");
 const handoff = loaded.get("HACKATHON-HANDOFF.yaml");
-const reconciliation = loaded.get("evidence/RECONCILIATION.md");
 const claims = loaded.get("evidence/CLAIM-LEDGER.md");
 const orchestration = loaded.get("evidence/ORCHESTRATION-JPA.md");
-const runtime = loaded.get("evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md");
 const operatingGates = loaded.get("HACKATHON-OPERATING-GATES.yaml");
 
 for (const [name, text] of [
@@ -198,55 +184,43 @@ for (const [name, text] of [
   if (/project_complete:\s*true/.test(text)) throw new Error(`${name} illegally promotes PROJECT_COMPLETE`);
 }
 
-if (canonical.includes("DEPENDENCY_VULNERABILITY_RECONCILIATION")) {
-  throw new Error("canonical state still lists the closed dependency vulnerability reconciliation as open");
+if (canonical.includes("candidate:\n  branch: winning-intelligence-v2")) {
+  throw new Error("canonical state still points to the V2 candidate branch");
 }
-if (canonical.includes("PUBLIC_DEPLOYMENT_PROOF\n")) {
-  throw new Error("canonical state still lists public deployment proof as an open blocker");
+if (canonical.includes("workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION")) {
+  throw new Error("canonical state still exposes V2 as the active workstream");
 }
-if (canonical.includes("candidate_branch: final-judge-package")) {
-  throw new Error("canonical state still points to the pre-WI-v2 candidate branch");
+if (canonical.includes("IMPLEMENTED_TRANSIENT_PASS_PENDING_INDEPENDENT_PR_CI_CODEQL")) {
+  throw new Error("canonical state regressed V3 from permanent PR validation to transient/pending state");
 }
-if (hackathon.includes("evidence_capsule: IMPLEMENTED_PENDING_PR_VALIDATION")) {
-  throw new Error("hackathon state regressed Evidence Capsule to its pre-validation state");
+if (hackathon.includes("candidate_branch: winning-intelligence-v2")) {
+  throw new Error("hackathon state still points to the V2 candidate");
 }
-if (hackathon.includes("public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT")) {
-  throw new Error("hackathon state regressed the verified Vercel runtime to the historical Pages blocker");
+if (hackathon.includes("v3_codeql: PENDING_INDEPENDENT_PR")) {
+  throw new Error("hackathon state regressed V3 CodeQL to pending after permanent proof exists");
 }
-if (operatingGates.includes("status: PENDING_REPOSITORY_PAGES_ENABLEMENT")) {
-  throw new Error("operating gates still treat the historical Pages failure as the current runtime state");
+if (claims.includes("WI V3 permanent PR CI/CodeQL is green | UNKNOWN_PENDING_PR")) {
+  throw new Error("claim ledger regressed validated V3 PR proof to UNKNOWN_PENDING_PR");
 }
-if (reconciliation.includes("Dependency audit open")) {
-  throw new Error("reconciliation still describes the closed dependency audit as open");
+if (claims.includes("public runtime already contains WI V3 Wait Ghost changes | VERIFIED")) {
+  throw new Error("claim ledger overclaims V3 public runtime before exact deployment proof");
 }
-if (claims.includes("public judge runtime is live | UNKNOWN / NOT_CLAIMED")) {
-  throw new Error("claim ledger still describes the now-verified public runtime as unknown");
+if (operatingGates.includes("WAIT_GHOST_REPLAY_TRUTH\n    status: PASS_VERIFIED_LIVE_AI")) {
+  throw new Error("operating gates illegally describe historical Ghost replay as live AI");
 }
-if (runtime.includes("83da2b807e2072bde30a76c72937c3cbe74ff389")) {
-  throw new Error("runtime evidence still points at the pre-future-classic production SHA");
+if (existsSync(".github/workflows/apply-v3-surgical.yml")) {
+  throw new Error("temporary V3 surgical workflow must be removed before PR validation");
 }
-if (existsSync(".github/workflows/final-judge-patch.yml")) {
-  throw new Error("one-shot final judge patch workflow must not remain active after successful migration");
-}
-if (existsSync(".github/workflows/apply-wi-v2.yml")) {
-  throw new Error("one-shot Winning Intelligence migration workflow must be removed after success");
-}
-if (existsSync(".github/workflows/format-wi-v2.yml")) {
-  throw new Error("one-shot Winning Intelligence formatter must be removed after success");
-}
-if (
-  existsSync("scripts/apply-winning-intelligence-v2.mjs") ||
-  existsSync("scripts/apply-winning-intelligence-v2-fixed.mjs")
-) {
-  throw new Error("temporary Winning Intelligence migration scripts must not ship in the candidate");
+if (existsSync("scripts/apply-v3-surgical.mjs")) {
+  throw new Error("temporary V3 patcher must be removed before PR validation");
 }
 if (!orchestration.includes("HUMAN SUBMIT") || !orchestration.includes("POST-MORTEM")) {
   throw new Error("orchestration trace does not preserve terminal human-submit/post-mortem stages");
 }
 if (!orchestration.includes("UNKNOWN_IN_REPO")) {
-  throw new Error("orchestration trace must preserve missing upstream repo evidence as UNKNOWN_IN_REPO");
+  throw new Error("missing upstream orchestration provenance must stay UNKNOWN_IN_REPO");
 }
 
 console.log(
-  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + V3 privacy/replay cross-state invariants`
 );
