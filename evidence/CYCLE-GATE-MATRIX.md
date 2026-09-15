@@ -45,6 +45,7 @@ All five are **PASS** in `REALITY-ANCHOR.md`, with mitigation explicitly scoped 
 | BUILD CORRECTNESS | typecheck/tests/build must pass | PASS |
 | CODEQL | static security/quality scan | PASS |
 | DEPENDENCY SECURITY | no unresolved npm audit findings in candidate | PASS_ZERO_NPM_AUDIT |
+| SUPPLY-CHAIN INSTALL SCRIPTS | surface unreviewed dependency lifecycle scripts instead of silently trusting them | REVIEWED_NONBLOCKING — npm 11 flags `esbuild@0.28.2` postinstall as not approved; it is skipped under npm 11 and Node 24 CI still builds successfully. Do not use broad `dangerously-allow-all-scripts`. |
 | PACKAGE BOUNDARY | dev toolchain not leaked into published package surface | PASS |
 | RELEASE REPRODUCIBILITY | release workflow builds SDK + demo artifacts | PASS |
 | ACCESSIBILITY / INPUT PARITY | keyboard/pointer/focus support where required | PASS_WITH_IMPLEMENTATION_TEST_EVIDENCE |
@@ -114,4 +115,4 @@ Current terminal verdict: **BUILD_CANDIDATE_READY_WITH_LIMITATIONS**.
 6. Lock final submission URLs/assets/copy.
 7. Re-run terminal reconciliation and final QC.
 
-Broader user validation remains useful but is **non-blocking** for hackathon submission; it blocks only any strong claim that QuickSpin universally improves perceived wait.
+Broader user validation and npm install-script policy hardening remain useful but are **non-blocking** for hackathon submission; neither may be converted into a stronger claim than the evidence supports.
