@@ -1,11 +1,3 @@
-import { SessionStateMachine } from "./state-machine";
-import {
-  applyThemeToRoot,
-  defaultTheme,
-  normalizeTheme,
-  themeForGame,
-  type NormalizedTheme,
-} from "./theme";
 import type {
   CreateQuickSpinOptions,
   EndReason,
@@ -21,18 +13,17 @@ import type {
   GameInstance,
   GameResult,
   QuickSpinController,
-  SessionStatus,
   ThemeConfig,
   WaitEvent,
-  WaitEventHandler,
   WaitSession,
 } from "./types";
+import { SessionStateMachine } from "./state-machine";
+import { WIDGET_CSS } from "./styles";
 import { runnerGame } from "./runner";
 import { orbitGame } from "./orbit";
 import {
   bestLabel,
   evidenceCoverageFromTrail,
-  perceivedWaitStats,
   recordSession,
   sessionRecordToCapsule,
   totalSessions,
@@ -41,193 +32,215 @@ import {
 } from "./persistence";
 
 const GAMES: Record<string, GameDefinition> = {
-  [runnerGame.id]: runnerGame,
-  [orbitGame.id]: orbitGame,
+  runner: runnerGame,
+  orbit: orbitGame,
 };
 
-function clamp01(v: number): number {
-  return Math.min(1, Math.max(0, v));
-}
+const SIGNAL_KINDS = new Set<ExecutionSignal["kind"]>(["retrieval", "tool", "artifact", "warning"]);
 
 function normalizeExecutionSignal(signal: ExecutionSignal): ExecutionSignal | null {
-  if (!signal || typeof signal !== "object") return null;
-  if (!["retrieval", "tool", "artifact", "warning"].includes(signal.kind)) return null;
-  const label = typeof signal.label === "string" ? signal.label.trim().slice(0, 96) : "";
-  const evidenceRef =
-    typeof signal.evidenceRef === "string" ? signal.evidenceRef.trim().slice(0, 160) : "";
-  if (!label || !evidenceRef) return null;
-  return { kind: signal.kind, label, evidenceRef };
+  const kind = signal?.kind;
+  const label = typeof signal?.label === "string" ? signal.label.trim() : "";
+  const evidenceRef = typeof signal?.evidenceRef === "string" ? signal.evidenceRef.trim() : "";
+  if (!SIGNAL_KINDS.has(kind) || !label || !evidenceRef) return null;
+  return {
+    kind,
+    label: label.slice(0, 64),
+    evidenceRef: evidenceRef.slice(0, 160),
+  };
 }
 
-function safeError(error: unknown): Error {
-  if (error instanceof Error) return error;
-  if (typeof error === "string" && error.trim()) return new Error(error.trim());
-  try {
-    const serialized = JSON.stringify(error);
-    return new Error(serialized && serialized !== "{}" ? serialized : "Unknown host request failure");
-  } catch {
-    return new Error("Unknown host request failure");
-  }
-}
+const DARK_THEME: Required<ThemeConfig> = {
+  mode: "dark",
+  primary: "#8b7cff",
+  surface: "#10111a",
+  elevated: "#181a27",
+  game: "#202334",
+  text: "#f8f9fc",
+  muted: "#a9b0c0",
+  border: "rgba(255,255,255,0.1)",
+  success: "#16a36a",
+  radius: "16px",
+  font: 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif',
+};
+
+const LIGHT_THEME: Required<ThemeConfig> = {
+  mode: "light",
+  primary: "#6658e8",
+  surface: "#ffffff",
+  elevated: "#f3f4f8",
+  game: "#eef0f6",
+  text: "#17181d",
+  muted: "#68707f",
+  border: "rgba(16,17,26,0.1)",
+  success: "#16a36a",
+  radius: "16px",
+  font: 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif',
+};
 
 function resolveTarget(target?: string | HTMLElement): HTMLElement {
   if (target instanceof HTMLElement) return target;
   if (typeof target === "string") {
-    const node = document.querySelector<HTMLElement>(target);
-    if (!node) throw new Error(`QuickSpin: target not found: ${target}`);
-    return node;
+    const el = document.querySelector(target);
+    if (el instanceof HTMLElement) return el;
   }
-  const auto = document.querySelector<HTMLElement>("[data-quickspin]:not([data-quickspin-active])");
-  if (auto) return auto;
-  const el = document.createElement("div");
-  el.setAttribute("data-quickspin", "");
-  document.body.appendChild(el);
-  return el;
+  throw new Error("QuickSpin: no target element found. Pass a selector or element.");
 }
 
 function formatWait(ms: number): string {
-  if (ms < 1000) return `${Math.round(ms)} ms`;
-  return `${(ms / 1000).toFixed(ms >= 10000 ? 1 : 2)} s`;
+  const total = Math.max(0, Math.round(ms / 1000));
+  return `${total}s`;
 }
 
-function buildStyles(): string {
-  return `
-    :host { all: initial; }
-    *, *::before, *::after { box-sizing: border-box; }
-    .quickspin-root {
-      --qs-primary: #ff7b54;
-      --qs-surface: #0f172a;
-      --qs-elevated: #172036;
-      --qs-game: #0b1020;
-      --qs-text: #f8fafc;
-      --qs-muted: #94a3b8;
-      --qs-border: #334155;
-      --qs-success: #4ade80;
-      --qs-radius: 18px;
-      --qs-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-family: var(--qs-font);
-      color: var(--qs-text);
-      width: min(100%, 520px);
-      border: 1px solid var(--qs-border);
-      border-radius: var(--qs-radius);
-      background: var(--qs-surface);
-      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
-      overflow: hidden;
-      position: relative;
-    }
-    .quickspin-root[hidden] { display: none !important; }
-    .quickspin-head {
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:14px 16px; border-bottom:1px solid var(--qs-border); background:var(--qs-elevated);
-    }
-    .quickspin-title { display:flex; flex-direction:column; gap:3px; min-width:0; }
-    .quickspin-status { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .quickspin-elapsed { font-size:11px; color:var(--qs-muted); }
-    .quickspin-icon-btn, .quickspin-reopen {
-      appearance:none; border:1px solid var(--qs-border); color:var(--qs-text); background:transparent;
-      border-radius:999px; cursor:pointer; font:inherit;
-    }
-    .quickspin-icon-btn { width:34px; height:34px; }
-    .quickspin-icon-btn:focus-visible, .quickspin-reopen:focus-visible, button:focus-visible {
-      outline:2px solid var(--qs-primary); outline-offset:2px;
-    }
-    .quickspin-progress { height:3px; background:color-mix(in srgb, var(--qs-border), transparent 25%); overflow:hidden; }
-    .quickspin-progress-fill { height:100%; width:0; background:var(--qs-primary); transform-origin:left; }
-    .quickspin-progress-fill.indeterminate { width:32%; animation:qs-slide 1.35s ease-in-out infinite; }
-    @keyframes qs-slide { 0%{transform:translateX(-110%)} 50%{transform:translateX(210%)} 100%{transform:translateX(420%)} }
-    .quickspin-stage { position:relative; aspect-ratio:16 / 9; min-height:240px; background:var(--qs-game); overflow:hidden; }
-    .quickspin-stage canvas { width:100%; height:100%; display:block; touch-action:none; }
-    .quickspin-overlay {
-      position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:14px; padding:28px; text-align:center; background:color-mix(in srgb, var(--qs-game), transparent 4%); z-index:4;
-    }
-    .quickspin-overlay[hidden] { display:none; }
-    .quickspin-label { font-size:14px; line-height:1.45; max-width:360px; }
-    .quickspin-actions { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; }
-    .quickspin-actions button, .quickspin-felt-btn {
-      appearance:none; border:1px solid var(--qs-border); border-radius:999px; padding:9px 13px;
-      color:var(--qs-text); background:var(--qs-elevated); cursor:pointer; font:600 12px/1 var(--qs-font);
-    }
-    .quickspin-actions .primary { background:var(--qs-primary); color:#111827; border-color:transparent; }
-    .quickspin-felt { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
-    .quickspin-notes { font-size:11px; color:var(--qs-muted); max-width:400px; line-height:1.5; white-space:pre-line; }
-    .quickspin-footer { display:flex; justify-content:space-between; gap:10px; padding:11px 15px; border-top:1px solid var(--qs-border); color:var(--qs-muted); font-size:10px; background:var(--qs-elevated); }
-    .quickspin-reopen {
-      display:none; width:100%; padding:10px 14px; border:0; border-radius:0; background:var(--qs-elevated); text-align:left;
-      font-size:12px; font-weight:700;
-    }
-    .quickspin-root.is-collapsed .quickspin-head,
-    .quickspin-root.is-collapsed .quickspin-progress,
-    .quickspin-root.is-collapsed .quickspin-stage,
-    .quickspin-root.is-collapsed .quickspin-footer { display:none; }
-    .quickspin-root.is-collapsed .quickspin-reopen { display:block; }
-    .quickspin-receipt { width:min(100%,360px); border:1px solid var(--qs-border); border-radius:14px; overflow:hidden; text-align:left; }
-    .quickspin-receipt-row { display:flex; justify-content:space-between; gap:12px; padding:9px 11px; border-bottom:1px solid var(--qs-border); font-size:11px; }
-    .quickspin-receipt-row:last-child { border-bottom:0; }
-    .quickspin-receipt-row span { color:var(--qs-muted); }
-    .quickspin-receipt-row strong { text-align:right; }
-    @media (prefers-reduced-motion: reduce) {
-      .quickspin-progress-fill.indeterminate { animation:none; width:100%; opacity:.55; }
-      * { scroll-behavior:auto !important; transition-duration:0s !important; animation-duration:0s !important; }
-    }
-  `;
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
 }
 
 export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinController {
   const target = resolveTarget(opts.target);
-  if (target.hasAttribute("data-quickspin-active"))
-    throw new Error("QuickSpin: target already active.");
-  target.setAttribute("data-quickspin-active", "true");
+  const revealDelayMs = Math.max(0, opts.delayMs ?? 650);
+  let gameId = GAMES[opts.game ?? ""] ? opts.game! : "runner";
 
   const hostEl = document.createElement("div");
-  hostEl.style.display = "contents";
-  target.appendChild(hostEl);
+  hostEl.style.display = "none";
   const shadow = hostEl.attachShadow({ mode: "open" });
-  const style = document.createElement("style");
-  style.textContent = buildStyles();
-  shadow.appendChild(style);
+  const styleEl = document.createElement("style");
+  styleEl.textContent = WIDGET_CSS;
+  shadow.appendChild(styleEl);
 
-  const root = document.createElement("section");
+  const root = document.createElement("div");
   root.className = "quickspin-root";
-  root.hidden = true;
-  root.innerHTML = `
-    <div class="quickspin-head">
-      <div class="quickspin-title"><div class="quickspin-status">Waiting for the model…</div><div class="quickspin-elapsed">0s</div></div>
-      <button class="quickspin-icon-btn" type="button" aria-label="Minimize QuickSpin">−</button>
-    </div>
-    <div class="quickspin-progress"><div class="quickspin-progress-fill"></div></div>
-    <div class="quickspin-stage"><canvas></canvas><div class="quickspin-overlay"></div></div>
-    <div class="quickspin-footer"><span class="quickspin-best"></span><span>QuickSpin · optional play</span></div>
-    <button class="quickspin-reopen" type="button" aria-label="Reopen QuickSpin">QuickSpin · waiting… · reopen</button>
-  `;
+
+  const collapsedBar = document.createElement("div");
+  collapsedBar.className = "quickspin-collapsed";
+  const collapsedText = document.createElement("span");
+  collapsedText.className = "quickspin-collapsed-text";
+  collapsedText.textContent = "QuickSpin · AI working";
+  const reopenBtn = document.createElement("button");
+  reopenBtn.className = "quickspin-btn-primary quickspin-reopen";
+  reopenBtn.type = "button";
+  reopenBtn.textContent = "Resume play";
+  collapsedBar.appendChild(collapsedText);
+  collapsedBar.appendChild(reopenBtn);
+
+  // Header
+  const header = document.createElement("div");
+  header.className = "quickspin-header";
+  const brand = document.createElement("div");
+  brand.className = "quickspin-brand";
+  const dot = document.createElement("span");
+  dot.className = "quickspin-dot";
+  brand.appendChild(dot);
+  brand.appendChild(document.createTextNode("QuickSpin"));
+  const statusEl = document.createElement("div");
+  statusEl.className = "quickspin-status";
+  statusEl.setAttribute("role", "status");
+  statusEl.setAttribute("aria-live", "polite");
+  statusEl.textContent = "Waiting for the model…";
+  const elapsedEl = document.createElement("div");
+  elapsedEl.className = "quickspin-elapsed";
+  elapsedEl.textContent = "0s";
+  const tools = document.createElement("div");
+  tools.className = "quickspin-tools";
+  const minimizeBtn = document.createElement("button");
+  minimizeBtn.className = "quickspin-btn";
+  minimizeBtn.type = "button";
+  minimizeBtn.textContent = "—";
+  minimizeBtn.title = "Collapse QuickSpin (game pauses)";
+  minimizeBtn.setAttribute("aria-label", "Collapse QuickSpin");
+  tools.appendChild(minimizeBtn);
+  header.appendChild(brand);
+  header.appendChild(statusEl);
+  header.appendChild(elapsedEl);
+  header.appendChild(tools);
+
+  // Game switcher
+  const gamesRow = document.createElement("div");
+  gamesRow.className = "quickspin-games";
+  const gameBtns: HTMLButtonElement[] = [];
+  for (const id of Object.keys(GAMES)) {
+    const b = document.createElement("button");
+    b.className = "quickspin-gamebtn";
+    b.type = "button";
+    b.textContent = GAMES[id].name;
+    b.setAttribute("aria-pressed", gameId === id ? "true" : "false");
+    b.addEventListener("click", () => setGame(id));
+    gameBtns.push(b);
+    gamesRow.appendChild(b);
+  }
+
+  // Stage: canvas + result/wait overlay
+  const stage = document.createElement("div");
+  stage.className = "quickspin-stage";
+  const canvas = document.createElement("canvas");
+  canvas.className = "quickspin-canvas";
+  canvas.width = 480;
+  canvas.height = 220;
+  const overlay = document.createElement("div");
+  overlay.className = "quickspin-overlay";
+  overlay.hidden = true;
+  stage.appendChild(canvas);
+  stage.appendChild(overlay);
+
+  // Footer
+  const footer = document.createElement("div");
+  footer.className = "quickspin-footer";
+  const controlsEl = document.createElement("span");
+  controlsEl.textContent = GAMES[gameId].controls;
+  const bestEl = document.createElement("span");
+  bestEl.textContent = "";
+  footer.appendChild(controlsEl);
+  footer.appendChild(bestEl);
+
+  // Progress bar
+  const progressBar = document.createElement("div");
+  progressBar.className = "quickspin-progress";
+  const progressFill = document.createElement("div");
+  progressFill.className = "quickspin-progress-fill";
+  progressBar.appendChild(progressFill);
+
+  root.appendChild(collapsedBar);
+  root.appendChild(header);
+  root.appendChild(gamesRow);
+  root.appendChild(stage);
+  root.appendChild(progressBar);
+  root.appendChild(footer);
   shadow.appendChild(root);
+  target.appendChild(hostEl);
+  target.setAttribute("data-quickspin-active", "true");
 
-  const statusEl = root.querySelector<HTMLElement>(".quickspin-status")!;
-  const elapsedEl = root.querySelector<HTMLElement>(".quickspin-elapsed")!;
-  const progressFill = root.querySelector<HTMLElement>(".quickspin-progress-fill")!;
-  const stage = root.querySelector<HTMLElement>(".quickspin-stage")!;
-  const canvas = root.querySelector<HTMLCanvasElement>("canvas")!;
-  const overlay = root.querySelector<HTMLElement>(".quickspin-overlay")!;
-  const bestEl = root.querySelector<HTMLElement>(".quickspin-best")!;
-  const minimizeBtn = root.querySelector<HTMLButtonElement>(".quickspin-icon-btn")!;
-  const reopenBtn = root.querySelector<HTMLButtonElement>(".quickspin-reopen")!;
+  // ---- theme ----
+  let theme: ThemeConfig = opts.theme ?? DARK_THEME;
 
-  const machine = new SessionStateMachine();
-  let gameId = GAMES[opts.game ?? "runner"] ? (opts.game ?? "runner") : "runner";
-  let themeBase = normalizeTheme(opts.theme ?? defaultTheme());
-  let currentTheme: NormalizedTheme = themeForGame(themeBase, gameId);
+  function applyTheme(t: ThemeConfig): void {
+    theme = t;
+    const base = (t.mode === "light" ? LIGHT_THEME : DARK_THEME) as Required<ThemeConfig>;
+    const m = { ...base, ...t } as Required<ThemeConfig>;
+    hostEl.style.setProperty("--qs-primary", m.primary);
+    hostEl.style.setProperty("--qs-surface", m.surface);
+    hostEl.style.setProperty("--qs-elevated", m.elevated);
+    hostEl.style.setProperty("--qs-game", m.game);
+    hostEl.style.setProperty("--qs-text", m.text);
+    hostEl.style.setProperty("--qs-muted", m.muted);
+    hostEl.style.setProperty("--qs-border", m.border);
+    hostEl.style.setProperty("--qs-success", m.success);
+    hostEl.style.setProperty("--qs-radius", m.radius);
+    hostEl.style.setProperty("--qs-font", m.font);
+  }
+  applyTheme(theme);
+
+  // ---- state ----
   let currentGame: GameInstance | null = null;
   let sessionActive = false;
-  let destroyed = false;
   let startedAt = 0;
   let engagedMs = 0;
   let lastTs = 0;
+  let raf = 0;
   let manuallyHidden = false;
   let collapsed = false;
-  let externalHandler: WaitEventHandler | null = null;
   let uiShown = false;
+  let destroyed = false;
   let revealTimer: number | null = null;
-  const revealDelayMs = Number.isFinite(opts.delayMs) ? Math.max(0, Number(opts.delayMs)) : 650;
   let latestPhase: string | null = null;
   let phaseIndex = -1;
   let phaseIntensity = 0;
@@ -235,6 +248,9 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   const executionTrail: ExecutionTrailEntry[] = [];
   let lastCapsule: WaitCapsule | null = null;
   let latestStatus = "Waiting for the model…";
+  const machine = new SessionStateMachine(emit);
+
+  let externalHandler: ((e: WaitEvent) => void) | null = null;
 
   function emit(e: WaitEvent): void {
     if (opts.onEvent) opts.onEvent(e);
@@ -251,214 +267,284 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   }
 
   function clearRevealTimer(): void {
-    if (revealTimer !== null) {
-      clearTimeout(revealTimer);
+    if (revealTimer != null) {
+      window.clearTimeout(revealTimer);
       revealTimer = null;
     }
   }
 
-  function applyTheme(theme: ThemeConfig): void {
-    themeBase = normalizeTheme(theme);
-    currentTheme = themeForGame(themeBase, gameId);
-    applyThemeToRoot(root, currentTheme);
-  }
-
-  function setThemeState(id: string): void {
-    currentTheme = themeForGame(themeBase, id);
-    applyThemeToRoot(root, currentTheme);
-  }
-
-  applyTheme(opts.theme ?? defaultTheme());
-
-  const gameHost: GameHost = {
-    canvas,
-    root: stage,
-    get progress() {
-      return machine.progress;
-    },
-    get intensity() {
-      return machine.progress == null ? phaseIntensity : machine.progress;
-    },
-    get phase() {
-      return latestPhase;
-    },
-    finish(reason: EndReason) {
-      return currentGame ? currentGame.finish(reason) : fallbackResult(reason);
-    },
-    elapsedMs() {
-      return Math.max(0, performance.now() - startedAt);
-    },
-  };
-
-  function fallbackResult(reason: EndReason): GameResult {
-    return { score: 0, label: "No game", notes: [], reason };
-  }
-
-  function destroyGame(): void {
-    currentGame?.destroy();
-    currentGame = null;
-  }
-
-  function beginGame(): void {
-    if (!sessionActive || destroyed || currentGame) return;
-    const def = GAMES[gameId] ?? runnerGame;
-    currentGame = def.create(gameHost);
-    currentGame.start();
-    while (pendingSignals.length) {
-      const signal = pendingSignals.shift();
-      if (signal && currentGame.signal) currentGame.signal(signal);
-    }
-    if (machine.status === "waiting") machine.transition("playing");
-    emit({ type: "game-start", data: { game: gameId } });
-  }
-
-  function focusFirstButton(): void {
-    window.setTimeout(() => overlay.querySelector<HTMLButtonElement>("button")?.focus(), 0);
-  }
-
-  function revealSessionUI(): void {
-    revealTimer = null;
-    if (!sessionActive || destroyed || machine.status === "response-ready") return;
-    uiShown = true;
-    syncVisibility();
-    showChoiceOverlay();
-  }
-
-  function showChoiceOverlay(): void {
-    overlay.hidden = false;
-    overlay.innerHTML = "";
-    const label = document.createElement("div");
-    label.className = "quickspin-label quickspin-waiting-label";
-    label.textContent = latestPhase ? `AI is working · ${latestPhase}` : "AI is working…";
-    const actions = document.createElement("div");
-    actions.className = "quickspin-actions";
-    for (const id of Object.keys(GAMES)) {
-      const def = GAMES[id];
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = `${def.name} · ${def.controls}`;
-      button.addEventListener("click", () => {
-        setGameNoStart(id);
-        overlay.hidden = true;
-        beginGame();
-      });
-      actions.appendChild(button);
-    }
-    const skip = document.createElement("button");
-    skip.type = "button";
-    skip.textContent = "No thanks";
-    skip.addEventListener("click", () => {
-      overlay.hidden = true;
-    });
-    actions.appendChild(skip);
-    overlay.append(label, actions);
-    focusFirstButton();
-  }
-
   function syncVisibility(): void {
-    const shouldHide = manuallyHidden || !uiShown || !sessionActive;
-    root.hidden = shouldHide;
+    const shouldShow = uiShown && !manuallyHidden;
+    hostEl.style.display = shouldShow ? "" : "none";
+    root.classList.toggle("is-collapsed", collapsed);
   }
 
   function updateCollapsedCopy(): void {
-    reopenBtn.textContent = `QuickSpin · ${latestPhase ?? latestStatus} · reopen`;
+    if (!sessionActive) {
+      collapsedText.textContent = "QuickSpin · response ready";
+      return;
+    }
+    const elapsed = formatWait(performance.now() - startedAt);
+    const phase = latestPhase ?? latestStatus;
+    collapsedText.textContent = `QuickSpin · ${phase} · ${elapsed}`;
   }
 
+  // ---- single RAF owner: visibility-guarded, drives the active game ----
   function loop(ts: number): void {
     if (destroyed) return;
-    if (lastTs === 0) lastTs = ts;
-    const delta = Math.min(50, Math.max(0, ts - lastTs));
+    raf = requestAnimationFrame(loop);
+    const dt = lastTs ? (ts - lastTs) / 1000 : 0;
     lastTs = ts;
+
     if (sessionActive) {
-      elapsedEl.textContent = formatWait(Math.max(0, performance.now() - startedAt));
-      if (!document.hidden && !manuallyHidden && !collapsed && currentGame) {
-        currentGame.tick(ts, delta);
-        engagedMs += delta;
+      elapsedEl.textContent = formatWait(performance.now() - startedAt);
+      updateCollapsedCopy();
+      if (machine.progress == null) progressFill.classList.add("indeterminate");
+    }
+
+    const canTick =
+      sessionActive && currentGame && uiShown && !collapsed && !manuallyHidden && !document.hidden;
+
+    if (canTick && currentGame) {
+      currentGame.resume();
+      currentGame.tick(ts, dt);
+      engagedMs += dt * 1000;
+    } else if (currentGame) {
+      currentGame.pause();
+    }
+  }
+
+  function setThemeState(id: string): void {
+    for (const b of gameBtns) {
+      b.setAttribute("aria-pressed", GAMES[id].name === b.textContent ? "true" : "false");
+    }
+    controlsEl.textContent = GAMES[id].controls;
+  }
+
+  function setGame(id: string): void {
+    if (!GAMES[id]) return;
+    const hadGame = currentGame != null;
+    const switching = id !== gameId;
+    gameId = id;
+    setThemeState(id);
+    const old = currentGame;
+    currentGame = null;
+    old?.destroy();
+    if (sessionActive && uiShown) {
+      canvas.style.pointerEvents = "";
+      if (hadGame) {
+        overlay.hidden = true;
+        startGame();
+      } else if (!switching) {
+        // no running game (e.g. "Just wait"): leave the choose-screen alone
       }
     }
-    raf = requestAnimationFrame(loop);
+    updateBest();
+  }
+
+  function gameHost(): GameHost {
+    return {
+      canvas,
+      root,
+      get progress() {
+        return machine.progress;
+      },
+      get intensity() {
+        return machine.progress == null ? phaseIntensity : clamp01(machine.progress);
+      },
+      get phase() {
+        return latestPhase;
+      },
+      finish(reason: EndReason): GameResult {
+        return onGameFinish(reason);
+      },
+      elapsedMs() {
+        return sessionActive ? performance.now() - startedAt : 0;
+      },
+    };
+  }
+
+  function onGameFinish(reason: EndReason): GameResult {
+    const game = currentGame;
+    if (!game) return { score: 0, label: "—", notes: [], reason };
+    const result = game.finish(reason);
+    if (reason === "player-failed" && sessionActive) showCrashOverlay(result);
+    return result;
+  }
+
+  function startGame(): void {
+    const old = currentGame;
+    currentGame = null;
+    old?.destroy();
+    const g = GAMES[gameId].create(gameHost());
+    currentGame = g;
+    g.start();
+    if (g.signal && pendingSignals.length > 0) {
+      const queued = pendingSignals.splice(0, pendingSignals.length);
+      for (const signal of queued) g.signal(signal);
+    }
+    emit({
+      type: "game-start",
+      data: { game: gameId, phase: latestPhase, intensity: gameHost().intensity },
+    });
+  }
+
+  function focusFirstButton(): void {
+    const b = overlay.querySelector<HTMLButtonElement>("button");
+    b?.focus();
+  }
+
+  function begin(): void {
+    startGame();
+    overlay.hidden = true;
+    canvas.style.pointerEvents = "";
+    machine.transition("playing");
+  }
+
+  function showChooseScreen(status?: string): void {
+    latestStatus = status ?? latestStatus;
+    statusEl.textContent = latestPhase ?? latestStatus;
+    overlay.hidden = false;
+    overlay.innerHTML = "";
+    canvas.style.pointerEvents = "none";
+
+    const label = document.createElement("div");
+    label.className = "quickspin-waiting-label";
+    label.textContent = latestPhase
+      ? `AI is working · ${latestPhase}`
+      : "AI is working — play without leaving the response behind.";
+
+    const actions = document.createElement("div");
+    actions.className = "quickspin-actions";
+    const play = document.createElement("button");
+    play.className = "quickspin-btn-primary";
+    play.type = "button";
+    play.textContent = "Play while you wait";
+    play.addEventListener("click", begin);
+    const waitBtn = document.createElement("button");
+    waitBtn.className = "quickspin-btn-ghost";
+    waitBtn.type = "button";
+    waitBtn.textContent = "Just wait";
+    waitBtn.addEventListener("click", () => {
+      overlay.hidden = true;
+    });
+    actions.appendChild(play);
+    actions.appendChild(waitBtn);
+
+    overlay.appendChild(label);
+    overlay.appendChild(actions);
+  }
+
+  function revealSessionUI(): void {
+    if (!sessionActive || destroyed) return;
+    revealTimer = null;
+    uiShown = true;
+    collapsed = false;
+    syncVisibility();
+    showChooseScreen(latestStatus);
+  }
+
+  function finishHandoff(): void {
+    overlay.hidden = true;
+    collapsed = false;
+    uiShown = false;
+    syncVisibility();
   }
 
   function completeSession(): void {
     if (!sessionActive) return;
     clearRevealTimer();
-    const actualWaitMs = Math.max(0, performance.now() - startedAt);
-    const result = currentGame?.finish("ai-complete") ?? fallbackResult("ai-complete");
-    if (machine.status === "waiting" || machine.status === "playing")
-      machine.transition("response-ready");
+    sessionActive = false;
+    let result: GameResult | null = null;
+    if (currentGame) result = currentGame.finish("ai-complete");
+    machine.transition("response-ready");
+    machine.transition("completed");
+    const actualWaitMs = performance.now() - startedAt;
     const rec = recordSession({
       gameId: currentGame ? gameId : null,
-      score: currentGame ? result.score : null,
+      score: result?.score ?? null,
       actualWaitMs,
       engagedPlayMs: engagedMs,
+      feltWaitMs: null,
       completed: true,
       outcome: "completed",
       trail: executionTrail,
       evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
+    });
+    const engagedRatio = actualWaitMs > 0 ? clamp01(engagedMs / actualWaitMs) : 0;
+    emit({
+      type: "session-complete",
+      data: {
+        id: rec.id,
+        game: currentGame ? gameId : null,
+        score: result?.score ?? null,
+        actualWaitMs,
+        engagedMs,
+        engagedRatio,
+        dayStreak: rec.dayStreak,
+        sessionStreak: rec.sessionStreak,
+      },
     });
     finalizeCapsule(rec.record);
     destroyGame();
     updateFooterStats();
 
     if (uiShown) {
-      syncVisibility();
-      showResult(result, rec.id, actualWaitMs, engagedMs, rec.isHighScore);
-    }
-
-    machine.transition("completed");
-    sessionActive = false;
-    emit({
-      type: "session-complete",
-      data: {
-        id: rec.id,
-        game: rec.record.gameId,
-        score: rec.record.score,
-        actualWaitMs,
-        engagedPlayMs: engagedMs,
+      updateCollapsedCopy();
+      showResponseOverlay(
         result,
-        outcome: "completed",
-      },
-    });
+        actualWaitMs,
+        engagedMs,
+        rec.id,
+        rec.isHighScore,
+        rec.dayStreak,
+        rec.sessionStreak
+      );
+    } else {
+      // Fast responses finish cleanly without flashing the game UI.
+      uiShown = false;
+      syncVisibility();
+    }
   }
 
   function cancelSession(): void {
     if (!sessionActive) return;
     clearRevealTimer();
-    const actualWaitMs = Math.max(0, performance.now() - startedAt);
-    const result = currentGame?.finish("cancelled") ?? fallbackResult("cancelled");
+    sessionActive = false;
+    machine.transition("cancelled");
     const rec = recordSession({
       gameId: currentGame ? gameId : null,
       score: null,
-      actualWaitMs,
+      actualWaitMs: performance.now() - startedAt,
       engagedPlayMs: engagedMs,
+      feltWaitMs: null,
       completed: false,
       outcome: "cancelled",
       trail: executionTrail,
       evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
     });
-    if (machine.status === "waiting" || machine.status === "playing") machine.transition("cancelled");
     emit({
       type: "cancel",
       data: { id: rec.id, outcome: "cancelled", game: currentGame ? gameId : null },
     });
     finalizeCapsule(rec.record);
     destroyGame();
-    sessionActive = false;
     if (uiShown) showCancelledOverlay();
-    void result;
+    else syncVisibility();
   }
 
   function failSession(error?: unknown): void {
     if (!sessionActive) return;
     clearRevealTimer();
-    const failure = safeError(error);
-    const actualWaitMs = Math.max(0, performance.now() - startedAt);
-    const result = currentGame?.finish("cancelled") ?? fallbackResult("cancelled");
+    sessionActive = false;
+    machine.transition("failed");
+    const failure = error instanceof Error ? error : new Error(String(error ?? "UNKNOWN_FAILURE"));
     const rec = recordSession({
       gameId: currentGame ? gameId : null,
       score: null,
-      actualWaitMs,
+      actualWaitMs: performance.now() - startedAt,
       engagedPlayMs: engagedMs,
+      feltWaitMs: null,
       completed: false,
       outcome: "failed",
       failureCode: "HOST_REQUEST_FAILED",
@@ -466,7 +552,6 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       trail: executionTrail,
       evidenceCoverage: evidenceCoverageFromTrail(executionTrail),
     });
-    if (machine.status === "waiting" || machine.status === "playing") machine.transition("failed");
     emit({
       type: "fail",
       data: {
@@ -478,38 +563,44 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     });
     finalizeCapsule(rec.record);
     destroyGame();
-    sessionActive = false;
     if (uiShown) showErrorOverlay(failure, rec.id);
-    void result;
+    else syncVisibility();
   }
 
-  function showResult(
-    result: GameResult,
-    recordId: string,
-    actualWaitMs: number,
-    engagedPlayMs: number,
-    isHighScore: boolean
-  ): void {
+  function destroyGame(): void {
+    const old = currentGame;
+    currentGame = null;
+    old?.destroy();
+  }
+
+  function showCrashOverlay(result: GameResult): void {
     overlay.hidden = false;
     overlay.innerHTML = "";
-    const title = document.createElement("div");
-    title.className = "quickspin-label";
-    title.textContent = result.label;
-    const notes = document.createElement("div");
-    notes.className = "quickspin-notes";
-    const high = isHighScore ? "New local high score.\n" : "";
-    notes.textContent = `${high}${result.notes.join("\n")}`.trim();
+    const label = document.createElement("div");
+    label.className = "quickspin-label";
+    label.textContent = "Crash! The model is still working.";
+    const score = document.createElement("div");
+    score.className = "quickspin-score-big";
+    score.textContent = result.label;
     const actions = document.createElement("div");
     actions.className = "quickspin-actions";
-    const receipt = document.createElement("button");
-    receipt.className = "primary";
-    receipt.type = "button";
-    receipt.textContent = "View Wait Receipt";
-    receipt.addEventListener("click", () =>
-      showPerceptionPrompt(recordId, actualWaitMs, engagedPlayMs)
-    );
-    actions.appendChild(receipt);
-    overlay.append(title, notes, actions);
+    const replay = document.createElement("button");
+    replay.className = "quickspin-btn-primary";
+    replay.type = "button";
+    replay.textContent = "Play again";
+    replay.addEventListener("click", begin);
+    const wait = document.createElement("button");
+    wait.className = "quickspin-btn-ghost";
+    wait.type = "button";
+    wait.textContent = "Keep waiting";
+    wait.addEventListener("click", () => {
+      overlay.hidden = true;
+    });
+    actions.appendChild(replay);
+    actions.appendChild(wait);
+    overlay.appendChild(label);
+    overlay.appendChild(score);
+    overlay.appendChild(actions);
     focusFirstButton();
   }
 
@@ -521,39 +612,109 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   ): void {
     overlay.hidden = false;
     overlay.innerHTML = "";
-    const box = document.createElement("div");
-    box.className = "quickspin-receipt";
-    const deltaMs = feltWaitMs == null ? null : feltWaitMs - actualWaitMs;
-    const deltaLabel =
-      deltaMs == null
-        ? "not answered"
-        : `${deltaMs >= 0 ? "+" : "−"}${formatWait(Math.abs(deltaMs))}`;
     const ratio = feltWaitMs == null || actualWaitMs <= 0 ? null : feltWaitMs / actualWaitMs;
-    const ratioLabel = ratio == null ? "—" : `${Math.round(ratio * 100)}% of actual`;
-    box.innerHTML = `
-      <div class="quickspin-receipt-row"><span>WAIT RECEIPT</span><strong>${recordId.slice(0, 8)}</strong></div>
-      <div class="quickspin-receipt-row"><span>Actual wait</span><strong>${formatWait(actualWaitMs)}</strong></div>
-      <div class="quickspin-receipt-row"><span>Played during wait</span><strong>${formatWait(engagedPlayMs)}</strong></div>
-      <div class="quickspin-receipt-row"><span>Felt wait</span><strong>${feltWaitMs == null ? "—" : formatWait(feltWaitMs)}</strong></div>
-      <div class="quickspin-receipt-row"><span>Felt − actual</span><strong>${deltaLabel}</strong></div>
-      <div class="quickspin-receipt-row"><span>Perceived ratio</span><strong>${ratioLabel}</strong></div>
-    `;
-    overlay.appendChild(box);
+    const deltaMs = feltWaitMs == null ? null : feltWaitMs - actualWaitMs;
+    const engagement = actualWaitMs > 0 ? clamp01(engagedPlayMs / actualWaitMs) : 0;
+
+    const title = document.createElement("div");
+    title.className = "quickspin-receipt-title";
+    title.textContent = "WAIT RECEIPT";
+    const grid = document.createElement("div");
+    grid.className = "quickspin-receipt";
+
+    const fields: Array<[string, string]> = [
+      ["Actual", formatWait(actualWaitMs)],
+      ["Played", formatWait(engagedPlayMs)],
+      ["Engaged", `${Math.round(engagement * 100)}%`],
+      ["Felt", feltWaitMs == null ? "Skipped" : formatWait(feltWaitMs)],
+    ];
+    for (const [label, value] of fields) {
+      const cell = document.createElement("div");
+      cell.className = "quickspin-receipt-cell";
+      const l = document.createElement("span");
+      l.textContent = label;
+      const v = document.createElement("strong");
+      v.textContent = value;
+      cell.appendChild(l);
+      cell.appendChild(v);
+      grid.appendChild(cell);
+    }
+
+    overlay.appendChild(title);
+    overlay.appendChild(grid);
+
+    if (ratio != null && deltaMs != null) {
+      const summary = document.createElement("div");
+      summary.className = ratio <= 1 ? "quickspin-reduction" : "quickspin-extension";
+      const pct = Math.round(Math.abs(1 - ratio) * 100);
+      summary.textContent =
+        ratio < 0.995
+          ? `This wait felt ${pct}% shorter.`
+          : ratio > 1.005
+            ? `This wait felt ${pct}% longer.`
+            : "This wait felt about as long as it actually took.";
+      overlay.appendChild(summary);
+    }
+
+    emit({
+      type: "receipt",
+      data: {
+        id: recordId,
+        actualWaitMs,
+        engagedPlayMs,
+        engagement,
+        feltWaitMs,
+        ratio,
+        deltaMs,
+      },
+    });
+
+    const done = document.createElement("button");
+    done.className = "quickspin-btn-primary";
+    done.type = "button";
+    done.textContent = "View response";
+    done.addEventListener("click", finishHandoff);
+    overlay.appendChild(done);
+    done.focus();
   }
 
-  function showPerceptionPrompt(
-    recordId: string,
+  function showResponseOverlay(
+    result: GameResult | null,
     actualWaitMs: number,
-    engagedPlayMs: number
+    engagedPlayMs: number,
+    recordId: string,
+    isHigh: boolean,
+    dayStreak: number,
+    sessionStreak: number
   ): void {
     overlay.hidden = false;
     overlay.innerHTML = "";
+    const title = document.createElement("div");
+    title.className = "quickspin-label";
+    title.textContent = "Response ready";
+    const score = document.createElement("div");
+    score.className = "quickspin-score-big";
+    score.textContent = result ? result.label : "—";
+    const notes = document.createElement("ul");
+    notes.className = "quickspin-notes";
+    const items: string[] = [];
+    if (result?.notes) items.push(...result.notes);
+    if (isHigh) items.push("New personal best");
+    items.push(`Streaks — days ${dayStreak} · sessions ${sessionStreak}`);
+    for (const n of items) {
+      const li = document.createElement("li");
+      li.textContent = n;
+      notes.appendChild(li);
+    }
+    overlay.appendChild(title);
+    overlay.appendChild(score);
+    overlay.appendChild(notes);
+
     const answerPerception = (feltMs: number): void => {
       const stored = updateSessionPerception(recordId, feltMs);
-      if (lastCapsule?.recordId === recordId) lastCapsule.feltWaitMs = stored?.feltWaitMs ?? feltMs;
-      const ratio = actualWaitMs > 0 ? feltMs / actualWaitMs : 1;
+      const ratio = feltMs / Math.max(1, actualWaitMs);
       const deltaMs = feltMs - actualWaitMs;
-      const change = actualWaitMs > 0 ? (feltMs - actualWaitMs) / actualWaitMs : 0;
+      const change = 1 - ratio;
       emit({
         type: "perceived-wait",
         data: {
@@ -679,7 +840,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   });
 
   // If the host page is hidden at load, the RAF still runs but tick is guarded.
-  let raf = requestAnimationFrame(loop);
+  raf = requestAnimationFrame(loop);
   updateFooterStats();
 
   function prepareMachineForStart(): void {
@@ -693,7 +854,8 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     }
     if (machine.status !== "idle")
       throw new Error(`QuickSpin: cannot start from ${machine.status}.`);
-    if (!machine.transition("waiting")) throw new Error("QuickSpin: failed to enter waiting state.");
+    if (!machine.transition("waiting"))
+      throw new Error("QuickSpin: failed to enter waiting state.");
   }
 
   function startSession(options?: { gameId?: string; status?: string }): WaitSession {
@@ -841,12 +1003,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
       executionTrail.push({
         type: "intervention",
         atMs: hostIntent.atMs,
-        intervention: {
-          id: hostIntent.id,
-          kind: hostIntent.kind,
-          label: hostIntent.label,
-          atMs: hostIntent.atMs,
-        },
+        intervention: hostIntent,
       });
       emit({ type: "intervention", data: hostIntent });
       let result: InterventionResult;
