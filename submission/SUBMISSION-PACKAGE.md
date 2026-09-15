@@ -1,6 +1,6 @@
 # QuickSpin — Submission Package
 
-Status: **COPY / CLAIMS LOCKED — RUNTIME + VIDEO LINKS PENDING**
+Status: **COPY / CLAIMS LOCKED — FINAL TRACE RUNTIME + VIDEO / COMMONS LOCK PENDING**
 
 Challenge: Commonsmade — **Make Waiting for AI Fun**
 
@@ -8,17 +8,21 @@ Challenge: Commonsmade — **Make Waiting for AI Fun**
 
 **QuickSpin**
 
-## Tagline
+## Judge memory sentence
 
-**Turn live AI execution into play time — then get a receipt for what actually happened.**
+**QuickSpin turns AI waiting into a game you can verify afterward.**
+
+## Supporting line
+
+**Private Capsule. Shareable Ghost. Comparable wait.**
 
 ## One-sentence pitch
 
-QuickSpin is an embeddable waiting runtime for AI apps that turns real host execution phases and observed events into optional gameplay, then measures the wait with a signed Wait Receipt while preserving completion, failure, cancellation, and UNKNOWN as distinct outcomes.
+QuickSpin is an embeddable waiting runtime for AI apps that turns real host-observed execution into optional gameplay, preserves the full run privately in an Evidence Capsule, and can derive a redacted Wait Ghost for historical replay, sharing, and truthful wait-to-wait comparison.
 
 ## Short description
 
-AI apps increasingly spend noticeable time reasoning, retrieving, and calling tools. QuickSpin replaces passive waiting with a reusable playable layer driven by real host phases and evidence-bearing execution signals. When the request resolves, a Wait Receipt records actual wait, engaged play, and perceived wait. If the request fails, QuickSpin preserves the failure instead of fabricating success; unsupported execution signals are rejected as UNKNOWN.
+AI apps increasingly spend noticeable time reasoning, retrieving, and calling tools. QuickSpin replaces passive waiting with a reusable playable layer driven by host-observed phases and evidence-bearing execution signals. When the request ends, QuickSpin keeps completion, failure, cancellation, and UNKNOWN distinct, records the experience in a truthful Wait Receipt and private Evidence Capsule, and can produce a privacy-reduced Wait Ghost that is safe to replay without presenting historical events as live AI.
 
 ## Why it fits the challenge
 
@@ -26,31 +30,33 @@ AI apps increasingly spend noticeable time reasoning, retrieving, and calling to
 
 - fast replies under the default 650 ms threshold do not flash the game UI;
 - longer waits can become optional play;
-- users can minimize/restore the layer;
-- the game ends when the actual request resolves/fails.
+- users can minimize and restore the layer;
+- gameplay ends when the actual host request resolves, fails, or is cancelled;
+- the post-wait experience can continue through a privacy-safe historical replay rather than a dead receipt screen.
 
 ### Originality
 
-The waiting state is not only themed. Observable execution can alter gameplay, while a post-wait receipt measures whether the experience actually felt shorter.
+The waiting state is not only themed. Host-observed execution can alter gameplay, the resulting run survives as a private Evidence Capsule, and a deliberately reduced Wait Ghost can be shared/replayed without leaking labels, evidence references, arbitrary intervention payloads, private record IDs, timestamps, or failure details.
 
 ### AI-native fit
 
-Hosts can supply real phase changes plus observed retrieval/tool/artifact/warning signals. Signals require provenance; unsupported claims become UNKNOWN rather than game content.
+Hosts can supply real phase changes plus observed retrieval, tool, artifact, and warning signals. Accepted signals require provenance. Unsupported signals become `UNKNOWN / INSUFFICIENT_EVIDENCE` and do not mutate gameplay. Historical Ghost replay never emits host execution signals and is explicitly not live AI.
 
 ### Repeatability
 
-The same lifecycle ships as vanilla SDK, React wrapper, ESM, CJS, and IIFE bundles. Runner and Orbit are interchangeable consumers of the same host contract.
+The same lifecycle ships as a vanilla SDK, React wrapper, ESM, CJS, and IIFE bundles. Runner and Orbit are interchangeable consumers of the same host contract. Evidence Capsule → Wait Ghost → Replay / Compare is a reusable evidence lifecycle rather than one hardcoded demo trick.
 
 ### Execution
 
-- 33 automated tests;
-- Node 22/24 CI;
+- **41 automated tests**;
+- Node 22 and Node 24 CI;
 - CodeQL;
 - full npm audit: 0 vulnerabilities;
 - production npm audit: 0 vulnerabilities;
 - package-boundary dry run confirms build/test tooling is not shipped;
-- deterministic positive and negative demo paths;
-- reduced-motion and keyboard paths.
+- deterministic positive, UNKNOWN, and negative demo paths;
+- keyboard/input parity and reduced-motion paths;
+- TRACE Visual Jury V1 passed PR CI + CodeQL and post-merge main CI + CodeQL without changing SDK/runtime contracts.
 
 ## Reality anchor — canonical five-part pattern
 
@@ -74,11 +80,43 @@ A waiting layer must not equate “still waiting” with “will succeed,” mus
 
 ### 5. Response / mitigation
 
-QuickSpin mitigates the waiting-experience/evidence-integrity problem through indeterminate progress, evidence-bearing execution signals, explicit failed/cancelled/completed outcomes, UNKNOWN/refusal behavior, a 650 ms anti-flash threshold, and a signed Wait Receipt. Provider reliability itself remains out of scope.
+QuickSpin mitigates the waiting-experience/evidence-integrity problem through indeterminate progress, evidence-bearing execution signals, explicit terminal outcomes, UNKNOWN/refusal behavior, a 650 ms anti-flash threshold, a truthful Wait Receipt, private Evidence Capsule, and privacy-reduced Wait Ghost. Provider reliability itself remains out of scope.
 
 Evidence: `evidence/REALITY-ANCHOR.md`.
 
-## Negative path / real failure > fake success
+## Signature evidence lifecycle
+
+`HOST EVENT → PLAY → PRIVATE EVIDENCE CAPSULE → REDACTED WAIT GHOST → HISTORICAL REPLAY / SHARE → DIRECTIONAL WAIT DELTA`
+
+### Private Evidence Capsule
+
+The Capsule is the richer host/integration evidence record. It may include provenance references and execution details required for inspection.
+
+It is **not** claimed to be cryptographically signed or tamper-proof.
+
+### Redacted Wait Ghost
+
+The Ghost is a smaller derivative intended for sharing/replay. It excludes sensitive provenance content including:
+
+- prompt/content payloads;
+- phase/signal labels;
+- evidence references;
+- arbitrary intervention payloads;
+- private record ID;
+- wall-clock timestamp;
+- detailed failure/acknowledgement content.
+
+A Ghost share token lives in the URL hash. No hosted social backend or upload service is claimed.
+
+### Historical replay
+
+Ghost replay reconstructs the timing/event-type sequence as a historical artifact. It does **not** call the model, emit host execution signals, or claim the historical events are happening again.
+
+### Compare
+
+Wait-to-wait comparison exposes signed/directional deltas such as actual wait and engaged play. QuickSpin deliberately does **not** invent a winner, trust score, confidence score, or quality verdict.
+
+## Negative path / Real failure > fake success
 
 The demo's `Run negative-path proof` triggers an actual rejected Promise with controlled error `DEMO_PROVIDER_TIMEOUT`.
 
@@ -92,7 +130,7 @@ Expected behavior:
 
 This is explicitly a controlled runtime failure, not a claim that a live provider failed during the recording.
 
-Historical CI/deployment/orchestration failures are also retained in `evidence/FAILURE-LEDGER.md` after mitigation. They are not deleted to make the project appear greener.
+Historical CI/deployment/orchestration failures are retained in `evidence/FAILURE-LEDGER.md` and `evidence/TRACE-VISUAL-JURY-V1.md` after mitigation. They are not deleted to make the project appear greener.
 
 ## UNKNOWN / refusal
 
@@ -106,18 +144,25 @@ Use `submission/VIDEO-SHOT-LOCK.md` and `demo.md`.
 
 Minimum visible proof:
 
-- same 12-second classic wait;
-- same 12-second QuickSpin wait;
+- canonical judge memory sentence;
+- same exact 12-second classic control;
+- same exact 12-second QuickSpin path;
 - real phase-driven game intensity;
 - at least one execution signal becomes a game event;
-- signed Wait Receipt;
+- truthful Wait Receipt;
+- private Evidence Capsule;
+- Wait Ghost redaction boundary;
+- historical Wait Ghost replay clearly labeled not live AI;
+- directional wait comparison with no winner score if included;
 - actual rejected-Promise negative path;
 - UNKNOWN/provenance rule;
 - reusable SDK contract.
 
 ## Differentiation line
 
-**QuickSpin is not trying to be the biggest AI waiting game. It is the reusable waiting layer that lets an AI product make real execution playable, preserve failure truth, and measure what the user experienced.**
+**QuickSpin is not trying to be the biggest AI waiting game. It is the reusable waiting layer that makes observed execution playable, preserves the private run for verification, and derives a smaller redacted artifact when the experience needs to be replayed or shared.**
+
+Observed public competitor intelligence informed this direction, but the scan is **not** claimed exhaustive and QuickSpin does **not** claim no other applicant could have built similar mechanics.
 
 ## Technical integration snippet
 
@@ -143,12 +188,18 @@ try {
 }
 ```
 
-## Locked links
+## Runtime links and provenance
 
 - Repository: `https://github.com/Faadil1/quickspin`
-- Public runtime: **PENDING — do not substitute the expected Pages hostname until a deployment returns and the URL is externally verified**
+- Current externally verified public runtime: `https://quickspin-runtime.vercel.app`
+- Current verified runtime source SHA: `cb3b322907197e37518e85ddb377def2053edcc3`
+- Current verified deployment: `dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG`
+- Current verified routes: `/`, `/lab`, `/proof`, `/sdk`, `/judges`
+- TRACE Visual Jury V1 code merge SHA: `c34012a732e8bb7cd2b5601f1a8f9862a87e4056`
+- **Final TRACE visual runtime refresh: PENDING EXACT-SHA DEPLOYMENT — do not claim the current public URL proves `c34012a...` until the Vercel build log does.**
 - Demo video: **PENDING CAPTURE / UPLOAD**
 - Failure Ledger: repository `evidence/FAILURE-LEDGER.md`
+- TRACE visual evidence: repository `evidence/TRACE-VISUAL-JURY-V1.md`
 - Reality Anchor: repository `evidence/REALITY-ANCHOR.md`
 - Cycle/Gate Matrix: repository `evidence/CYCLE-GATE-MATRIX.md`
 
@@ -156,19 +207,21 @@ try {
 
 ### What we built
 
-QuickSpin is a drop-in waiting runtime for AI apps. During a real request, host phases can drive game intensity and observed execution events can become playable signals. When the response resolves, QuickSpin stops the game and creates a Wait Receipt showing actual wait, engaged play time, and perceived wait.
+QuickSpin is a drop-in waiting runtime for AI apps. During a host request, observed phases can drive game intensity and evidence-bearing execution events can become playable signals. When the request ends, QuickSpin stops the game, creates a truthful Wait Receipt, and preserves the richer run in a private Evidence Capsule.
+
+When that experience needs to be replayed or shared, QuickSpin derives a redacted Wait Ghost instead of exposing the full evidence record. The Ghost keeps the timing shape and event types required for replay while removing sensitive provenance content. Wait-to-wait Compare then exposes directional deltas without inventing a winner or quality score.
 
 ### Why it matters
 
-Long AI waits are no longer just loading states: agents reason, browse, retrieve, and call tools for seconds or minutes. QuickSpin gives that time an interaction model while remaining honest about uncertainty. It does not fake progress, does not turn failures into success, and refuses unsupported execution signals.
+Long AI waits are no longer just loading states: agents reason, browse, retrieve, and call tools for seconds or minutes. QuickSpin gives that time an interaction model while remaining honest about uncertainty and authority. It does not fake progress, does not turn failures into success, and refuses unsupported execution signals.
 
 ### What makes it different
 
-The product is the reusable execution-to-play contract, not one minigame. Runner and Orbit share the same lifecycle; hosts can integrate through vanilla JavaScript or React; the receipt makes the waiting experience measurable rather than relying on a “felt faster” marketing claim.
+The product is the reusable execution-to-play-to-evidence contract, not one minigame. Runner and Orbit share the same lifecycle; hosts can integrate through vanilla JavaScript or React; full evidence stays private; sharing uses a reduced derivative; replay is historical rather than fake live AI; comparison shows the delta instead of inventing a verdict.
 
 ### What we proved
 
-We built deterministic before/after waits, evidence-bearing execution signals, explicit failed/cancelled/completed outcomes, an actual rejected-Promise negative path, UNKNOWN/refusal behavior, signed perceived-wait metrics, accessibility paths, and a release/CI/security evidence chain. We also ground the design in a primary-source real production latency/rejection incident while explicitly refusing to claim that QuickSpin repairs provider reliability.
+The V3 product candidate has 41 automated tests, Node 22/24 CI, CodeQL, zero-finding npm audit, explicit failed/cancelled/completed outcomes, UNKNOWN/refusal behavior, a controlled rejected-Promise negative path, privacy-redaction tests for Wait Ghost, replay/diff tests, and a public V3 runtime verified across all five canonical routes. TRACE Visual Jury V1 then passed its own CI/CodeQL and post-merge checks without modifying the SDK contract. The final visual runtime refresh still requires an exact `c34012a...` deployment before that presentation layer is claimed live.
 
 ## Forbidden submission claims
 
@@ -179,10 +232,13 @@ Do not claim:
 - controlled demo phases are live production AI;
 - the induced negative-path failure is a live provider outage;
 - QuickSpin would have prevented the cited OpenAI incident;
+- Evidence Capsule or Wait Ghost is cryptographically signed/tamper-proof;
+- Wait Ghost replay is live AI;
+- Compare decides which wait is better or more trustworthy;
+- the public competitor scan covers every submission;
 - npm publication before publication evidence exists;
-- live Stripe payment when the demo is in checkout-preview mode;
 - hosted analytics / extra game packs as current shipped features;
-- a public runtime until the deployment has actually returned and been externally fetched;
+- TRACE Visual Jury V1 is live until exact `c34012a...` deployment evidence exists;
 - absolute security completeness;
 - `PROJECT_COMPLETE` while final gates remain open.
 
@@ -192,23 +248,25 @@ Do not claim:
 - [x] Canonical cycle `RUBRIC → PAIN → PROBLEM → DIFFERENTIATOR → EXECUTION → EVIDENCE → STORY → DEMO → Q&A`
 - [x] Five-part reality anchor
 - [x] Primary-source real negative event
-- [x] Observable impact
-- [x] Design implication + scoped mitigation
-- [x] Differentiator
 - [x] Positive execution path
 - [x] Failure path
-- [x] Real failure > fake success ledger
+- [x] Real failure > fake success evidence retained
 - [x] UNKNOWN / abstention
-- [x] Claim ledger
+- [x] Private Evidence Capsule
+- [x] Redacted Wait Ghost
+- [x] Historical Ghost replay
+- [x] Directional wait diff / no winner score
 - [x] Security gate
-- [x] Cycle/Gateway anti-omission matrix
-- [x] Video proof sequence locked
-- [x] Q&A answer bank locked
-- [x] Submission copy locked
-- [ ] Public runtime verified
-- [ ] Rendered visual/mobile jury review
+- [x] 41-test Node 22/24 CI + CodeQL product proof
+- [x] Current V3 public runtime verified
+- [x] TRACE Visual Jury V1 code CI/CodeQL + post-merge checks
+- [x] Final video proof sequence locked
+- [x] Q&A answer bank exists
+- [x] Submission copy aligned to V3/TRACE
+- [ ] Exact TRACE Visual Jury V1 merge SHA deployed and externally verified
+- [ ] Final desktop/mobile/reduced-motion pixel inspection
 - [ ] Final video captured and uploaded
 - [ ] Adversarial Q&A rehearsed live
-- [ ] Final links tested from a logged-out/external context
+- [ ] Final links tested from logged-out/external context
 - [ ] Terminal reconciliation / final QC rerun
-- [ ] Final Commonsmade submission saved/submitted
+- [ ] Final Commonsmade project publish/attach/submit proof
