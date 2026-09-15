@@ -10,7 +10,8 @@ import {
   totalWaitTurnedToPlayMs,
 } from "../sdk/index";
 
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => window.setTimeout(resolve, ms));
 
 interface DemoPhase {
   status: string;
@@ -102,7 +103,7 @@ function renderNav(route: Route): HTMLElement {
     <div class="nav-rail">
       ${ROUTES.map(([href, label]) => {
         const key = href === "/" ? "home" : href.split("/")[1];
-        const active = key === route ? " aria-current=\"page\"" : "";
+        const active = key === route ? ' aria-current="page"' : "";
         return `<a href="${href}"${active}>${label}</a>`;
       }).join("")}
     </div>
@@ -367,7 +368,9 @@ function logEvents(root: HTMLElement): WaitEventHandler {
 }
 
 function controlledProviderFailure(): Promise<never> {
-  return new Promise((_, reject) => window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400));
+  return new Promise((_, reject) =>
+    window.setTimeout(() => reject(new Error("DEMO_PROVIDER_TIMEOUT")), 1400)
+  );
 }
 
 function initLab(app: HTMLElement): void {
@@ -380,9 +383,23 @@ function initLab(app: HTMLElement): void {
   const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats");
   const phaseEl = app.querySelector<HTMLElement>("#qs-phase");
   const segBtns = Array.from(app.querySelectorAll<HTMLButtonElement>(".seg button"));
-  if (!mount || !logEl || !classicPanel || !qsPanel || !runBtn || !failureBtn || !resetBtn || !phaseEl) return;
+  if (
+    !mount ||
+    !logEl ||
+    !classicPanel ||
+    !qsPanel ||
+    !runBtn ||
+    !failureBtn ||
+    !resetBtn ||
+    !phaseEl
+  )
+    return;
 
-  let controller: QuickSpinController = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents(logEl) });
+  let controller: QuickSpinController = createQuickSpin({
+    target: mount,
+    delayMs: 0,
+    onEvent: logEvents(logEl),
+  });
   let mode: "classic" | "quickspin" = "quickspin";
   let running = false;
 
@@ -398,7 +415,8 @@ function initLab(app: HTMLElement): void {
     mode = next;
     classicPanel.hidden = next !== "classic";
     qsPanel.hidden = next !== "quickspin";
-    for (const button of segBtns) button.setAttribute("aria-pressed", String(button.dataset.mode === next));
+    for (const button of segBtns)
+      button.setAttribute("aria-pressed", String(button.dataset.mode === next));
   };
 
   const refreshStats = () => {
@@ -467,7 +485,10 @@ function initLab(app: HTMLElement): void {
     setMode("quickspin");
     runBtn.disabled = true;
     failureBtn.disabled = true;
-    appendBubble("Find dinner options, but preserve failure truth if the provider rejects.", "user");
+    appendBubble(
+      "Find dinner options, but preserve failure truth if the provider rejects.",
+      "user"
+    );
     const session = controller.start({ status: "Calling provider" });
     session.setProgress();
     session.setPhase("Calling provider");
@@ -476,7 +497,11 @@ function initLab(app: HTMLElement): void {
       await controlledProviderFailure();
     } catch (error) {
       const failure = error instanceof Error ? error : new Error(String(error));
-      session.signal({ kind: "warning", label: "Provider request rejected", evidenceRef: "demo:negative-path:promise-rejection" });
+      session.signal({
+        kind: "warning",
+        label: "Provider request rejected",
+        evidenceRef: "demo:negative-path:promise-rejection",
+      });
       session.fail(failure);
       phaseEl.innerHTML = `Negative path: <strong>FAILED / ${failure.message}</strong> · no AI answer fabricated.`;
       refreshStats();
@@ -510,7 +535,16 @@ function main(): void {
   if (!app) return;
   const route = currentRoute();
   document.documentElement.dataset.page = route;
-  const page = route === "lab" ? renderLab() : route === "proof" ? renderProof() : route === "sdk" ? renderSdk() : route === "judges" ? renderJudges() : renderHome();
+  const page =
+    route === "lab"
+      ? renderLab()
+      : route === "proof"
+        ? renderProof()
+        : route === "sdk"
+          ? renderSdk()
+          : route === "judges"
+            ? renderJudges()
+            : renderHome();
   app.appendChild(pageShell(route, page));
   if (route === "lab") initLab(app);
 }
