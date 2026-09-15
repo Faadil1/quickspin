@@ -1,9 +1,9 @@
 schema_version: 1
 project: QuickSpin
-workstream: WINNING_INTELLIGENCE_V3_OPEN_SPACE
-canonical_base_sha: 2ee56ce711e6ee495f38908b21767698da9fe394
-candidate_branch: winning-intelligence-v3-open-space
-candidate_head_policy: TRACK_BRANCH_HEAD
+workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK
+canonical_main_sha: cb3b322907197e37518e85ddb377def2053edcc3
+candidate_branch: main
+candidate_head_policy: EXACT_MERGE_SHA
 project_complete: false
 readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 
@@ -21,119 +21,107 @@ activities:
   - id: A-003
     stage: dependency-security-reconciliation
     outcome: PASS_ZERO_NPM_AUDIT
-    evidence:
-      - evidence/security/SECURITY-GATE.md
-      - evidence/security/npm-audit-post-upgrade.json
-      - evidence/security/npm-audit-production.json
-      - evidence/security/npm-pack-dry-run.json
+    evidence: [evidence/security/SECURITY-GATE.md]
 
   - id: A-004
-    stage: public-runtime-vercel-proof-pre-v3
-    outcome: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3
-    evidence: [evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md]
-    note: Existing future-classic production runtime and five routes are verified, but it does not yet prove V3.
+    stage: winning-intelligence-v2-final-validation-and-merge
+    outcome: PASS
+    evidence: [github-actions:35001906327, github-actions:35001906289, git-commit:98c87f409c8b4b9586ef398812fb4d995fd1b5da]
 
   - id: A-005
-    stage: winning-intelligence-v2-final-validation
-    outcome: PASS_INDEPENDENT_CI_CODEQL
-    evidence:
-      - github-actions:35001906327
-      - github-actions:35001906289
-      - evidence/WINNING-INTELLIGENCE-V2.md
-    note: V2 passed final permanent CI and CodeQL after stale-verifier recovery, then merged as 98c87f409c8b4b9586ef398812fb4d995fd1b5da.
-
-  - id: A-006
-    stage: winning-intelligence-v2-merge
-    outcome: PASS_MERGED
-    evidence:
-      - git-commit:98c87f409c8b4b9586ef398812fb4d995fd1b5da
-
-  - id: A-007
     stage: v3-public-field-open-space-scan
     outcome: PASS_WITH_NON_EXHAUSTIVE_BOUNDARY
-    evidence:
-      - evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
-    note: Public field shows crowded generic waiting-game/useful-wait territory; replay/share/compare from redacted evidence is treated as an observed open-space hypothesis, never an exclusivity claim.
+    evidence: [evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md]
+
+  - id: A-006
+    stage: v3-private-capsule-to-redacted-ghost-contract
+    outcome: PASS_PERMANENT_TESTS
+    evidence: [src/sdk/capsule.ts, src/sdk/capsule.test.ts]
+
+  - id: A-007
+    stage: v3-historical-replay-truth
+    outcome: PASS
+    note: Ghost replay remains deterministic historical evidence and never claims live AI.
 
   - id: A-008
-    stage: v3-private-capsule-to-redacted-ghost-contract
-    outcome: IMPLEMENTED_TRANSIENT_PASS
-    evidence:
-      - src/sdk/capsule.ts
-      - src/sdk/types.ts
-      - src/sdk/capsule.test.ts
-      - github-actions:35003001488
-    note: Wait Ghost removes labels, refs, payloads, private ids/timestamps and failure details while preserving relative timing/event classes/outcome/counts.
+    stage: v3-wait-regression-diff
+    outcome: PASS
+    note: Signed deltas only; no winner/trust/confidence/quality score.
 
   - id: A-009
-    stage: v3-historical-replay-truth
-    outcome: IMPLEMENTED_TRANSIENT_PASS
-    evidence:
-      - src/sdk/capsule.ts
-      - src/demo/main.ts
-      - src/sdk/capsule.test.ts
-    note: Ghost replay returns deterministic historical steps and does not emit current host execution signals.
+    stage: v3-persistence-privacy-hardening
+    outcome: PASS
+    note: Arbitrary host intervention payload remains in-memory only and is not stored in QuickSpin's durable trail.
 
   - id: A-010
-    stage: v3-wait-regression-diff
-    outcome: IMPLEMENTED_TRANSIENT_PASS
-    evidence:
-      - src/sdk/capsule.ts
-      - src/sdk/capsule.test.ts
-    note: Comparison exposes signed deltas only and deliberately contains no winner, trust, confidence or quality score.
-
-  - id: A-011
-    stage: v3-persistence-privacy-hardening
-    outcome: PASS_TRANSIENT
-    evidence:
-      - src/sdk/types.ts
-      - src/sdk/widget.ts
-      - github-actions:35003001488
-    note: Full HostIntervention payload remains available to the host callback in memory but is no longer persisted in QuickSpin's durable execution trail.
-
-  - id: A-012
     stage: v3-transient-product-validation
     outcome: PASS_TYPECHECK_41_TESTS
-    evidence:
-      - github-actions:35003001488
-    note: Temporary surgical application passed npm install with zero vulnerabilities, TypeScript, and 41 tests before committing the V3 product files.
+    evidence: [github-actions:35003001488]
 
-  - id: A-013
+  - id: A-011
     stage: v3-diff-scope-assurance
     outcome: PASS_AFTER_SCOPE_DRIFT_REJECTION
+    evidence: [git-commit:31a494459baf0dd907130578e7997641ef468078, git-commit:944781484a592028c65367a68503daafc1ac95d5, evidence/FAILURE-LEDGER.md]
+
+  - id: A-012
+    stage: v3-pr-final-proof
+    outcome: PASS_INDEPENDENT_CI_CODEQL_AFTER_STALE_VERIFIER_RECOVERY
     evidence:
-      - git-commit:31a494459baf0dd907130578e7997641ef468078
-      - git-commit:944781484a592028c65367a68503daafc1ac95d5
+      - github-actions:35004294002
+      - github-actions:35006098609
+      - github-actions:35006098565
       - evidence/FAILURE-LEDGER.md
-    note: An 845-line widget rewrite was rejected as scope drift; exact validated widget restored before surgical V3 patching.
+    note: F-18 retains the stale post-promotion verifier failure; final PR head passed CI and CodeQL.
+
+  - id: A-013
+    stage: v3-merge
+    outcome: PASS_MERGED
+    evidence: [git-commit:cb3b322907197e37518e85ddb377def2053edcc3]
 
   - id: A-014
+    stage: v3-post-merge-main-validation
+    outcome: PASS
+    evidence: [github-actions:35006274961, github-actions:35006274850]
+
+  - id: A-015
+    stage: v3-exact-production-deploy
+    outcome: PASS_READY
+    evidence:
+      - vercel-deployment:dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
+      - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
+    note: Vercel logs explicitly checkout exact merge SHA cb3b322907197e37518e85ddb377def2053edcc3 before npm ci and build.
+
+  - id: A-016
+    stage: v3-five-route-runtime-proof
+    outcome: PASS_ALL_HTTP_200
+    evidence: [evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md]
+    routes: [/, /lab, /proof, /sdk, /judges]
+
+  - id: A-017
+    stage: v3-served-bundle-proof
+    outcome: PASS
+    evidence: [runtime-asset:/assets/index-CRyhx7en.js]
+    note: Served bundle contains Wait Ghost share/replay, historical-not-live-AI boundary, wait diff no-winner copy, and V3 judge framing.
+
+  - id: A-018
+    stage: v3-feature-freeze
+    outcome: ACTIVE
+    note: Winning Intelligence differentiation is closed at iteration 3/3 unless new high-signal competitor evidence invalidates the distinction.
+
+  - id: A-019
     stage: requirements-evidence-artifacts-risks-project-state-build-reconciliation
     outcome: PASS_WITH_CONDITIONS
-    evidence:
-      - evidence/RECONCILIATION.md
-      - evidence/CYCLE-GATE-MATRIX.md
-      - evidence/GATE-REPORT.md
-      - state/CANONICAL-STATE.yaml
     open_blocking_gates:
-      - WI_V3_PRODUCT_DELTA_PR_VALIDATION
-      - WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF
       - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
       - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
       - QA_LIVE_REHEARSAL
       - COMMONS_SUBMISSION_LOCK
       - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
 
-  - id: A-015
+  - id: A-020
     stage: handoff-to-finisher
-    outcome: PAUSED_FOR_WI_V3_PROOF
+    outcome: PAUSED_FOR_FINAL_VISUAL_VIDEO_QA_AND_SUBMISSION_GATES
     evidence: [HACKATHON-HANDOFF.yaml, state/HANDOVER.yaml]
-
-  - id: A-016
-    stage: v3-feature-freeze
-    outcome: ACTIVE_AFTER_V3_PROOF
-    evidence: [evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md]
-    note: This is Winning Intelligence differentiation iteration 3 of 3. After permanent proof, next major work is TRACE visual-jury elevation unless new high-signal competitor evidence invalidates the distinction.
 
 failure_records_retained:
   - github-actions:34925583311
@@ -150,6 +138,7 @@ failure_records_retained:
   - github-actions:34999366553
   - github-actions:35000339670
   - github-actions:35000815478
+  - github-actions:35004294002
   - git-commit:679860f0afc987bc024f5fbbd55d25bb716825f2
   - git-commit:31a494459baf0dd907130578e7997641ef468078
 
