@@ -27,8 +27,10 @@ const required = {
     "F-11",
     "F-12",
     "F-13",
+    "F-14",
     "34999196264",
     "34999396864",
+    "35000339670",
   ],
   "evidence/JUDGE-CYCLE.md": [
     "RUBRIC",
@@ -108,11 +110,12 @@ const required = {
   "state/CANONICAL-STATE.yaml": [
     "workstream: WINNING_INTELLIGENCE_V2_DIFFERENTIATION",
     "winning_intelligence_cycle:",
+    "status: PASS_INDEPENDENT_PR_CI_CODEQL",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
     "EVIDENCE_CAPSULE_IS_NOT_A_CRYPTOGRAPHIC_SIGNATURE",
     "HOST_INTERVENTION_INTENT_IS_NOT_EXECUTION_UNTIL_ACKNOWLEDGED",
     "project_complete: false",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_WI_V2",
     "runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58",
     "runtime_url: https://quickspin-runtime.vercel.app",
     "visual_architecture: FUTURE_CLASSIC_MULTI_PAGE",
@@ -138,8 +141,12 @@ const required = {
     "winning_intelligence_cycle:",
     "concrete_real_negative_event: PASS",
     "distinction: PASS_STRENGTHENED_BY_WI_V2",
-    "evidence_capsule: IMPLEMENTED_PENDING_PR_VALIDATION",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME",
+    "evidence_capsule: PASS_IMPLEMENTED_AND_TESTED",
+    "host_observation_bridge: PASS_IMPLEMENTED_AND_TYPECHECKED",
+    "host_intervention_ack_contract: PASS_IMPLEMENTED_AND_TYPECHECKED",
+    "code_correctness: PASS_CI_35000563352_NODE_22_24_35_TESTS",
+    "codeql: PASS_35000563920",
+    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_WI_V2",
     "commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF",
     "HOI: UNKNOWN_IN_REPO_LEGACY_IMPORT",
     "judge_coverage: PASS",
@@ -200,6 +207,9 @@ if (canonical.includes("PUBLIC_DEPLOYMENT_PROOF\n")) {
 if (canonical.includes("candidate_branch: final-judge-package")) {
   throw new Error("canonical state still points to the pre-WI-v2 candidate branch");
 }
+if (hackathon.includes("evidence_capsule: IMPLEMENTED_PENDING_PR_VALIDATION")) {
+  throw new Error("hackathon state regressed Evidence Capsule to its pre-validation state");
+}
 if (hackathon.includes("public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT")) {
   throw new Error("hackathon state regressed the verified Vercel runtime to the historical Pages blocker");
 }
@@ -221,7 +231,13 @@ if (existsSync(".github/workflows/final-judge-patch.yml")) {
 if (existsSync(".github/workflows/apply-wi-v2.yml")) {
   throw new Error("one-shot Winning Intelligence migration workflow must be removed after success");
 }
-if (existsSync("scripts/apply-winning-intelligence-v2.mjs") || existsSync("scripts/apply-winning-intelligence-v2-fixed.mjs")) {
+if (existsSync(".github/workflows/format-wi-v2.yml")) {
+  throw new Error("one-shot Winning Intelligence formatter must be removed after success");
+}
+if (
+  existsSync("scripts/apply-winning-intelligence-v2.mjs") ||
+  existsSync("scripts/apply-winning-intelligence-v2-fixed.mjs")
+) {
   throw new Error("temporary Winning Intelligence migration scripts must not ship in the candidate");
 }
 if (!orchestration.includes("HUMAN SUBMIT") || !orchestration.includes("POST-MORTEM")) {
@@ -231,4 +247,6 @@ if (!orchestration.includes("UNKNOWN_IN_REPO")) {
   throw new Error("orchestration trace must preserve missing upstream repo evidence as UNKNOWN_IN_REPO");
 }
 
-console.log(`judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`);
+console.log(
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + cross-state invariants`
+);
