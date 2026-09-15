@@ -60,7 +60,12 @@ const required = {
     "CLOSED",
     "Public deployment proof",
   ],
-  "evidence/GATE-REPORT.md": ["REAL NEGATIVE EVENT", "UNKNOWN / ABSTENTION", "PROJECT_COMPLETE"],
+  "evidence/GATE-REPORT.md": [
+    "REAL NEGATIVE EVENT",
+    "UNKNOWN / ABSTENTION",
+    "PASS_VERIFIED_PUBLIC_RUNTIME",
+    "PROJECT_COMPLETE",
+  ],
   "evidence/JUDGE-QA.md": ["What happens if the AI request fails?"],
   "evidence/Q&A-REHEARSAL.md": ["Give me one concrete real-world failure", "QuickSpin"],
   "evidence/CLAIM-LEDGER.md": [
@@ -68,6 +73,13 @@ const required = {
     "UNKNOWN / NOT_CLAIMED",
     "dependency-security gate is closed",
     "public judge runtime is live",
+    "VERIFIED",
+  ],
+  "evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md": [
+    "PASS / PUBLIC_DEPLOYMENT_PROOF CLOSED",
+    "https://quickspin-runtime.vercel.app",
+    "83da2b807e2072bde30a76c72937c3cbe74ff389",
+    "HTTP status: **200 OK**",
   ],
   "evidence/security/SECURITY-GATE.md": ["PASS", "0 vulnerabilities"],
   "evidence/security/SUPPLY-CHAIN-REVIEW.md": [
@@ -84,7 +96,8 @@ const required = {
     "workstream: FINAL_QC_AND_SUBMISSION_FINISHER",
     "REAL_FAILURE_GT_FAKE_SUCCESS",
     "project_complete: false",
-    "PENDING_REPOSITORY_PAGES_ENABLEMENT",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME",
+    "runtime_url: https://quickspin-runtime.vercel.app",
   ],
   "state/HANDOVER.yaml": ["FINAL_QC_AND_SUBMISSION_FINISHER", "project_complete: false", "rollback"],
   ".pbpd/state/ACTIVITY-TRACE.yaml": [
@@ -143,11 +156,14 @@ for (const [name, text] of [
 if (canonical.includes("DEPENDENCY_VULNERABILITY_RECONCILIATION")) {
   throw new Error("canonical state still lists the closed dependency vulnerability reconciliation as open");
 }
+if (canonical.includes("PUBLIC_DEPLOYMENT_PROOF\n")) {
+  throw new Error("canonical state still lists public deployment proof as an open blocker");
+}
 if (reconciliation.includes("Dependency audit open")) {
   throw new Error("reconciliation still describes the closed dependency audit as open");
 }
-if (claims.includes("security complete | REFUSED | dependency-vulnerability reconciliation still open")) {
-  throw new Error("claim ledger still uses the stale dependency-security rationale");
+if (claims.includes("public judge runtime is live | UNKNOWN / NOT_CLAIMED")) {
+  throw new Error("claim ledger still describes the now-verified public runtime as unknown");
 }
 if (existsSync(".github/workflows/final-judge-patch.yml")) {
   throw new Error("one-shot final judge patch workflow must not remain active after successful migration");
