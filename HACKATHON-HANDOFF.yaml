@@ -1,8 +1,8 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: WINNING_INTELLIGENCE_V2_DIFFERENTIATION
-to: WINNING_INTELLIGENCE_V3_OPEN_SPACE
-handoff_status: ACTIVE_WITH_BLOCKING_WI_V3_AND_FINAL_GATES
+from: WINNING_INTELLIGENCE_V3_OPEN_SPACE
+to: FINAL_RUNTIME_VISUAL_PROOF_LOCK
+handoff_status: ACTIVE_WITH_ONLY_FINAL_PRESENTATION_AND_SUBMISSION_GATES
 readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
@@ -13,22 +13,21 @@ what_is_verified:
   - explicit_failed_outcome_persistence
   - controlled_real_promise_rejection_negative_path
   - unknown_insufficient_evidence_signal_rejection
-  - execution_signal_gameplay_tests
-  - truthful_wait_receipt_direction_not_crypto_signature
   - dependency_security_zero_full_and_production_audit
-  - future_classic_multi_page_runtime_live_pre_v3
-  - five_public_routes_http_200_pre_v3
   - wi_v2_evidence_capsule_observe_intervention_contract_merged
-  - wi_v2_final_ci_35001906327
-  - wi_v2_final_codeql_35001906289
-  - public_competitor_scan_non_exhaustive_boundary
-  - generic_waiting_game_space_recognized_as_crowded
-  - wait_ghost_redacted_derivative_implemented
-  - wait_ghost_privacy_fixture_tests_pass_transiently
-  - historical_replay_not_live_ai_implemented
-  - signed_wait_diff_without_winner_score_implemented
+  - wi_v3_wait_ghost_redacted_derivative
+  - wi_v3_privacy_fixture_tests
+  - historical_replay_not_live_ai
+  - signed_wait_diff_without_winner_score
   - persisted_intervention_payload_removed
-  - v3_transient_typecheck_and_41_tests_pass_35003001488
+  - v3_final_pr_ci_35006098609
+  - v3_final_pr_codeql_35006098565
+  - v3_merge_sha_cb3b322907197e37518e85ddb377def2053edcc3
+  - v3_post_merge_ci_35006274961
+  - v3_post_merge_codeql_35006274850
+  - exact_v3_production_deployment_dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG_ready
+  - five_public_routes_http_200_v3
+  - served_v3_bundle_wait_ghost_replay_diff_content_verified
 
 canonical_evidence:
   - evidence/WINNING-INTELLIGENCE-V2.md
@@ -36,7 +35,6 @@ canonical_evidence:
   - evidence/REALITY-ANCHOR.md
   - evidence/FAILURE-LEDGER.md
   - evidence/RUBRIC-TRACEABILITY.md
-  - evidence/JUDGE-CYCLE.md
   - evidence/CYCLE-GATE-MATRIX.md
   - evidence/RECONCILIATION.md
   - evidence/GATE-REPORT.md
@@ -48,9 +46,6 @@ canonical_evidence:
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
-  - validate_wi_v3_with_permanent_node22_node24_ci_and_codeql
-  - merge_exact_v3_head
-  - redeploy_exact_v3_merge_sha_and_verify_five_routes
   - inspect_final_runtime_desktop_mobile_reduced_motion
   - capture_capsule_to_ghost_replay_compare_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
@@ -92,4 +87,4 @@ scope_policy:
   after_v3_proof: FEATURE_FREEZE_FOR_TRACE_VISUAL_JURY_PASS
   exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Close winning-intelligence-v3-open-space and retain the merged V2 product plus prior verified Vercel runtime if V3 fails independent validation.
+rollback: Retain merge SHA cb3b322907197e37518e85ddb377def2053edcc3 and production deployment dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the verified functional fallback if later visual-only work regresses judge proof.
