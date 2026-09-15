@@ -45,7 +45,7 @@ All five are **PASS** in `REALITY-ANCHOR.md`, with mitigation explicitly scoped 
 | BUILD CORRECTNESS | typecheck/tests/build must pass | PASS |
 | CODEQL | static security/quality scan | PASS |
 | DEPENDENCY SECURITY | no unresolved npm audit findings in candidate | PASS_ZERO_NPM_AUDIT |
-| SUPPLY-CHAIN INSTALL SCRIPTS | surface unreviewed dependency lifecycle scripts instead of silently trusting them | REVIEWED_NONBLOCKING — npm 11 flags `esbuild@0.28.2` postinstall as not approved; it is skipped under npm 11 and Node 24 CI still builds successfully. Do not use broad `dangerously-allow-all-scripts`. |
+| SUPPLY-CHAIN INSTALL SCRIPTS | surface unreviewed dependency lifecycle scripts instead of silently trusting them | REVIEWED_WARNING_NONRUNTIME — npm 11 flags `esbuild@0.28.2`; build passes and package boundary excludes build tooling. See `security/SUPPLY-CHAIN-REVIEW.md`. |
 | PACKAGE BOUNDARY | dev toolchain not leaked into published package surface | PASS |
 | RELEASE REPRODUCIBILITY | release workflow builds SDK + demo artifacts | PASS |
 | ACCESSIBILITY / INPUT PARITY | keyboard/pointer/focus support where required | PASS_WITH_IMPLEMENTATION_TEST_EVIDENCE |
@@ -115,4 +115,34 @@ Current terminal verdict: **BUILD_CANDIDATE_READY_WITH_LIMITATIONS**.
 6. Lock final submission URLs/assets/copy.
 7. Re-run terminal reconciliation and final QC.
 
-Broader user validation and npm install-script policy hardening remain useful but are **non-blocking** for hackathon submission; neither may be converted into a stronger claim than the evidence supports.
+Broader user validation and stricter npm install-script policy remain useful but are **non-blocking** for hackathon submission; neither may be converted into a stronger claim than the evidence supports.
+
+## I. Faadil Agent System + Judge Performance Assurance
+
+Canonical orchestration route:
+
+`HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM`
+
+Repo-local truth is recorded in `ORCHESTRATION-JPA.md`. Historical HOI / Chief-of-Staff proof is not present in this repository and therefore remains `UNKNOWN_IN_REPO / LEGACY_IMPORT`; it is **not** retroactively promoted to PASS.
+
+Mandatory Judge Performance Assurance gates:
+
+| Gate | Status | Evidence |
+| --- | --- | --- |
+| JUDGE COVERAGE | PASS | criterion→behavior→evidence→demo→pitch→artifact→submission→risk mapping in `ORCHESTRATION-JPA.md` |
+| CRITICAL-PATH ASSURANCE | PASS_WITH_RUNTIME_RENDER_PROOF_PENDING | positive + failure + UNKNOWN + anti-flash paths mapped |
+| TECHNICAL OWNERSHIP | PASS_WITH_REHEARSAL_PENDING | implementation surfaces enumerated; live defense pending |
+| SESSION CONTINUITY | PASS | state/handover/activity/claim/failure surfaces locked |
+| CLAIM CLASSIFICATION | PASS | deterministic/constrained/probabilistic/human-reviewed/hybrid/unknown discipline |
+
+Canonical final demo narrative:
+
+`PROBLEM → PAIN → TRIGGER → LIVE WORKFLOW → WOW → CONSEQUENCE → ACTION → TECHNICAL PROOF → IMPACT → CLOSE`
+
+The current video shot lock maps to this sequence. **Value before technology; proof before plumbing; one narrative; reliability/fallback before rehearsal.**
+
+Promotion rule:
+
+`PROJECT FINISHER → SUBMISSION_READY → HUMAN SUBMIT → POST-MORTEM → LEARNING / SYSTEM UPDATE`
+
+`SUBMISSION_READY` is still blocked by the public-runtime, render-inspection, video, live-Q&A, and final-link gates above.
