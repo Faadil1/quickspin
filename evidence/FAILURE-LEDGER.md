@@ -72,10 +72,10 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Event: GitHub Actions run `34929705731` passed install, the full QuickSpin quality gate, all 33 tests, judge verification, and SDK build, then failed at `actions/configure-pages@v6`.
 - Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929705731
 - Exact failure: `Get Pages site failed ... repository has Pages enabled and configured to build using GitHub Actions ... Not Found`.
-- Cause: GitHub Pages is not enabled/configured for this repository; the workflow token cannot turn an absent Pages site into runtime evidence.
-- Impact: demo build remains valid, but no public `page_url` exists yet and `PUBLIC_DEPLOYMENT_PROOF` stays open.
-- Mitigation: keep the reproducible Pages workflow, enable Pages from repository administration, rerun the workflow, then externally fetch the returned URL before promotion.
-- Lesson: a deployment workflow, expected hostname, and successful static build are not equivalent to a live runtime. **No page URL → no live-demo claim.**
+- Cause: GitHub Pages was not enabled/configured for this repository; the workflow token could not turn an absent Pages site into runtime evidence.
+- Historical impact: the demo build was valid, but no public `page_url` existed at that time.
+- Mitigation: the later canonical Vercel production runtime closed `PUBLIC_DEPLOYMENT_PROOF`; this failed Pages attempt remains retained.
+- Lesson: a deployment workflow, expected hostname, and successful static build are not equivalent to a live runtime. **No returned/fetched URL → no live-demo claim.**
 
 ## F-09 — Temporary final-patch workflow became non-idempotent noise
 
@@ -96,3 +96,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Impact: correct canonical state was rejected because assurance logic depended on typography rather than semantic markers.
 - Mitigation: validate stable semantic tokens (`Dependency security` and `CLOSED`) independently and keep cross-state assertions for stale-risk detection.
 - Lesson: **assurance should be stricter about truth, not brittle about formatting. A false negative is still a real verifier failure and remains in the record.**
+
+## F-11 — Multi-page visual candidate first pass failed the format gate
+
+- Event: PR #7 CI run `34973010201` failed only at `npm run format:check`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34973010201
+- Verified surrounding truth: Node 22 and Node 24 typecheck, all 33 tests, judge verification, multi-page Vite build, SDK build, artifact upload, and CodeQL all passed on the same candidate.
+- Cause: `src/site/lab.ts` and `src/site/shell.ts` had not yet been normalized by the repository Prettier policy.
+- Impact: the candidate correctly remained red even though its functional gates were green.
+- Mitigation: a one-shot formatter normalized exactly those two files, then the temporary workflow was removed immediately after success.
+- Lesson: **visual ambition does not bypass production hygiene. A formatting-only failure is still a real gate failure and remains in the evidence record.**
