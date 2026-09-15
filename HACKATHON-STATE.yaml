@@ -33,7 +33,7 @@ gates:
   video: PENDING
   submission_package: PENDING
   deployment_proof: PENDING
-  dependency_security_reconciliation: OPEN
+  dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT
   verification_before_completion: PASS_WITH_CONDITIONS
   build_readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
   handoff_to_finisher: NOT_INVOKED

@@ -31,3 +31,5 @@ terminal_sequence:
   - requirements-evidence-artifacts-risks-project-state-build-reconciliation
   - build-readiness
   - handoff-to-finisher
+
+security_gate: PASS_ZERO_NPM_AUDIT
