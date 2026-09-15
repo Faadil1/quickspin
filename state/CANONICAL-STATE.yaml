@@ -3,7 +3,7 @@ canonical_base:
   branch: main
   sha_at_finisher_start: c21eb03bb1cdcb0f18816000624dfaad38ebe965
 candidate:
-  branch: runtime-proof-lock
+  branch: future-classic-runtime-lock
   head_policy: TRACK_BRANCH_HEAD
 workstream: FINAL_QC_AND_SUBMISSION_FINISHER
 lifecycle_state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
@@ -56,6 +56,9 @@ completed:
   - SUBMISSION_PACKAGE_DRAFT_PREPARED
   - SDK_SAMPLE_PROVENANCE_RECONCILED
   - PUBLIC_DEPLOYMENT_PROOF_VERIFIED_VERCEL
+  - FUTURE_CLASSIC_MULTI_PAGE_ARCHITECTURE
+  - ROUTES_HOME_LAB_PROOF_SDK_JUDGES_HTTP_200
+  - FUTURE_CLASSIC_BUILD_CI_AND_CODEQL_GREEN
 
 open_blocking_gates:
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
@@ -70,6 +73,7 @@ closed_risks:
   dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT
   one_shot_patch_workflow_noise: REMOVED_AFTER_FAILURE_RETENTION
   public_deployment_proof: PASS_VERIFIED_VERCEL_RUNTIME
+  single_page_jury_compression_risk: MITIGATED_BY_MULTI_PAGE_ARCHITECTURE
 
 next_required_gate: FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
 
@@ -86,9 +90,19 @@ terminal_sequence:
 
 security_gate: PASS_ZERO_NPM_AUDIT
 runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME
+runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58
+runtime_deployment_id: dpl_Gu77jod1hxSEPu8Sz9pRPAq3zbyL
 runtime_url: https://quickspin-runtime.vercel.app
+runtime_routes_verified:
+  - /
+  - /lab
+  - /proof
+  - /sdk
+  - /judges
 runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
-visual_gate: PASS_WITH_CONDITIONS_PENDING_RUNTIME_INSPECTION
+visual_direction: SMOKED_PEARL_GRAPHITE_OXIDIZED_COPPER_ELECTRIC_SIGNAL
+visual_architecture: FUTURE_CLASSIC_MULTI_PAGE
+visual_gate: PASS_WITH_CONDITIONS_PENDING_PIXEL_LEVEL_DESKTOP_MOBILE_INSPECTION
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
 submission_gate: DRAFT_READY_PENDING_FINAL_LINKS
