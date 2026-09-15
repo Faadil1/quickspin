@@ -64,11 +64,7 @@ export interface RecordedIntervention {
 }
 
 export type ExecutionTrailEntryType =
-  | "phase"
-  | "signal"
-  | "signal-rejected"
-  | "intervention"
-  | "intervention-result";
+  "phase" | "signal" | "signal-rejected" | "intervention" | "intervention-result";
 
 /** Portable, post-run evidence. Entries are facts QuickSpin observed from its own contract. */
 export interface ExecutionTrailEntry {

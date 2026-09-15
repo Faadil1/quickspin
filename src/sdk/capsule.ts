@@ -61,7 +61,10 @@ export function validateWaitCapsule(value: unknown): value is WaitCapsule {
   return capsule.trail.every((entry) => {
     if (!entry || typeof entry !== "object") return false;
     const trailEntry = entry as { type?: unknown; atMs?: unknown };
-    return TRAIL_TYPES.has(trailEntry.type as ExecutionTrailEntryType) && finiteNonNegative(trailEntry.atMs);
+    return (
+      TRAIL_TYPES.has(trailEntry.type as ExecutionTrailEntryType) &&
+      finiteNonNegative(trailEntry.atMs)
+    );
   });
 }
 
@@ -102,7 +105,8 @@ export function validateWaitGhost(value: unknown): value is WaitGhost {
   if (ghost.version !== 1 || ghost.privacy !== "redacted" || ghost.source !== "wait-capsule")
     return false;
   if (!OUTCOMES.has(ghost.outcome as SessionOutcome)) return false;
-  if (!finiteNonNegative(ghost.actualWaitMs) || !finiteNonNegative(ghost.engagedPlayMs)) return false;
+  if (!finiteNonNegative(ghost.actualWaitMs) || !finiteNonNegative(ghost.engagedPlayMs))
+    return false;
   if (ghost.gameId !== null && typeof ghost.gameId !== "string") return false;
   if (ghost.score !== null && typeof ghost.score !== "number") return false;
   if (ghost.feltWaitMs !== null && !finiteNonNegative(ghost.feltWaitMs)) return false;

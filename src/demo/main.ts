@@ -1,6 +1,19 @@
 import "./site.css";
-import { createQuickSpin } from "../sdk/index";
-import type { ExecutionSignal, QuickSpinController, WaitEventHandler } from "../sdk/types";
+import {
+  compareWaitExperiences,
+  createQuickSpin,
+  createWaitGhost,
+  createWaitGhostReplay,
+  decodeWaitGhost,
+  encodeWaitGhost,
+} from "../sdk/index";
+import type {
+  ExecutionSignal,
+  QuickSpinController,
+  WaitEventHandler,
+  WaitGhost,
+  WaitGhostEvent,
+} from "../sdk/types";
 import { mountHeroDemo } from "./hero";
 import {
   bestLabel,
@@ -110,7 +123,7 @@ function homePage(): string {
       <div>
         <div class="eyebrow">Commonsmade · Make Waiting for AI Fun</div>
         <h1 class="display">Make AI waiting <em>playable.</em><br>Keep the truth.</h1>
-        <p class="lede">QuickSpin turns real host-observed AI execution into optional gameplay, then produces a truthful Wait Receipt for what actually happened — including failure and UNKNOWN.</p>
+        <p class="lede">QuickSpin turns real host-observed AI execution into optional gameplay, preserves a private Evidence Capsule, and can derive a redacted Wait Ghost you can replay or share without exposing provenance labels or payloads.</p>
         <div class="route-actions">
           <a class="action signal" href="/lab">Enter the live wait lab →</a>
           <a class="action" href="/proof">Inspect the evidence</a>
@@ -130,7 +143,7 @@ function homePage(): string {
     <section class="proof-band" aria-label="Core QuickSpin proof">
       <article class="proof-card signal"><span class="index">01 / EXECUTION</span><h3>Real events become game mechanics.</h3><p>Tool, retrieval, artifact and warning signals require host-owned provenance before QuickSpin lets them affect play.</p></article>
       <article class="proof-card"><span class="index">02 / FAILURE</span><h3>Failure stays failure.</h3><p>A rejected request ends as FAILED. QuickSpin does not manufacture a response just to keep the demo green.</p></article>
-      <article class="proof-card"><span class="index">03 / MEASURE</span><h3>Wait gets a receipt.</h3><p>Actual wait, played time, engagement and felt wait stay signed — shorter, equal or longer.</p></article>
+      <article class="proof-card"><span class="index">03 / MEASURE</span><h3>Wait gets a receipt.</h3><p>Actual wait, played time, engagement and felt wait stay directional — and a redacted Wait Ghost can replay the run without pretending it is live AI.</p></article>
     </section>
     <section class="page-head" style="margin-bottom:0">
       <div><div class="eyebrow">Five surfaces / one product truth</div><h1>Not a landing page.<br>A product instrument.</h1><p>Each route has one job: explain, demonstrate, prove, integrate, or defend. The judge never has to excavate a single scrolling page to find the evidence.</p></div>
@@ -162,8 +175,11 @@ function labPage(): string {
           <button id="run-demo" class="run">Run 12-second comparison</button>
           <button id="run-failure" class="failure">Run negative-path proof</button>
           <button id="copy-capsule">Copy Evidence Capsule</button>
+          <button id="copy-ghost">Copy redacted Wait Ghost link</button>
+          <button id="replay-ghost">Replay Wait Ghost</button>
           <button id="reset-stats">Reset local evidence</button>
         </div>
+        <div id="ghost-status" class="qs-phase">Wait Ghost: none loaded. Shared ghosts are redacted replay artifacts — never live AI.</div>
       </div>
       <aside class="evidence-panel" style="padding:0;overflow:hidden">
         <div class="panel-kicker" style="padding:18px;margin:0"><span>EVIDENCE FEED</span><span>HOST EVENTS</span></div>
@@ -190,7 +206,8 @@ function proofPage(): string {
       <div class="receipt-row"><span>ENGAGED</span><strong>7.88 s</strong></div>
       <div class="receipt-row signal"><span>FELT WAIT</span><strong>9.00 s / −25%</strong></div>
       <div class="receipt-row"><span>PROVENANCE</span><strong>HOST-OBSERVED</strong></div>
-      <div class="receipt-row"><span>EVIDENCE CAPSULE</span><strong>PORTABLE JSON</strong></div>
+      <div class="receipt-row"><span>EVIDENCE CAPSULE</span><strong>PRIVATE / PORTABLE JSON</strong></div>
+      <div class="receipt-row"><span>WAIT GHOST</span><strong>REDACTED / REPLAYABLE / SHAREABLE</strong></div>
       <div class="receipt-row"><span>UNKNOWN</span><strong>RETAINED / NOT LAUNDERED</strong></div>
       <div class="receipt-foot">Illustrative receipt layout. The live lab records the actual session values; perceived-wait delta is allowed to be shorter, equal, or longer.</div>
     </section>
@@ -215,7 +232,7 @@ function sdkPage(): string {
     <section class="evidence-grid" style="margin-top:28px">
       <article class="evidence-panel"><div class="eyebrow">Execution signals</div><h2>Observed events become play.</h2><p><strong>retrieval</strong>, <strong>tool</strong>, <strong>artifact</strong>, and <strong>warning</strong> are optional host-supplied signals. Every accepted signal carries a provenance reference.</p></article>
       <article class="evidence-panel"><div class="eyebrow">Honest progress</div><h2>Indeterminate is a feature.</h2><p>If the host cannot prove percent progress, QuickSpin does not invent one. Phase changes can still alter intensity without pretending the model is “62% done.”</p></article>
-      <article class="evidence-panel"><div class="eyebrow">Distribution</div><h2>Reusable by design.</h2><p>Vanilla SDK, React wrapper, ESM, CJS and IIFE outputs share the same host contract. The waiting layer can travel across product surfaces.</p></article>
+      <article class="evidence-panel"><div class="eyebrow">Distribution</div><h2>Reusable by design.</h2><p>Vanilla SDK, React wrapper, ESM, CJS and IIFE outputs share the same host contract. Evidence Capsules can derive privacy-safe Wait Ghosts for replay, sharing and wait-to-wait regression diffs.</p></article>
       <article class="evidence-panel"><div class="eyebrow">Fast responses</div><h2>No game flash for trivial waits.</h2><p>The default 650 ms reveal threshold lets fast model responses finish without interrupting the user with unnecessary UI.</p></article>
     </section>
   </main>`;
@@ -240,7 +257,7 @@ function judgesPage(): string {
     ],
     [
       "DIFFERENTIATOR",
-      "Observed execution becomes gameplay; the outcome gets a signed Wait Receipt.",
+      "Observed execution becomes gameplay; private evidence becomes a Capsule; a redacted derivative becomes a shareable Wait Ghost.",
       "PASS",
     ],
     [
@@ -254,7 +271,11 @@ function judgesPage(): string {
       "PASS",
     ],
     ["STORY", "One narrative: real wait → playable execution → truthful outcome.", "PASS"],
-    ["DEMO", "12-second control, QuickSpin path, receipt, failure and UNKNOWN.", "READY"],
+    [
+      "DEMO",
+      "12-second control, Capsule, redacted Ghost replay, wait diff, failure and UNKNOWN.",
+      "READY",
+    ],
     [
       "Q&A",
       "Adversarial answer bank refuses unsupported claims instead of improvising them.",
@@ -292,7 +313,7 @@ function judgesPage(): string {
     ${pageHead("Judge surface", "Every claim has a route to proof.", "This page compresses the build into judge logic: criterion → behavior → evidence → demo. It is intentionally explicit about what is verified, controlled, unknown, or refused.", "05 / JUDGES")}
     <section class="judge-cycle">${cycle.map((r) => `<div class="judge-row"><div class="stage">${r[0]}</div><div class="why">${r[1]}</div><div class="verdict">${r[2]}</div></div>`).join("")}</section>
     <section class="five-pattern">${pattern.map((p) => `<article class="pattern-step"><div class="n">${p[0]}</div><h3>${p[1]}</h3><p>${p[2]}</p></article>`).join("")}</section>
-    <section class="evidence-panel"><div class="eyebrow">Canonical distinction</div><h2>QuickSpin is not trying to be the biggest AI waiting game.</h2><p>It is the reusable waiting layer that makes real execution playable, preserves failure truth, refuses unsupported signals, and measures what the user experienced. That is the product — the minigames are interchangeable implementations of the contract.</p><div class="route-actions"><a class="action signal" href="/lab">See it run →</a><a class="action" href="/proof">Inspect evidence</a><a class="action" href="/sdk">Inspect integration</a></div></section>
+    <section class="evidence-panel"><div class="eyebrow">Canonical distinction</div><h2>QuickSpin is not trying to be the biggest AI waiting game.</h2><p>It is the reusable waiting layer that makes real execution playable, preserves failure truth, refuses unsupported signals, records a private Evidence Capsule, and derives a privacy-safe Wait Ghost for replay/share/compare. That evidence lifecycle is the product — the minigames are interchangeable implementations of the contract.</p><div class="route-actions"><a class="action signal" href="/lab">See it run →</a><a class="action" href="/proof">Inspect evidence</a><a class="action" href="/sdk">Inspect integration</a></div></section>
   </main>`;
 }
 
@@ -330,6 +351,9 @@ function mountLab(app: HTMLElement): void {
   const runBtn = app.querySelector<HTMLButtonElement>("#run-demo")!;
   const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure")!;
   const copyCapsuleBtn = app.querySelector<HTMLButtonElement>("#copy-capsule")!;
+  const copyGhostBtn = app.querySelector<HTMLButtonElement>("#copy-ghost")!;
+  const replayGhostBtn = app.querySelector<HTMLButtonElement>("#replay-ghost")!;
+  const ghostStatus = app.querySelector<HTMLElement>("#ghost-status")!;
   const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats")!;
   const phaseEl = app.querySelector<HTMLElement>("#qs-phase")!;
   const classicPhase = app.querySelector<HTMLElement>("#classic-phase")!;
@@ -353,6 +377,8 @@ function mountLab(app: HTMLElement): void {
     }),
   };
   let ctrl: QuickSpinController = createQuickSpin(controllerOptions);
+  const initialHash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  let sharedGhost: WaitGhost | null = decodeWaitGhost(initialHash.get("ghost") ?? "");
   let mode: "classic" | "quickspin" = "quickspin";
   let running = false;
 
@@ -384,6 +410,50 @@ function mountLab(app: HTMLElement): void {
     const perceived = perceivedWaitStats();
     set("stat-felt", perceived.samples > 0 ? `${Math.round(perceived.avgRatio * 100)}%` : "—");
     set("stat-streak", String(currentDayStreak()));
+  };
+
+  const ghostEventLabel = (event: WaitGhostEvent): string => {
+    if (event.type === "signal") return `signal · ${event.signalKind ?? "unknown-kind"}`;
+    if (event.type === "signal-rejected") return "UNKNOWN · signal rejected";
+    if (event.type === "intervention")
+      return `intervention · ${event.interventionKind ?? "custom"}`;
+    if (event.type === "intervention-result")
+      return `intervention result · ${event.accepted ? "accepted" : "rejected"}`;
+    return event.type;
+  };
+
+  const currentGhost = (): WaitGhost | null => {
+    const capsule = ctrl.getLastCapsule();
+    return capsule ? createWaitGhost(capsule) : null;
+  };
+
+  const showGhostComparison = (): void => {
+    const capsule = ctrl.getLastCapsule();
+    if (!sharedGhost || !capsule) return;
+    const diff = compareWaitExperiences(sharedGhost, capsule);
+    const actual = `${diff.actualWaitDeltaMs >= 0 ? "+" : "−"}${formatMs(Math.abs(diff.actualWaitDeltaMs))}`;
+    const engaged = `${diff.engagedPlayDeltaMs >= 0 ? "+" : "−"}${formatMs(Math.abs(diff.engagedPlayDeltaMs))}`;
+    ghostStatus.textContent = `Wait diff · current − shared ghost: actual ${actual}; engaged ${engaged}; outcome ${diff.fromOutcome} → ${diff.toOutcome}. No winner score.`;
+  };
+
+  const replayGhost = async (ghost: WaitGhost): Promise<void> => {
+    if (running) return;
+    running = true;
+    replayGhostBtn.disabled = true;
+    replayGhostBtn.textContent = "Replaying redacted timeline…";
+    ghostStatus.textContent = "WAIT GHOST REPLAY · redacted historical artifact · not live AI.";
+    for (const step of createWaitGhostReplay(ghost, 6)) {
+      await sleep(Math.min(step.delayMs, 1200));
+      const line = document.createElement("div");
+      line.textContent = `[WAIT GHOST +${Math.round(step.event.atMs)}ms] ${ghostEventLabel(step.event)}`;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    ghostStatus.textContent = `Wait Ghost replay complete · ${ghost.timeline.length} redacted event(s) · source outcome ${ghost.outcome}. Replay did not emit host execution signals.`;
+    running = false;
+    replayGhostBtn.disabled = false;
+    replayGhostBtn.textContent = "Replay Wait Ghost";
+    showGhostComparison();
   };
 
   const runClassic = async (): Promise<void> => {
@@ -432,6 +502,7 @@ function mountLab(app: HTMLElement): void {
       "</strong>.";
     appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
     refreshStats();
+    showGhostComparison();
   };
 
   const runDemo = async (): Promise<void> => {
@@ -495,6 +566,29 @@ function mountLab(app: HTMLElement): void {
     void navigator.clipboard?.writeText(capsule);
     copyCapsuleBtn.textContent = "Evidence Capsule copied";
   });
+  copyGhostBtn.addEventListener("click", () => {
+    const ghost = currentGhost();
+    if (!ghost) {
+      copyGhostBtn.textContent = "Run a QuickSpin path first";
+      return;
+    }
+    sharedGhost = ghost;
+    const url = new URL(window.location.href);
+    url.hash = `ghost=${encodeWaitGhost(ghost)}`;
+    window.history.replaceState(null, "", url);
+    void navigator.clipboard?.writeText(url.toString());
+    copyGhostBtn.textContent = "Redacted Wait Ghost link copied";
+    ghostStatus.textContent = `Wait Ghost ready · ${ghost.timeline.length} redacted event(s). Labels, evidence refs, payloads, record id, timestamp and failure details are excluded.`;
+  });
+  replayGhostBtn.addEventListener("click", () => {
+    const ghost = sharedGhost ?? currentGhost();
+    if (!ghost) {
+      ghostStatus.textContent =
+        "No Wait Ghost available. Run QuickSpin or open a shared #ghost link first.";
+      return;
+    }
+    void replayGhost(ghost);
+  });
   resetBtn.addEventListener("click", () => {
     ctrl.destroy();
     mount.innerHTML = "";
@@ -502,6 +596,7 @@ function mountLab(app: HTMLElement): void {
     logEl.innerHTML = "";
     ctrl = createQuickSpin(controllerOptions);
     copyCapsuleBtn.textContent = "Copy Evidence Capsule";
+    copyGhostBtn.textContent = "Copy redacted Wait Ghost link";
     refreshStats();
   });
   for (const button of segBtns)
@@ -511,6 +606,9 @@ function mountLab(app: HTMLElement): void {
     );
 
   setMode("quickspin");
+  if (sharedGhost) {
+    ghostStatus.textContent = `Shared Wait Ghost loaded · ${sharedGhost.timeline.length} redacted event(s) · outcome ${sharedGhost.outcome}. Replay is historical, not live AI.`;
+  }
   refreshStats();
 }
 
