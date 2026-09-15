@@ -1,0 +1,31 @@
+name: Format multi-page build
+
+on:
+  push:
+    branches:
+      - multi-page-future-classic
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: multi-page-future-classic
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run format
+      - name: Commit formatting only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/demo/main.ts index.html vercel.json
+          git diff --cached --quiet || git commit -m "style: format future-classic multi-page build"
+          git push origin multi-page-future-classic
