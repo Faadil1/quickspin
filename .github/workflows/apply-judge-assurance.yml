@@ -1,0 +1,50 @@
+name: Apply judge assurance hardening
+
+on:
+  push:
+    branches:
+      - judge-assurance-negative-path
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: judge-assurance-negative-path
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Apply hardening patch
+        run: python3 scripts/apply-judge-assurance.py
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format candidate
+        run: npm run format
+
+      - name: Quality gate
+        run: |
+          npm run check
+          npm run build
+
+      - name: Commit validated judge assurance pass
+        run: |
+          rm scripts/apply-judge-assurance.py
+          rm .github/workflows/apply-judge-assurance.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add failure evidence and judge assurance gates"
+          git push origin judge-assurance-negative-path
