@@ -1,0 +1,78 @@
+project: QuickSpin
+framework: HACKATHON_OPERATING_GATES
+principle: Real failure > fake success
+
+required_order:
+  - RUBRIC
+  - PAIN
+  - PROBLEM
+  - DIFFERENTIATOR
+  - EXECUTION
+  - EVIDENCE
+  - STORY
+  - DEMO
+  - QA
+
+gates:
+  - id: G01
+    name: RUBRIC_FIT
+    pass_when: Product proof maps to waiting experience, originality, AI-native fit, repeatability, and execution.
+    evidence: evidence/RUBRIC-TRACEABILITY.md
+  - id: G02
+    name: REALITY_AND_PAIN
+    pass_when: At least one real external negative event and observable impact are sourced without overclaiming mitigation.
+    evidence: evidence/REALITY-ANCHOR.md
+  - id: G03
+    name: NEGATIVE_PATH
+    pass_when: A runtime failure produces a distinct failed outcome and no fabricated success response.
+    evidence: evidence/FAILURE-LEDGER.md
+  - id: G04
+    name: UNKNOWN_ABSTENTION
+    pass_when: Insufficient provenance results in UNKNOWN/refusal and no gameplay mutation.
+    evidence: evidence/CLAIM-LEDGER.md
+  - id: G05
+    name: DISTINCTION
+    pass_when: Differentiator is execution-coupled rather than a cosmetic spinner replacement.
+    evidence: evidence/RUBRIC-TRACEABILITY.md
+  - id: G06
+    name: UX_UI
+    pass_when: Core path is legible, accessible, honest about progress, and visually ready for jury review.
+    status: PASS_WITH_CONDITIONS
+  - id: G07
+    name: BUILD_CORRECTNESS
+    pass_when: Typecheck, formatting, tests, evidence verifier, SDK build, and demo build pass.
+    evidence: github-actions:34928206101
+  - id: G08
+    name: CLAIM_EVIDENCE_RECONCILIATION
+    pass_when: Every material claim is VERIFIED, REFUSED, UNKNOWN, or explicitly limited.
+    evidence: evidence/CLAIM-LEDGER.md
+  - id: G09
+    name: DEMO_PATH
+    pass_when: Happy path, receipt, negative path, and UNKNOWN rule are demonstrable.
+    status: PASS_PENDING_CAPTURE
+  - id: G10
+    name: VIDEO
+    pass_when: Final capture visibly proves the material claims and failure path.
+    status: PENDING
+  - id: G11
+    name: QA
+    pass_when: Judge objections can be answered from evidence without invention.
+    evidence: evidence/JUDGE-QA.md
+    status: PASS_PENDING_REHEARSAL
+  - id: G12
+    name: SUBMISSION_PACKAGE
+    pass_when: Runtime, repo, video, copy, and evidence links are final and consistent.
+    status: PENDING
+  - id: G13
+    name: VERIFICATION_BEFORE_COMPLETION
+    pass_when: Requirements, evidence, artifacts, risks, project state, and actual build reconcile.
+    evidence: evidence/RECONCILIATION.md
+    status: PASS_WITH_CONDITIONS
+  - id: G14
+    name: BUILD_READINESS
+    pass_when: Critical MUSTs are verified or explicitly constrained with no silent UNKNOWN.
+    status: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+  - id: G15
+    name: HANDOFF_TO_FINISHER
+    pass_when: Remaining final-QC and submission tasks can be handed off without changing product truth.
+    status: NOT_INVOKED

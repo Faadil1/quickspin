@@ -15,7 +15,7 @@ export {
   totalWaitTurnedToPlayMs,
   updateSessionPerception,
 } from "./persistence";
-export type { SessionRecord } from "./persistence";
+export type { SessionOutcome, SessionRecord } from "./persistence";
 export {
   createRunnerSurface,
   runnerCollectSignal,

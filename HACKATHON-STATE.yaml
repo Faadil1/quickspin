@@ -1,0 +1,41 @@
+project: QuickSpin
+framework: HACKATHON_STATE
+canonical_main_sha: c0d3a0d61d74d6944e20f8a0af7e3ceac6b6a2e4
+candidate_branch: judge-assurance-negative-path
+candidate_sha_before_framework_sync: af6de08277d5862ef35a96e20e3ef681de8e124d
+state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+project_complete: false
+
+cycle:
+  RUBRIC: PASS
+  PAIN: PASS
+  PROBLEM: PASS
+  DIFFERENTIATOR: PASS
+  EXECUTION: PASS
+  EVIDENCE: PASS_WITH_LIMITATIONS
+  STORY: PASS
+  DEMO: PASS_PENDING_CAPTURE
+  QA: PASS_PENDING_REHEARSAL
+
+gates:
+  rubric_fit: PASS
+  real_negative_event: PASS
+  observable_impact: PASS
+  design_implication: PASS
+  mitigation: PASS
+  real_failure_gt_fake_success: PASS
+  unknown_abstention: PASS
+  distinction: PASS
+  judge_coverage: PASS
+  ux_ui: PASS_WITH_CONDITIONS
+  build_correctness: PASS
+  demo_path: PASS_PENDING_CAPTURE
+  video: PENDING
+  submission_package: PENDING
+  deployment_proof: PENDING
+  dependency_security_reconciliation: OPEN
+  verification_before_completion: PASS_WITH_CONDITIONS
+  build_readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+  handoff_to_finisher: NOT_INVOKED
+
+next_decision: Keep candidate isolated until collaborator review timing permits merge or further delta review.

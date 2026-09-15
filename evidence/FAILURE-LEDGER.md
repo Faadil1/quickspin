@@ -1,0 +1,42 @@
+# Failure Ledger — Real failure > fake success
+
+Failures are retained as evidence. Fixing a failure does not delete the record that it occurred.
+
+## F-01 — External production reality
+
+- Event: OpenAI elevated latency/errors, June 2, 2026.
+- Evidence: https://status.openai.com/incidents/01KT5XJ5ATD6RMYP908WS69FVD/write-up
+- Truth: production AI latency and request failures are real states.
+- Product implication: QuickSpin must preserve failure/unknown separately from success.
+
+## F-02 — QuickSpin build failure preserved
+
+- Event: GitHub Actions run `34925583311` failed.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34925583311
+- Cause: deterministic day-streak tests mocked `Date.now()`, while implementation used
+  `new Date()` and therefore read the runner wall clock.
+- Fix: day-streak cursor now starts from `new Date(Date.now())`.
+- Rule applied: the red run remains part of history; later green runs do not rewrite it as if it
+  never happened.
+
+## F-03 — Controlled runtime negative path
+
+- Trigger: **Run negative-path proof** in the demo.
+- Mechanism: an actual Promise rejects after 1.4 seconds with `DEMO_PROVIDER_TIMEOUT`.
+- Expected evidence: `warning` → `fail`, persisted `outcome: failed`, failure code/message, no AI
+  answer bubble.
+- Honesty boundary: controlled test failure, not a claim of a live provider outage.
+
+## UNKNOWN counter-case
+
+Execution signals without a valid kind, non-empty label, and `evidenceRef` are rejected. The SDK
+emits `signal-rejected` with `UNKNOWN / INSUFFICIENT_EVIDENCE` and does not mutate game state.
+This is the canonical abstention path: **no evidence → no gameplay claim**.
+
+## F-04 — Judge-assurance gate rejected its own first pass
+
+- Event: GitHub Actions run `34928143854` failed at TypeScript typecheck.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34928143854
+- Cause: the newly added evidence test used `Array.prototype.at()`, but QuickSpin targets ES2020.
+- Mitigation: the test now uses index access compatible with the actual target.
+- Lesson: assurance code is subject to the same build truth as product code; a green narrative cannot override a red compiler.

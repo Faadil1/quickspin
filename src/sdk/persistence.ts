@@ -1,5 +1,7 @@
 const STORAGE_KEY = "quickspin:sessions:v1";
 
+export type SessionOutcome = "completed" | "cancelled" | "failed" | "unknown";
+
 export interface SessionRecord {
   id: string;
   gameId: string | null;
@@ -11,6 +13,10 @@ export interface SessionRecord {
   /** What the user told us the wait felt like (perceived-wait question). */
   feltWaitMs: number | null;
   completed: boolean;
+  /** Explicit terminal truth. Old records may not contain this field. */
+  outcome: SessionOutcome;
+  failureCode: string | null;
+  failureMessage: string | null;
   ts: number;
 }
 
@@ -58,6 +64,9 @@ export function recordSession(input: {
   engagedPlayMs: number;
   feltWaitMs?: number | null;
   completed: boolean;
+  outcome?: SessionOutcome;
+  failureCode?: string | null;
+  failureMessage?: string | null;
 }): { id: string; isHighScore: boolean; dayStreak: number; sessionStreak: number } {
   const p = loadStorage();
   const previousBest = input.gameId ? bestScore(input.gameId) : 0;
@@ -72,6 +81,9 @@ export function recordSession(input: {
     engagedPlayMs: input.engagedPlayMs,
     feltWaitMs: input.feltWaitMs ?? null,
     completed: input.completed,
+    outcome: input.outcome ?? (input.completed ? "completed" : "unknown"),
+    failureCode: input.failureCode ?? null,
+    failureMessage: input.failureMessage ?? null,
     ts: Date.now(),
   });
   if (p.records.length > CAP) p.records = p.records.slice(-CAP);

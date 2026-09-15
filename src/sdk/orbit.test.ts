@@ -44,7 +44,11 @@ describe("orbit physics", () => {
   it("adds an execution-signal bonus only when the game awards a caught signal", () => {
     const s = createOrbitSurface(480, 220);
     expect(orbitResult(s, "ai-complete").score).toBe(0);
-    orbitAwardSignal(s, { kind: "artifact", label: "Draft assembled" });
+    orbitAwardSignal(s, {
+      kind: "artifact",
+      label: "Draft assembled",
+      evidenceRef: "test:orbit:artifact-1",
+    });
     expect(s.signalsCaught).toBe(1);
     expect(s.signalBonus).toBe(250);
     expect(orbitResult(s, "ai-complete").score).toBe(250);

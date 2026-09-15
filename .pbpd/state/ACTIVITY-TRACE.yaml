@@ -1,0 +1,55 @@
+schema_version: 1
+project: QuickSpin
+workstream: JUDGE_ASSURANCE_NEGATIVE_PATH
+canonical_base_sha: c0d3a0d61d74d6944e20f8a0af7e3ceac6b6a2e4
+current_candidate_sha: af6de08277d5862ef35a96e20e3ef681de8e124d
+project_complete: false
+readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+
+activities:
+  - id: A-001
+    stage: verification-before-completion
+    outcome: PASS_WITH_CONDITIONS
+    evidence:
+      - evidence/REALITY-ANCHOR.md
+      - evidence/FAILURE-LEDGER.md
+      - evidence/CLAIM-LEDGER.md
+    note: Real negative event, controlled runtime failure, signed wait evidence, and UNKNOWN path are explicit.
+
+  - id: A-002
+    stage: requirements-evidence-artifacts-risks-project-state-build-reconciliation
+    outcome: PASS_WITH_CONDITIONS
+    evidence:
+      - evidence/RECONCILIATION.md
+      - evidence/RUBRIC-TRACEABILITY.md
+      - evidence/GATE-REPORT.md
+      - state/CANONICAL-STATE.yaml
+    open_risks:
+      - DEPENDENCY_VULNERABILITY_RECONCILIATION
+      - PUBLIC_DEPLOYMENT_PROOF
+      - NEGATIVE_PATH_VIDEO_CAPTURE
+      - FINAL_SUBMISSION_PACKAGE
+      - BROADER_USER_VALIDATION
+
+  - id: A-003
+    stage: build-readiness
+    outcome: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+    evidence:
+      - github-actions:34928206101
+    note: Typecheck, format, tests, judge evidence verification, SDK build, and demo build passed.
+
+  - id: A-004
+    stage: handoff-to-finisher
+    outcome: NOT_INVOKED
+    reason: Open risks and final submission artifacts remain. PROJECT_COMPLETE is forbidden.
+
+failure_records_retained:
+  - github-actions:34925583311
+  - github-actions:34928143854
+
+invariants:
+  - REAL_FAILURE_GT_FAKE_SUCCESS
+  - NO_EVIDENCE_NO_CLAIM
+  - UNKNOWN_IS_A_VALID_OUTCOME
+  - FAILURE_IS_NOT_COMPLETION
+  - IMPLEMENTATION_PRESENCE_IS_NOT_EXECUTION_EVIDENCE
