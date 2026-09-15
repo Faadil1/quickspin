@@ -1,33 +1,51 @@
 project: QuickSpin
 workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK
-source_main_sha: cb3b322907197e37518e85ddb377def2053edcc3
+source_main_sha: f8b07abee09821be7ac0ea179f05359cecc2d203
 candidate_branch: main
 objective: >-
-  Freeze product functionality after Winning Intelligence iteration 3/3, preserve the
-  private Evidence Capsule → redacted Wait Ghost → historical replay → signed-delta
-  distinction, and finish the exact deployed candidate through TRACE visual-jury review,
-  final capture, Q&A rehearsal and submission locks.
+  Keep product functionality frozen after Winning Intelligence iteration 3/3, preserve the
+  private Evidence Capsule → redacted Wait Ghost → historical replay → directional-delta
+  distinction, and finish the exact TRACE Visual Jury V1 candidate through production runtime
+  proof, pixel inspection, final capture, Q&A rehearsal and submission locks.
 
 current_truth:
   wi_v2_merged_to_fork_main: true
   wi_v3_merged_to_fork_main: true
   wi_v3_merge_sha: cb3b322907197e37518e85ddb377def2053edcc3
+  trace_visual_jury_v1_merged_to_fork_main: true
+  trace_visual_jury_v1_merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
+  trace_visual_jury_v1_final_pr_ci: github-actions:35010476926
+  trace_visual_jury_v1_final_pr_codeql: github-actions:35010476921
+  trace_visual_jury_v1_post_merge_ci: github-actions:35010625808
+  trace_visual_jury_v1_post_merge_codeql: PENDING_AT_HANDOVER_WRITE
   project_complete: false
   readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
   security_gate: PASS_ZERO_NPM_AUDIT
   real_external_negative_event: PASS_PRIMARY_SOURCE
   runtime_negative_path: PASS
   unknown_abstention: PASS
-  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_TRACE_VISUAL
   production_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
   production_url: https://quickspin-runtime.vercel.app
   production_routes_http_200: [/, /lab, /proof, /sdk, /judges]
-  production_bundle: /assets/index-CRyhx7en.js
-  production_bundle_v3_content_verified: true
-  v3_post_merge_ci: github-actions:35006274961
-  v3_post_merge_codeql: github-actions:35006274850
-  v3_tests: 41
+  production_source_sha: cb3b322907197e37518e85ddb377def2053edcc3
+  trace_visual_runtime_deployed: false
+  trace_visual_runtime_claim: NOT_YET_CLAIMED
   feature_scope: FROZEN_AFTER_WINNING_INTELLIGENCE_3_OF_3
+
+trace_visual_jury_v1_truth:
+  scope: DEMO_PRESENTATION_ONLY_NO_SDK_RUNTIME_CONTRACT_CHANGE
+  changed_files: [index.html, src/demo/jury.ts, src/demo/jury.css]
+  above_fold_signature_path: HOST_EVENT_TO_PLAY_TO_PRIVATE_CAPSULE_TO_REDACTED_GHOST
+  lab_actions_grouped_into_run_and_after_wait: true
+  visible_capsule_to_ghost_redaction_boundary: true
+  judge_memory_sentence_surface: true
+  keyboard_focus_and_touch_hierarchy: true
+  mobile_stacking: true
+  reduced_motion_safe: true
+  signed_receipt_ambiguous_copy_removed: true
+  prior_format_gate_failures_retained_in_state: [35009685840, 35009845739]
+  recovery_ci: 35010476926
 
 proof_paths:
   - evidence/WINNING-INTELLIGENCE-V2.md
@@ -56,6 +74,8 @@ v3_product_truth:
   malformed_share_token_fail_closed: true
 
 blocking_open_items:
+  - deploy_exact_trace_visual_jury_v1_merge_sha_c34012a732e8bb7cd2b5601f1a8f9862a87e4056
+  - verify_five_public_routes_and_trace_visual_bundle
   - inspect_final_runtime_desktop_mobile_and_reduced_motion
   - capture_capsule_to_ghost_replay_compare_and_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
@@ -70,11 +90,11 @@ nonblocking_open_items:
   - exclusivity_of_open_space_not_claimed
 
 next_action: >-
-  Perform TRACE visual-jury inspection of the exact production runtime at desktop, mobile
-  and reduced-motion breakpoints. Fix only visual/accessibility/judge-legibility defects;
-  do not expand product functionality. Then capture the final evidence path.
+  Deploy exactly c34012a732e8bb7cd2b5601f1a8f9862a87e4056 to quickspin-runtime, prove the
+  five canonical routes and the TRACE jury bundle, then perform desktop/mobile/reduced-motion
+  inspection. Fix only visual/accessibility/judge-legibility defects; do not expand functionality.
 
 rollback: >-
-  If visual-only changes regress product proof, keep cb3b322907197e37518e85ddb377def2053edcc3
-  and Vercel deployment dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the verified functional
-  fallback. Do not reopen Winning Intelligence product scope without new high-signal evidence.
+  If TRACE visual changes regress product proof, keep cb3b322907197e37518e85ddb377def2053edcc3
+  and Vercel deployment dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the verified functional fallback.
+  Do not reopen Winning Intelligence product scope without new high-signal evidence.
