@@ -17,15 +17,15 @@ Every material claim must be one of: `VERIFIED`, `VERIFIED_WITH_SCOPE`, `UNKNOWN
 | intervention intent means the model request was changed | REFUSED | QuickSpin emits intent only; host must explicitly acknowledge/reject |
 | host intervention acknowledgement can carry evidence provenance | VERIFIED | `InterventionResult.evidenceRef`; V2 merged |
 | arbitrary intervention payload is persisted by QuickSpin | REFUSED_BY_IMPLEMENTATION | V3 stores only `RecordedIntervention` id/kind/optional label/relative time; host payload remains in-memory only |
-| Wait Ghost is derived from a full Wait Capsule | VERIFIED_IN_CODE_AND_TRANSIENT_TESTS | `createWaitGhost()` + V3 capsule tests |
+| Wait Ghost is derived from a full Wait Capsule | VERIFIED_IN_CODE_AND_TESTS | `createWaitGhost()` + permanent V3 test suite |
 | Wait Ghost exposes phase/signal/intervention labels or evidence refs | REFUSED_BY_IMPLEMENTATION_AND_TESTS | redaction tests use deliberately sensitive fixtures and assert those values are absent |
 | Wait Ghost exposes record id, wall-clock timestamp or failure details | REFUSED_BY_IMPLEMENTATION_AND_TESTS | Wait Ghost schema does not contain those fields; redaction tests assert absence |
 | Wait Ghost share token requires a backend upload | REFUSED | mechanism is URL-safe encoded redacted JSON in the URL hash; no hosted social backend is claimed |
 | Wait Ghost is cryptographically signed or tamper-proof | REFUSED | no signature/MAC exists |
 | Wait Ghost replay is live AI | REFUSED | replay returns historical deterministic steps only and does not emit host execution signals |
-| malformed/oversized Wait Ghost tokens fail closed | VERIFIED_BY_TRANSIENT_TESTS | `decodeWaitGhost()` returns `null`; 32k token ceiling |
+| malformed/oversized Wait Ghost tokens fail closed | VERIFIED_BY_TESTS | `decodeWaitGhost()` returns `null`; 32k token ceiling |
 | wait-to-wait diff decides a winner | REFUSED | comparison returns signed deltas only; no winner/trust/quality score |
-| wait-to-wait regression deltas are computable | VERIFIED_BY_TRANSIENT_TESTS | actual/engaged/felt/score/evidence/outcome deltas in `compareWaitExperiences()` |
+| wait-to-wait regression deltas are computable | VERIFIED_BY_TESTS | actual/engaged/felt/score/evidence/outcome deltas in `compareWaitExperiences()` |
 | failed request does not become completed | VERIFIED_BY_TESTS | explicit persisted failed outcome |
 | negative demo performs an actual Promise rejection | VERIFIED_IN_CODE_PENDING_CAPTURE | controlled `DEMO_PROVIDER_TIMEOUT` harness; video still pending |
 | external AI latency/rejection/failure is a real production condition | VERIFIED_PRIMARY_SOURCE | OpenAI June 2–3, 2026 official incident write-up |
@@ -40,7 +40,7 @@ Every material claim must be one of: `VERIFIED`, `VERIFIED_WITH_SCOPE`, `UNKNOWN
 | QuickSpin is absolutely “security complete” | REFUSED | no finite audit justifies an absolute security claim |
 | WI V2 product delta is independently CI/CodeQL green | VERIFIED | final V2 head CI `35001906327`, CodeQL `35001906289`, then merged |
 | WI V3 transient implementation passes typecheck + tests | VERIFIED_WITH_SCOPE | migration validation run `35003001488`; 5 test files / 41 tests |
-| WI V3 permanent PR CI/CodeQL is green | UNKNOWN_PENDING_PR | transient validation is not the final merge authority |
+| WI V3 permanent PR CI/CodeQL is green | VERIFIED | PR #12 validation head passed CI `35004024452`, CodeQL `35004024601`, Node 22/24, 41 tests, judge verifier, demo and SDK builds before state promotion |
 | public judge runtime is live | VERIFIED | current Vercel future-classic runtime previously reached READY and five canonical routes returned HTTP 200 |
 | public runtime already contains WI V3 Wait Ghost changes | UNKNOWN / NOT_CLAIMED | requires exact post-merge V3 deployment + route verification |
 | expected GitHub Pages hostname is a live URL | REFUSED | Pages remains unverified and is not the canonical judge runtime |
@@ -48,7 +48,7 @@ Every material claim must be one of: `VERIFIED`, `VERIFIED_WITH_SCOPE`, `UNKNOWN
 | npm package is publicly published | UNKNOWN / NOT_CLAIMED | no publication evidence locked |
 | hosted analytics exists | NOT_IMPLEMENTED / NOT_CLAIMED | roadmap only |
 | controlled demo failure is a live provider outage | REFUSED | controlled failure is explicitly labeled controlled evidence |
-| PROJECT_COMPLETE | REFUSED_CURRENTLY | V3 PR/runtime proof, visual inspection, capture, live rehearsal, Commons lock and final submission lock remain open |
+| PROJECT_COMPLETE | REFUSED_CURRENTLY | V3 runtime proof, visual inspection, capture, live rehearsal, Commons lock and final submission lock remain open |
 
 Canonical runtime proof: `evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md`.
 Canonical V2 differentiation proof: `evidence/WINNING-INTELLIGENCE-V2.md`.
