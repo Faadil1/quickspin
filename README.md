@@ -7,7 +7,7 @@
 **Turn live AI execution into play time — and measure whether the wait actually felt better.**
 
 QuickSpin is an embeddable waiting runtime for AI apps. Instead of leaving users on a passive
-“thinking…” spinner, a host can expose its real execution phases to a playable widget. When the AI
+“thinking…” spinner, a host can expose its real execution phases and observed execution signals to a playable widget. When the AI
 response is ready, QuickSpin ends the game cleanly and can show a **Wait Receipt** with actual wait,
 engaged play time, engagement ratio, and an optional perceived-wait answer.
 
@@ -55,7 +55,9 @@ const session = quickSpin.start({ status: "Reasoning…" });
 // No trustworthy percentage? Stay indeterminate.
 session.setProgress();
 session.setPhase("Searching the web…");
+session.signal({ kind: "retrieval", label: "Retrieved 12 sources" });
 session.setPhase("Drafting…");
+session.signal({ kind: "artifact", label: "Draft assembled" });
 
 const response = await modelRequest();
 session.complete();
@@ -68,6 +70,26 @@ const answer = await quickSpin.track(aiRun(prompt), {
   status: "Thinking…",
 });
 ```
+
+## Execution Signals
+
+`setPhase()` changes the pace of the waiting game. `signal()` goes one level deeper: it lets a host
+turn a **real observed runtime event** into game content. QuickSpin supports four intentionally small
+semantic kinds: `retrieval`, `tool`, `artifact`, and `warning`.
+
+```ts
+session.signal({ kind: "retrieval", label: "Retrieved 12 sources" });
+session.signal({ kind: "tool", label: "Called maps search" });
+session.signal({ kind: "artifact", label: "Draft assembled" });
+```
+
+Wait Runner emits those events as collectible diamonds; Orbit Catch attaches them to catchable
+targets. A signal only changes the score after the player actually interacts with it. Signals that
+arrive before the player starts are queued briefly and delivered when gameplay begins.
+
+**Epistemic rule:** QuickSpin never infers these events from elapsed time, phase names, or animation.
+The host must call `session.signal(...)` from something it genuinely observed in its own AI runtime.
+If the host has no such events, it simply does not send them.
 
 ## Wait Receipt
 
@@ -82,7 +104,7 @@ The perception calculation is signed. A wait that felt longer is reported as lon
 clamped to a fake “0% improvement.” The underlying record is updated in `localStorage`, so aggregate
 `perceivedWaitStats()` is based on real submitted answers.
 
-Relevant events include `session-start`, `phase`, `progress`, `game-start`, `session-complete`,
+Relevant events include `session-start`, `phase`, `progress`, `signal`, `game-start`, `session-complete`,
 `perceived-wait`, `receipt`, `cancel`, and `fail`.
 
 ## Games

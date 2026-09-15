@@ -18,18 +18,29 @@ export {
 export type { SessionRecord } from "./persistence";
 export {
   createRunnerSurface,
+  runnerCollectSignal,
   runnerCollides,
   runnerGame,
+  runnerInjectSignal,
   runnerJump,
   runnerResult,
   runnerStep,
 } from "./runner";
-export { createOrbitSurface, orbitGame, orbitResult, orbitStep, orbitTap } from "./orbit";
+export {
+  createOrbitSurface,
+  orbitAwardSignal,
+  orbitGame,
+  orbitResult,
+  orbitStep,
+  orbitTap,
+} from "./orbit";
 export { PLANS } from "./paywall";
 export type {
   CheckoutResult,
   CreateQuickSpinOptions,
   EndReason,
+  ExecutionSignal,
+  ExecutionSignalKind,
   GameDefinition,
   GameHost,
   GameId,

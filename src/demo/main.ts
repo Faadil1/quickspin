@@ -1,6 +1,11 @@
 import "./demo.css";
 import { createQuickSpin } from "../sdk/index";
-import type { PlanOption, QuickSpinController, WaitEventHandler } from "../sdk/types";
+import type {
+  ExecutionSignal,
+  PlanOption,
+  QuickSpinController,
+  WaitEventHandler,
+} from "../sdk/types";
 import { PLANS, createCheckoutFlow } from "../sdk/paywall";
 import { mountHeroDemo } from "./hero";
 import {
@@ -20,11 +25,38 @@ const LIVE_PAYMENTS = Boolean(STRIPE_LINKS.pro);
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
 /** Exactly 12 seconds: the before/after demo claim now matches runtime reality. */
-const PHASES: Array<[string, number, number]> = [
-  ["Reasoning…", 0.12, 2600],
-  ["Searching the web…", 0.32, 3100],
-  ["Drafting…", 0.62, 3400],
-  ["Polishing…", 0.88, 2900],
+interface DemoPhase {
+  status: string;
+  progress: number;
+  ms: number;
+  signal: ExecutionSignal;
+}
+
+const PHASES: DemoPhase[] = [
+  {
+    status: "Reasoning…",
+    progress: 0.12,
+    ms: 2600,
+    signal: { kind: "tool", label: "Planned constraints" },
+  },
+  {
+    status: "Searching the web…",
+    progress: 0.32,
+    ms: 3100,
+    signal: { kind: "retrieval", label: "Retrieved Austin dinner options" },
+  },
+  {
+    status: "Drafting…",
+    progress: 0.62,
+    ms: 3400,
+    signal: { kind: "artifact", label: "Ranked five candidate spots" },
+  },
+  {
+    status: "Polishing…",
+    progress: 0.88,
+    ms: 2900,
+    signal: { kind: "artifact", label: "Final answer assembled" },
+  },
 ];
 
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -98,8 +130,8 @@ function main(): void {
     const fill = chat.querySelector<HTMLElement>(".fill") as HTMLElement;
     const label = chat.querySelector<HTMLElement>(".progress-label")!;
     track.style.display = "flex";
-    track.querySelector<HTMLElement>(".spinner-label")!.textContent = PHASES[0][0];
-    for (const [status, p, ms] of PHASES) {
+    track.querySelector<HTMLElement>(".spinner-label")!.textContent = PHASES[0].status;
+    for (const { status, progress: p, ms } of PHASES) {
       track.querySelector<HTMLElement>(".spinner-label")!.textContent = status;
       fill.style.width = `${Math.round(p * 100)}%`;
       label.textContent = `${Math.round(p * 100)}%`;
@@ -112,14 +144,20 @@ function main(): void {
   };
 
   const runQuickSpin = async () => {
-    phaseEl.innerHTML = "Phase: <strong>" + PHASES[0][0] + "</strong>";
-    const session = ctrl!.start({ status: PHASES[0][0] });
+    phaseEl.innerHTML = "Phase: <strong>" + PHASES[0].status + "</strong>";
+    const session = ctrl!.start({ status: PHASES[0].status });
     // No fake percentage: phase changes themselves drive honest game intensity.
     session.setProgress();
-    for (const [status, _p, ms] of PHASES) {
+    for (const { status, ms, signal } of PHASES) {
       session.setPhase(status);
+      session.signal(signal);
       phaseEl.innerHTML =
-        "Phase: <strong>" + status + "</strong> · game intensity follows the phase";
+        "Phase: <strong>" +
+        status +
+        "</strong> · live signal: <strong>" +
+        signal.kind +
+        "</strong> — " +
+        signal.label;
       await sleep(ms);
     }
     session.complete();
@@ -344,14 +382,14 @@ function buildPage(): HTMLElement {
     el(
       "p",
       "",
-      "When the host has no trustworthy percentage, real phase changes raise game intensity instead of fabricating progress."
+      "Real phase changes raise game intensity, and observed host execution events become collectible or catchable gameplay signals."
     )
   );
   const gameList = el("div", "game-list");
   gameList.innerHTML =
     `<div class="game"><div class="name">Wait Runner</div><div class="tag">Jump the obstacle, outrun the wait. <kbd>Space</kbd> or tap to jump.</div></div>` +
     `<div class="game"><div class="name">Orbit Catch</div><div class="tag">Catch the glow target. Tap/click, or focus the canvas and use <kbd>Space</kbd>/<kbd>Enter</kbd>.</div></div>` +
-    `<div class="game"><div class="name">Phase coupling</div><div class="tag">Reasoning → search → draft → polish changes pace from real host signals.</div></div>`;
+    `<div class="game"><div class="name">Execution signals</div><div class="tag">Retrievals, tools, artifacts, and warnings become scorable game events only when the host actually sends them.</div></div>`;
   games.appendChild(gameList);
 
   const sdk = el("section", "section wrap");
@@ -361,7 +399,7 @@ function buildPage(): HTMLElement {
     el(
       "p",
       "",
-      `Mount it once, feed it real model phases, and complete the session when the actual response resolves. ` +
+      `Mount it once, feed it real model phases plus observed execution signals, and complete the session when the actual response resolves. ` +
         `Fast responses below the default 650ms threshold never flash the game UI.`
     )
   );
@@ -383,7 +421,9 @@ function buildPage(): HTMLElement {
 <span class="tok-kw">const</span> session = quickSpin.start({ status: <span class="tok-str">"Reasoning…"</span> });
 session.setProgress();               <span class="tok-cmt">// indeterminate: do not fake a %</span>
 session.setPhase(<span class="tok-str">"Searching the web…"</span>); <span class="tok-cmt">// real phase drives game intensity</span>
+session.signal({ kind: <span class="tok-str">"retrieval"</span>, label: <span class="tok-str">"Retrieved 12 sources"</span> });
 session.setPhase(<span class="tok-str">"Drafting…"</span>);
+session.signal({ kind: <span class="tok-str">"artifact"</span>, label: <span class="tok-str">"Draft assembled"</span> });
 
 <span class="tok-kw">const</span> response = <span class="tok-kw">await</span> modelRequest();
 session.complete();                  <span class="tok-cmt">// receipt + handoff</span>

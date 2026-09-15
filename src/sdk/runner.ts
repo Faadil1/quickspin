@@ -270,11 +270,7 @@ export const runnerGame: GameDefinition = {
       ctx.fillRect(8, state.playerY, PLAYER_W, PLAYER_H);
       ctx.font = "10px system-ui, sans-serif";
       ctx.fillStyle = "rgba(255,255,255,0.5)";
-      ctx.fillText(
-        `${state.distance.toFixed(0)} m · signals ${state.signalsCollected}`,
-        8,
-        12
-      );
+      ctx.fillText(`${state.distance.toFixed(0)} m · signals ${state.signalsCollected}`, 8, 12);
       if (host.phase) {
         const label = host.phase.slice(0, 30);
         const width = ctx.measureText(label).width;

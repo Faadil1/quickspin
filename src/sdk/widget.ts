@@ -1,6 +1,7 @@
 import type {
   CreateQuickSpinOptions,
   EndReason,
+  ExecutionSignal,
   GameDefinition,
   GameHost,
   GameInstance,
@@ -26,6 +27,15 @@ const GAMES: Record<string, GameDefinition> = {
   runner: runnerGame,
   orbit: orbitGame,
 };
+
+const SIGNAL_KINDS = new Set<ExecutionSignal["kind"]>(["retrieval", "tool", "artifact", "warning"]);
+
+function normalizeExecutionSignal(signal: ExecutionSignal): ExecutionSignal | null {
+  const kind = signal?.kind;
+  const label = typeof signal?.label === "string" ? signal.label.trim() : "";
+  if (!SIGNAL_KINDS.has(kind) || !label) return null;
+  return { kind, label: label.slice(0, 64) };
+}
 
 const DARK_THEME: Required<ThemeConfig> = {
   mode: "dark",
@@ -221,6 +231,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
   let latestPhase: string | null = null;
   let phaseIndex = -1;
   let phaseIntensity = 0;
+  const pendingSignals: ExecutionSignal[] = [];
   let latestStatus = "Waiting for the model…";
   const machine = new SessionStateMachine(emit);
 
@@ -344,6 +355,10 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     const g = GAMES[gameId].create(gameHost());
     currentGame = g;
     g.start();
+    if (g.signal && pendingSignals.length > 0) {
+      const queued = pendingSignals.splice(0, pendingSignals.length);
+      for (const signal of queued) g.signal(signal);
+    }
     emit({
       type: "game-start",
       data: { game: gameId, phase: latestPhase, intensity: gameHost().intensity },
@@ -800,6 +815,7 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
     latestPhase = null;
     phaseIndex = -1;
     phaseIntensity = 0;
+    pendingSignals.length = 0;
     collapsed = false;
     uiShown = false;
     progressFill.style.width = "0%";
@@ -858,6 +874,26 @@ export function createQuickSpin(opts: CreateQuickSpinOptions = {}): QuickSpinCon
         progressFill.classList.remove("indeterminate");
         progressFill.style.width = `${(clamp01(value) * 100).toFixed(1)}%`;
       }
+    },
+    signal(signal: ExecutionSignal) {
+      if (!sessionActive) return;
+      const normalized = normalizeExecutionSignal(signal);
+      if (!normalized) return;
+
+      if (currentGame?.signal) currentGame.signal(normalized);
+      else {
+        pendingSignals.push(normalized);
+        if (pendingSignals.length > 8) pendingSignals.shift();
+      }
+
+      emit({
+        type: "signal",
+        data: {
+          ...normalized,
+          phase: latestPhase,
+          status: machine.status,
+        },
+      });
     },
     complete() {
       completeSession();
