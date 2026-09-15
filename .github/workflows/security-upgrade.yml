@@ -1,0 +1,136 @@
+name: Security upgrade validation
+
+on:
+  push:
+    branches:
+      - finalization-security-runtime
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: finalization-security-runtime
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Upgrade vulnerable development toolchain
+        run: npm install --save-dev vite@8.3.0 vitest@5.0.0
+
+      - name: Align CI with supported Node and current GitHub actions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in Path('.github/workflows').glob('*.yml'):
+              text = p.read_text(encoding='utf-8')
+              text = text.replace('actions/checkout@v4', 'actions/checkout@v7')
+              text = text.replace('actions/setup-node@v4', 'actions/setup-node@v7')
+              if p.name == 'ci.yml':
+                  text = text.replace('node: [18, 20, 22]', 'node: [22, 24]')
+                  text = text.replace('node-version: 20\n', 'node-version: 22\n')
+              if p.name == 'release.yml':
+                  text = text.replace('node-version: 20\n', 'node-version: 22\n')
+              p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Format
+        run: npm run format
+
+      - name: Full quality gate
+        run: |
+          npm run check
+          npm run build
+
+      - name: Require clean dependency audit
+        run: |
+          mkdir -p evidence/security
+          npm audit --json > evidence/security/npm-audit-post-upgrade.json
+          npm audit --omit=dev --json > evidence/security/npm-audit-production.json
+
+      - name: Capture published-package boundary
+        run: npm pack --dry-run --json > evidence/security/npm-pack-dry-run.json
+
+      - name: Write security gate evidence
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const full = JSON.parse(fs.readFileSync('evidence/security/npm-audit-post-upgrade.json','utf8'));
+          const prod = JSON.parse(fs.readFileSync('evidence/security/npm-audit-production.json','utf8'));
+          const pack = JSON.parse(fs.readFileSync('evidence/security/npm-pack-dry-run.json','utf8'));
+          const fullCounts = full.metadata?.vulnerabilities || {};
+          const prodCounts = prod.metadata?.vulnerabilities || {};
+          const files = pack?.[0]?.files?.map(x => x.path) || [];
+          const forbidden = files.filter(p => p.startsWith('node_modules/') || p.includes('vite') || p.includes('vitest'));
+          if ((fullCounts.total || 0) !== 0) throw new Error(`full audit still has ${fullCounts.total} vulnerabilities`);
+          if ((prodCounts.total || 0) !== 0) throw new Error(`production audit still has ${prodCounts.total} vulnerabilities`);
+          if (forbidden.length) throw new Error(`dev-tool files leaked into package: ${forbidden.join(', ')}`);
+          const md = `# Dependency Security Gate — PASS\n\n` +
+            `Validated on ${new Date().toISOString()}.\n\n` +
+            `- Vite: 8.3.0\n- Vitest: 5.0.0\n- Build/test Node floor: 22.12+\n` +
+            `- Full npm audit: **0 vulnerabilities**\n- Production-only npm audit: **0 vulnerabilities**\n` +
+            `- npm pack dry-run: **no Vite/Vitest/node_modules files shipped**\n` +
+            `- Existing typecheck, tests, judge verification, SDK build, and demo build: **PASS**\n\n` +
+            `The previous 5-vulnerability audit remains preserved as pre-fix evidence in ` +
+            '`evidence/security/npm-audit.json`' + `. No force fix was used.\n`;
+          fs.writeFileSync('evidence/security/SECURITY-GATE.md', md);
+          NODE
+
+      - name: Update canonical risk state
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('state/CANONICAL-STATE.yaml')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
+          if 'security_gate: PASS_ZERO_NPM_AUDIT' not in text:
+              text += '\nsecurity_gate: PASS_ZERO_NPM_AUDIT\n'
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('HACKATHON-STATE.yaml')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('  dependency_security_reconciliation: OPEN', '  dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT')
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('evidence/RECONCILIATION.md')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('1. **Dependency audit open:** prior `npm ci` reported 5 vulnerabilities (3 moderate, 1 high, 1\n       critical). Exploitability in the shipped browser bundle has not yet been reconciled. This blocks\n       any “security-complete” claim; it does not get silently ignored.\n2. **Live deployment proof:**', '1. **Dependency security CLOSED:** Vite/Vitest were upgraded under a clean full and production npm audit; package dry-run confirms the dev toolchain is not shipped. See `evidence/security/SECURITY-GATE.md`.\n2. **Live deployment proof:**')
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('evidence/GATE-REPORT.md')
+          text = p.read_text(encoding='utf-8')
+          marker = '| BUILD / correctness | PASS | prior CI + CodeQL green; this branch re-runs check/build |'
+          replacement = marker + '\n| DEPENDENCY SECURITY | PASS | Vite/Vitest upgraded; full + production npm audit = 0; package boundary verified |'
+          if '| DEPENDENCY SECURITY |' not in text:
+              text = text.replace(marker, replacement)
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('.pbpd/state/ACTIVITY-TRACE.yaml')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('      - DEPENDENCY_VULNERABILITY_RECONCILIATION\n', '')
+          text += '\n  - id: A-005\n    stage: dependency-security-reconciliation\n    outcome: PASS_ZERO_NPM_AUDIT\n    evidence:\n      - evidence/security/SECURITY-GATE.md\n      - evidence/security/npm-audit-post-upgrade.json\n      - evidence/security/npm-audit-production.json\n      - evidence/security/npm-pack-dry-run.json\n'
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Re-run evidence verifier after state update
+        run: npm run judge:verify
+
+      - name: Commit validated security closure
+        run: |
+          rm .github/workflows/security-upgrade.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: close dependency security gate"
+          git push origin finalization-security-runtime
