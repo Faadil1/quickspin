@@ -1,8 +1,8 @@
 project: QuickSpin
 framework: HACKATHON_STATE
-canonical_main_sha: c0d3a0d61d74d6944e20f8a0af7e3ceac6b6a2e4
-candidate_branch: judge-assurance-negative-path
-candidate_sha_before_framework_sync: af6de08277d5862ef35a96e20e3ef681de8e124d
+canonical_main_sha: c21eb03bb1cdcb0f18816000624dfaad38ebe965
+candidate_branch: final-judge-package
+candidate_head_policy: TRACK_BRANCH_HEAD
 state: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
 project_complete: false
 
@@ -14,28 +14,57 @@ cycle:
   EXECUTION: PASS
   EVIDENCE: PASS_WITH_LIMITATIONS
   STORY: PASS
-  DEMO: PASS_PENDING_CAPTURE
-  QA: PASS_PENDING_REHEARSAL
+  DEMO: PASS_PENDING_CAPTURE_AND_LIVE_RUNTIME
+  QA: PREPARED_PENDING_LIVE_REHEARSAL
+
+reality_pattern:
+  signal_positive_opportunity: PASS
+  concrete_real_negative_event: PASS
+  observable_impact: PASS
+  design_lesson: PASS
+  response_mitigation: PASS_WITH_EXPLICIT_SCOPE_BOUNDARY
+  source: evidence/REALITY-ANCHOR.md
 
 gates:
-  rubric_fit: PASS
-  real_negative_event: PASS
+  eligibility_and_rubric_fit: PASS
+  pain_reality_grounding: PASS
+  real_negative_event: PASS_PRIMARY_SOURCE
   observable_impact: PASS
   design_implication: PASS
-  mitigation: PASS
+  mitigation_scope_honesty: PASS
   real_failure_gt_fake_success: PASS
   unknown_abstention: PASS
   distinction: PASS
   judge_coverage: PASS
-  ux_ui: PASS_WITH_CONDITIONS
-  build_correctness: PASS
-  demo_path: PASS_PENDING_CAPTURE
-  video: PENDING
-  submission_package: PENDING
-  deployment_proof: PENDING
-  dependency_security_reconciliation: PASS_ZERO_NPM_AUDIT
+  claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
+  security_dependency: PASS_ZERO_NPM_AUDIT
+  code_correctness: PASS
+  codeql: PASS
+  package_boundary: PASS
+  accessibility_input_parity: PASS_WITH_EXISTING_TEST_AND_IMPLEMENTATION_EVIDENCE
+  reduced_motion: PASS_IN_IMPLEMENTATION_PENDING_RUNTIME_INSPECTION
+  fast_response_anti_flash: PASS_IN_IMPLEMENTATION
+  failure_persistence: PASS
+  rollback_recoverability: PASS_BRANCH_AND_LEDGER_MODEL
+  ux_ui: PASS_WITH_CONDITIONS_PENDING_RUNTIME_INSPECTION
+  public_runtime: PENDING_REPOSITORY_PAGES_ENABLEMENT
+  demo_path: PASS_PENDING_CAPTURE_AND_PUBLIC_RUNTIME
+  video: PENDING_CAPTURE
+  qa_rehearsal: PREPARED_PENDING_LIVE_REHEARSAL
+  submission_package: DRAFT_READY_PENDING_FINAL_LINKS
+  license_ip_third_party_claims: PASS_WITH_NO_NEW_UNVERIFIED_ASSET_CLAIMS
+  broader_user_validation: OPEN_NONBLOCKING
   verification_before_completion: PASS_WITH_CONDITIONS
   build_readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
-  handoff_to_finisher: NOT_INVOKED
+  handoff_to_finisher: ACTIVE
+  final_qc: ACTIVE
+  project_complete_gate: BLOCKED_UNTIL_ALL_BLOCKING_GATES_PASS
 
-next_decision: Keep candidate isolated until collaborator review timing permits merge or further delta review.
+blocking_remaining:
+  - PUBLIC_DEPLOYMENT_PROOF
+  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE
+  - NEGATIVE_PATH_VIDEO_CAPTURE
+  - QA_LIVE_REHEARSAL
+  - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
+
+next_decision: Enable and verify the public runtime, then lock visual proof, capture, live Q&A rehearsal, and submission links before any PROJECT_COMPLETE promotion.
