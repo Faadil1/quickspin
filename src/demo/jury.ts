@@ -37,7 +37,8 @@ function enhanceHome(app: HTMLElement): void {
   if (display) {
     const memory = document.createElement("div");
     memory.className = "jury-memory-line";
-    memory.innerHTML = '<span>01 / PLAY</span><span>02 / VERIFY</span><strong>Verify afterward.</strong>';
+    memory.innerHTML =
+      '<span>01 / PLAY</span><span>02 / VERIFY</span><strong>Verify afterward.</strong>';
     display.insertAdjacentElement("afterend", memory);
   }
 
@@ -153,7 +154,9 @@ function enhanceJudges(app: HTMLElement): void {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(enhance), { once: true });
+  document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(enhance), {
+    once: true,
+  });
 } else {
   requestAnimationFrame(enhance);
 }
