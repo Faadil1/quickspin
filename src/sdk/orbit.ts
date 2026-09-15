@@ -105,7 +105,7 @@ export const orbitGame: GameDefinition = {
   id: "orbit",
   name: "Orbit Catch",
   tagline: "Catch the glow target. Multi-catch, combo-scored.",
-  controls: "Tap the target to catch it",
+  controls: "Tap/click or press Space/Enter to catch",
   create(host: GameHost): GameInstance {
     let logicalW = host.canvas.clientWidth || 480;
     let logicalH = host.canvas.clientHeight || 220;
@@ -136,6 +136,14 @@ export const orbitGame: GameDefinition = {
       e.preventDefault();
       const rect = host.canvas.getBoundingClientRect();
       orbitTap(state, e.clientX - rect.left, e.clientY - rect.top, logicalW, logicalH);
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (!state.active || (e.key !== "Enter" && e.code !== "Space")) return;
+      e.preventDefault();
+      // Keyboard mode intentionally targets the live glow position: the skill is timing,
+      // while pointer mode adds spatial targeting. Both produce genuine game state.
+      orbitTap(state, state.fishX, state.fishY, logicalW, logicalH);
     };
 
     const draw = () => {
@@ -176,23 +184,31 @@ export const orbitGame: GameDefinition = {
         8,
         12
       );
+      if (host.phase) {
+        const label = host.phase.slice(0, 30);
+        const width = ctx.measureText(label).width;
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.fillText(label, Math.max(8, logicalW - width - 8), logicalH - 10);
+      }
     };
 
     return {
       start() {
         paused = false;
         resizeIfNeeded();
+        host.canvas.tabIndex = 0;
         host.canvas.addEventListener("pointerdown", onPointer);
+        host.canvas.addEventListener("keydown", onKey);
         host.canvas.setAttribute(
           "aria-label",
           orbitGame.name +
-            ": tap the glow target to catch it. More catches in a row build a combo. While the model thinks, keep your hand warm."
+            ": catch the glow target while the model thinks. Tap or click the target, or press Space or Enter when the canvas is focused."
         );
       },
       tick(_time: number, dt: number) {
         if (paused) return;
         resizeIfNeeded();
-        orbitStep(state, Math.min(dt, 0.05), logicalW, logicalH, host.progress ?? 0);
+        orbitStep(state, Math.min(dt, 0.05), logicalW, logicalH, host.intensity);
         draw();
       },
       finish(reason) {
@@ -206,6 +222,7 @@ export const orbitGame: GameDefinition = {
       },
       destroy() {
         host.canvas.removeEventListener("pointerdown", onPointer);
+        host.canvas.removeEventListener("keydown", onKey);
       },
     };
   },
