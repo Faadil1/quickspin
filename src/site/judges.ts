@@ -37,7 +37,7 @@ const body = `
       <h2>No jump from “works” to “winner.”</h2>
     </div>
     <div class="cycle-line">
-      <span>RUBRIC</span><i>→</i><span>PAIN</span><i>→</i><span>PROBLEM</span><i>→</i><span>DIFFERENTIATOR</span><i>→</i><span>EXECUTION</span><i>→</i><span>EVIDENCE</span><i>→</i><span>STORY</span><i>→</i><span>DEMO</span><i>→</i><span>Q&A</span>
+      <span>RUBRIC</span><i></i><span>PAIN</span><i></i><span>PROBLEM</span><i></i><span>DIFFERENTIATOR</span><i></i><span>EXECUTION</span><i></i><span>EVIDENCE</span><i></i><span>STORY</span><i></i><span>DEMO</span><i></i><span>Q&A</span>
     </div>
   </section>
 
