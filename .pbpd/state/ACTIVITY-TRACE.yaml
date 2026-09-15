@@ -85,6 +85,21 @@ activities:
       - state/HANDOVER.yaml
     note: Finalizer may continue QC/package work but PROJECT_COMPLETE remains forbidden until all blocking gates pass.
 
+  - id: A-010
+    stage: orchestration-and-judge-performance-assurance
+    outcome: PASS_WITH_EXPLICIT_UPSTREAM_UNKNOWN
+    evidence:
+      - evidence/ORCHESTRATION-JPA.md
+      - evidence/CYCLE-GATE-MATRIX.md
+    note: Faadil Agent System route and Judge Coverage/Critical-Path/Technical Ownership/Session Continuity gates are explicit. Missing HOI/Chief-of-Staff repo provenance remains UNKNOWN_IN_REPO rather than fabricated PASS.
+
+  - id: A-011
+    stage: supply-chain-install-script-review
+    outcome: REVIEWED_WARNING_NONRUNTIME
+    evidence:
+      - evidence/security/SUPPLY-CHAIN-REVIEW.md
+    note: npm 11 surfaced esbuild@0.28.2 postinstall as not covered by project allowScripts; audit remains zero and package boundary excludes build tooling. No blanket approval is inferred.
+
 failure_records_retained:
   - github-actions:34925583311
   - github-actions:34928143854
@@ -94,6 +109,7 @@ failure_records_retained:
   - github-actions:34929705731
   - github-actions:34930293175
   - github-actions:34930326398
+  - github-actions:34958656629
 
 invariants:
   - REAL_FAILURE_GT_FAKE_SUCCESS
@@ -105,3 +121,4 @@ invariants:
   - IMPLEMENTATION_PRESENCE_IS_NOT_EXECUTION_EVIDENCE
   - EXPECTED_URL_IS_NOT_RUNTIME_EVIDENCE
   - PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION
+  - MISSING_ORCHESTRATION_PROVENANCE_STAYS_UNKNOWN
