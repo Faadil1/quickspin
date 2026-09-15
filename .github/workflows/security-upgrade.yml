@@ -26,7 +26,7 @@ jobs:
           cache: npm
 
       - name: Upgrade vulnerable development toolchain
-        run: npm install --save-dev vite@8.3.0 vitest@5.0.0
+        run: npm install --save-dev vite@7.3.6 vitest@5.0.0
 
       - name: Align CI with supported Node and current GitHub actions
         run: |
@@ -44,7 +44,7 @@ jobs:
               p.write_text(text, encoding='utf-8')
           PY
 
-      - name: Adapt tests to Vitest 5 mock typing and preserve failed migration evidence
+      - name: Adapt tests and preserve failed migration evidence
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -64,7 +64,9 @@ jobs:
           current = ledger.read_text(encoding='utf-8')
           if '## F-05 — Secure toolchain migration first pass failed' not in current:
               current += '''\n## F-05 — Secure toolchain migration first pass failed\n\n- Event: GitHub Actions run `34928931640` failed during `npm run typecheck`.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34928931640\n- Cause: Vitest 5 tightened `vi.fn()` typing; the test helper passed an untyped generic mock where `WaitEventHandler` was required.\n- Mitigation: the test now creates an explicitly typed `(event: WaitEvent) => void` mock.\n- Lesson: dependency security upgrades must pass the actual compiler/test contract; a zero-vulnerability install alone is not sufficient evidence.\n'''
-              ledger.write_text(current, encoding='utf-8')
+          if '## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility' not in current:
+              current += '''\n## F-06 — Vite 8 migration exposed a Rolldown TSX incompatibility\n\n- Event: GitHub Actions run `34929036325` passed typecheck and all 33 Vitest 5 tests, then failed in the SDK library build.\n- Evidence: https://github.com/Faadil1/quickspin/actions/runs/34929036325\n- Cause: Vite 8 switched the production bundler to Rolldown, which rejected the existing React TSX library entry without additional parser migration.\n- Decision: do not expand hackathon scope into a Rolldown migration when the supported Vite 7.3 security line can close the advisories while retaining the proven Rollup build path.\n- Lesson: latest-major adoption is not itself a quality gate; choose the smallest supported change that removes the verified risk without creating unrelated migration risk.\n'''
+          ledger.write_text(current, encoding='utf-8')
           PY
 
       - name: Format
@@ -100,12 +102,11 @@ jobs:
           if (forbidden.length) throw new Error(`dev-tool files leaked into package: ${forbidden.join(', ')}`);
           const md = `# Dependency Security Gate — PASS\n\n` +
             `Validated on ${new Date().toISOString()}.\n\n` +
-            `- Vite: 8.3.0\n- Vitest: 5.0.0\n- Build/test Node floor: 22.12+\n` +
+            `- Vite: 7.3.6 (supported security line)\n- Vitest: 5.0.0\n- Build/test Node floor: 22.12+\n` +
             `- Full npm audit: **0 vulnerabilities**\n- Production-only npm audit: **0 vulnerabilities**\n` +
             `- npm pack dry-run: **no Vite/Vitest/node_modules files shipped**\n` +
-            `- Existing typecheck, tests, judge verification, SDK build, and demo build: **PASS**\n\n` +
-            `The previous 5-vulnerability audit remains preserved as pre-fix evidence in ` +
-            '`evidence/security/npm-audit.json`' + `. No force fix was used.\n`;
+            `- Existing typecheck, 33 tests, judge verification, SDK build, and demo build: **PASS**\n\n` +
+            `The previous 5-vulnerability audit and failed Vite 8 migration remain preserved as evidence. No force fix was used.\n`;
           fs.writeFileSync('evidence/security/SECURITY-GATE.md', md);
           NODE
 
@@ -128,13 +129,15 @@ jobs:
 
           p = Path('evidence/RECONCILIATION.md')
           text = p.read_text(encoding='utf-8')
-          text = text.replace('1. **Dependency audit open:** prior `npm ci` reported 5 vulnerabilities (3 moderate, 1 high, 1\n       critical). Exploitability in the shipped browser bundle has not yet been reconciled. This blocks\n       any “security-complete” claim; it does not get silently ignored.\n2. **Live deployment proof:**', '1. **Dependency security CLOSED:** Vite/Vitest were upgraded under a clean full and production npm audit; package dry-run confirms the dev toolchain is not shipped. See `evidence/security/SECURITY-GATE.md`.\n2. **Live deployment proof:**')
+          old = '1. **Dependency audit open:** prior `npm ci` reported 5 vulnerabilities (3 moderate, 1 high, 1\n       critical). Exploitability in the shipped browser bundle has not yet been reconciled. This blocks\n       any “security-complete” claim; it does not get silently ignored.\n2. **Live deployment proof:**'
+          new = '1. **Dependency security CLOSED:** Vite 7.3.6 + Vitest 5 pass a clean full and production npm audit; package dry-run confirms the dev toolchain is not shipped. See `evidence/security/SECURITY-GATE.md`.\n2. **Live deployment proof:**'
+          text = text.replace(old, new)
           p.write_text(text, encoding='utf-8')
 
           p = Path('evidence/GATE-REPORT.md')
           text = p.read_text(encoding='utf-8')
           marker = '| BUILD / correctness | PASS | prior CI + CodeQL green; this branch re-runs check/build |'
-          replacement = marker + '\n| DEPENDENCY SECURITY | PASS | Vite/Vitest upgraded; full + production npm audit = 0; package boundary verified |'
+          replacement = marker + '\n| DEPENDENCY SECURITY | PASS | Vite 7.3.6 + Vitest 5; full + production npm audit = 0; package boundary verified |'
           if '| DEPENDENCY SECURITY |' not in text:
               text = text.replace(marker, replacement)
           p.write_text(text, encoding='utf-8')
