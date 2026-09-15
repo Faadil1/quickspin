@@ -123,3 +123,13 @@ This is the canonical abstention path: **no evidence → no gameplay claim**.
 - Mitigation: replace the migration with a parse-safe idempotent script, rerun format + TypeScript + tests + judge verification, then remove all one-shot migration machinery after the successful commit.
 - Recovery evidence: run `34999396864` passed migration, formatting, TypeScript, tests, judge verification and committed the P0 deltas.
 - Lesson: **automation that writes assurance-sensitive product code must itself be parseable, deterministic and disposable. A failed migration attempt remains evidence even when no product mutation escaped it.**
+
+## F-14 — WI V2 independent PR rejected unformatted SDK contract files
+
+- Event: PR #11 CI run `35000339670` reached the permanent merge-ref quality gate and failed only the Prettier check on `src/sdk/persistence.ts` and `src/sdk/types.ts`.
+- Evidence: https://github.com/Faadil1/quickspin/actions/runs/35000339670
+- Concurrent truth: Node 22 had already passed TypeScript, the expanded test suite, `judge:verify`, demo build and was building the SDK; the failure was not reclassified as a product pass because the permanent CI requires formatting too.
+- Cause: those two files were authored directly before the temporary migration run; the migration formatter did not commit their formatting because its commit allowlist only included later-mutated files.
+- Impact: WI V2 remained non-mergeable despite functional checks passing.
+- Mitigation: run a disposable formatter only on the two flagged SDK files, commit the formatting, remove the formatter workflow, then require a fresh full PR CI + CodeQL run.
+- Lesson: **a quality gate is conjunctive. Functional correctness does not erase a formatting failure, and a temporary migration workflow must not accidentally define the final merge standard.**
