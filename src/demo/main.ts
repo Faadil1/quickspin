@@ -19,11 +19,12 @@ const LIVE_PAYMENTS = Boolean(STRIPE_LINKS.pro);
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
+/** Exactly 12 seconds: the before/after demo claim now matches runtime reality. */
 const PHASES: Array<[string, number, number]> = [
-  ["Reasoning…", 0.1, 700],
-  ["Searching the web…", 0.3, 900],
-  ["Drafting…", 0.6, 900],
-  ["Polishing…", 0.85, 700],
+  ["Reasoning…", 0.12, 2600],
+  ["Searching the web…", 0.32, 3100],
+  ["Drafting…", 0.62, 3400],
+  ["Polishing…", 0.88, 2900],
 ];
 
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -69,6 +70,7 @@ function main(): void {
 
   let ctrl: QuickSpinController | null = createQuickSpin({
     target: mount,
+    delayMs: 0, // demo: show immediately; production defaults to a 650ms anti-flash threshold
     onEvent: logEvents(logEl),
   });
   let mode: "classic" | "quickspin" = "quickspin";
@@ -112,14 +114,16 @@ function main(): void {
   const runQuickSpin = async () => {
     phaseEl.innerHTML = "Phase: <strong>" + PHASES[0][0] + "</strong>";
     const session = ctrl!.start({ status: PHASES[0][0] });
-    for (const [status, p, ms] of PHASES) {
+    // No fake percentage: phase changes themselves drive honest game intensity.
+    session.setProgress();
+    for (const [status, _p, ms] of PHASES) {
       session.setPhase(status);
-      session.setProgress(p);
-      phaseEl.innerHTML = "Phase: <strong>" + status + "</strong>";
+      phaseEl.innerHTML =
+        "Phase: <strong>" + status + "</strong> · game intensity follows the phase";
       await sleep(ms);
     }
     session.complete();
-    phaseEl.innerHTML = "Phase: <strong>Done</strong> — the widget hands off.";
+    phaseEl.innerHTML = "Phase: <strong>Done</strong> — response ready; inspect the Wait Receipt.";
     appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
     refreshStats();
   };
@@ -154,7 +158,7 @@ function main(): void {
   resetBtn.addEventListener("click", () => {
     ctrl!.destroy();
     mount.innerHTML = "";
-    ctrl = createQuickSpin({ target: mount, onEvent: logEvents(logEl) });
+    ctrl = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents(logEl) });
     resetAll();
     app.querySelector<HTMLElement>("#event-log")!.innerHTML = "";
     refreshStats();
@@ -167,7 +171,6 @@ function main(): void {
     });
   }
 
-  // Game switcher inside the widget is enough; the demo shows runner.
   setMode("quickspin");
   refreshStats();
 }
@@ -181,9 +184,7 @@ function renderPlans(root: HTMLElement): void {
   const grid = el("div", "plans");
   for (const plan of PLANS) {
     const card = el("div", "plan" + (plan.highlighted ? " hot" : ""));
-    card.appendChild(
-      el("div", "plan-name", plan.name + (plan.highlighted ? " · RECOMMENDED" : ""))
-    );
+    card.appendChild(el("div", "plan-name", plan.name + (plan.highlighted ? " · PILOT" : "")));
     card.appendChild(el("div", "plan-price", `$${plan.priceUsd} <small>${plan.cadence}</small>`));
     const ul = el("ul");
     for (const f of plan.features) {
@@ -201,10 +202,10 @@ function renderPlans(root: HTMLElement): void {
       "button",
       "btn " + (plan.highlighted ? "primary" : "ghost"),
       plan.priceUsd === 0
-        ? "Choose Free (no checkout)"
+        ? "Use the SDK"
         : plan.highlighted && LIVE_PAYMENTS
-          ? "Choose Pro \u2014 pay with Stripe"
-          : "Choose Pro \u2014 checkout preview"
+          ? "Choose Team Pilot — pay with Stripe"
+          : "Choose Team Pilot — checkout preview"
     );
     buy.type = "button";
     buy.addEventListener("click", () => void choosePlan(plan, buy));
@@ -218,16 +219,12 @@ let checkoutBox: { open(): void; close(): void; destroy(): void } | null = null;
 
 async function choosePlan(plan: PlanOption, btn: HTMLButtonElement): Promise<void> {
   if (plan.priceUsd === 0) {
-    btn.textContent = "Free plan active";
+    btn.textContent = "SDK active";
     btn.disabled = true;
     return;
   }
   checkoutBox = createCheckoutFlow(
-    (_planId) => {
-      // Simulate a payment provider round-trip. Success only renders from this
-      // confirmed result — QuickSpin never fabricates one.
-      return sleep(900).then(() => ({ ok: true, paymentId: `demo_${Date.now()}` }));
-    },
+    (_planId) => sleep(900).then(() => ({ ok: true, paymentId: `preview_${Date.now()}` })),
     { paymentLinks: STRIPE_LINKS }
   );
   checkoutBox.open();
@@ -254,14 +251,13 @@ function buildPage(): HTMLElement {
 
   const hero = el("section", "hero wrap");
   hero.appendChild(el("div", "hero-badge", "Commonsmade Build · Make Waiting for AI Fun"));
-  hero.appendChild(el("h1", "", `Turn AI wait time into <em>play time.</em>`));
+  hero.appendChild(el("h1", "", `Turn live AI execution into <em>play time.</em>`));
   hero.appendChild(
     el(
       "p",
       "lead",
-      `The seconds that vanish on “thinking…” are the worst moment in every AI app. ` +
-        `QuickSpin is a drop-in widget that turns that dead wait into a playable arcade — ` +
-        `you play while the model works, and the wait ends with the game.`
+      `QuickSpin is a drop-in waiting runtime for AI apps. Real model phases drive a playable layer while the request runs, ` +
+        `then a Wait Receipt shows actual wait, engaged play time, and whether the wait truly felt shorter.`
     )
   );
 
@@ -283,7 +279,7 @@ function buildPage(): HTMLElement {
   ctaRow.appendChild(resetBtn);
   hero.appendChild(ctaRow);
   hero.appendChild(
-    el("p", "sub", "The wait is simulated locally — the Demo runs entirely in your browser.")
+    el("p", "sub", "The model wait in this demo is simulated locally and lasts exactly 12 seconds.")
   );
 
   const demo = el("section", "demo-section wrap");
@@ -298,11 +294,7 @@ function buildPage(): HTMLElement {
   }
   demo.appendChild(seg);
   demo.appendChild(
-    el(
-      "div",
-      "seg-label hostlabel",
-      "Choose your fate — same 12-second model wait, two waiting experiences."
-    )
+    el("div", "seg-label hostlabel", "Same 12-second model wait. Two waiting experiences.")
   );
 
   const classicPanel = el("div", "");
@@ -339,23 +331,27 @@ function buildPage(): HTMLElement {
 
   const stats = el("section", "wrap stats-grid");
   stats.innerHTML =
-    `<div class="stat" id="stat-wait"><div class="num">—</div><div class="lbl">AI wait turned into play</div></div>` +
+    `<div class="stat" id="stat-wait"><div class="num">—</div><div class="lbl">time actually played during AI wait</div></div>` +
     `<div class="stat" id="stat-sessions"><div class="num">—</div><div class="lbl">sessions on this device</div></div>` +
     `<div class="stat" id="stat-best"><div class="num">—</div><div class="lbl">best wait-run score</div></div>` +
-    `<div class="stat" id="stat-felt"><div class="num">—</div><div class="lbl">felt vs actual wait</div></div>` +
+    `<div class="stat" id="stat-felt"><div class="num">—</div><div class="lbl">average felt / actual wait</div></div>` +
     `<div class="stat" id="stat-streak"><div class="num">—</div><div class="lbl">day streak</div></div>`;
 
   const games = el("section", "section wrap");
   games.id = "games";
-  games.appendChild(el("h2", "", "Games"));
+  games.appendChild(el("h2", "", "Games driven by the wait"));
   games.appendChild(
-    el("p", "", "Short, repeatable, input-friendly. Two to start, more in the game packs.")
+    el(
+      "p",
+      "",
+      "When the host has no trustworthy percentage, real phase changes raise game intensity instead of fabricating progress."
+    )
   );
   const gameList = el("div", "game-list");
   gameList.innerHTML =
     `<div class="game"><div class="name">Wait Runner</div><div class="tag">Jump the obstacle, outrun the wait. <kbd>Space</kbd> or tap to jump.</div></div>` +
-    `<div class="game"><div class="name">Orbit Catch</div><div class="tag">Catch the glow target in a row to stack a combo. Tap or click.</div></div>` +
-    `<div class="game"><div class="name">Game packs (Pro)</div><div class="tag">More games after the hackathon.</div></div>`;
+    `<div class="game"><div class="name">Orbit Catch</div><div class="tag">Catch the glow target. Tap/click, or focus the canvas and use <kbd>Space</kbd>/<kbd>Enter</kbd>.</div></div>` +
+    `<div class="game"><div class="name">Phase coupling</div><div class="tag">Reasoning → search → draft → polish changes pace from real host signals.</div></div>`;
   games.appendChild(gameList);
 
   const sdk = el("section", "section wrap");
@@ -365,7 +361,8 @@ function buildPage(): HTMLElement {
     el(
       "p",
       "",
-      `Install the package, mount the widget, and feed it your model phases. When the wait is over, call <code>session.complete()</code> and hand off to the real response.`
+      `Mount it once, feed it real model phases, and complete the session when the actual response resolves. ` +
+        `Fast responses below the default 650ms threshold never flash the game UI.`
     )
   );
   const code = el("div", "code");
@@ -377,24 +374,22 @@ function buildPage(): HTMLElement {
 <span class="tok-kw">import</span> { createQuickSpin } <span class="tok-kw">from</span> <span class="tok-str">"quickspin"</span>;
 
 <span class="tok-kw">const</span> quickSpin = createQuickSpin({
-  <span class="tok-cmt">// target can be a selector or element</span>
   target: <span class="tok-str">"#quickspin"</span>,
-  game: <span class="tok-str">"runner"</span>,                    <span class="tok-cmt">// "runner" | "orbit"</span>
-  theme: { mode: <span class="tok-str">"dark"</span>, primary: <span class="tok-str">"#8b7cff"</span> },
+  game: <span class="tok-str">"runner"</span>,
+  delayMs: 650,                     <span class="tok-cmt">// no UI flash for fast replies</span>
   onEvent: (e) => analytics.observe(e),
 });
 
 <span class="tok-kw">const</span> session = quickSpin.start({ status: <span class="tok-str">"Reasoning…"</span> });
+session.setProgress();               <span class="tok-cmt">// indeterminate: do not fake a %</span>
+session.setPhase(<span class="tok-str">"Searching the web…"</span>); <span class="tok-cmt">// real phase drives game intensity</span>
 session.setPhase(<span class="tok-str">"Drafting…"</span>);
-session.setProgress(0.5);          <span class="tok-cmt">// or setProgress() for indeterminate</span>
 
 <span class="tok-kw">const</span> response = <span class="tok-kw">await</span> modelRequest();
-session.complete();                <span class="tok-cmt">// the wait ends with the game</span>
+session.complete();                  <span class="tok-cmt">// receipt + handoff</span>
 
-<span class="tok-cmt">// wrap a whole request:</span>
-<span class="tok-kw">const</span> answer = <span class="tok-kw">await</span> quickSpin.track(aiRun(prompt), {
-  status: <span class="tok-str">"Thinking…"</span>,
-});`
+<span class="tok-cmt">// or wrap the entire promise:</span>
+<span class="tok-kw">const</span> answer = <span class="tok-kw">await</span> quickSpin.track(aiRun(prompt));`
     )
   );
   sdk.appendChild(code);
@@ -402,25 +397,23 @@ session.complete();                <span class="tok-cmt">// the wait ends with t
     el(
       "p",
       "sub",
-      `Or mount declared widgets with <code>&lt;div data-quickspin&gt;&lt;/div&gt;</code>. The widget owns its own shadow DOM, so page styles never leak in.`
+      `Declarative mounting supports both <code>&lt;div data-quickspin&gt;</code> and <code>&lt;div id="quickspin"&gt;</code>. ` +
+        `The widget lives in Shadow DOM, and React ships at <code>quickspin/react</code>.`
     )
   );
 
   const pricing = el("section", "section wrap");
   pricing.id = "pricing";
-  pricing.appendChild(el("h2", "", "Pricing"));
+  pricing.appendChild(el("h2", "", "Open SDK, paid team pilot"));
   pricing.appendChild(
     el(
       "p",
       "",
       LIVE_PAYMENTS
-        ? `Checkout is live: “Choose Pro” opens a real Stripe Payment Link, payments land in ` +
-            `the Stripe dashboard, and revenue generated attaches to the entry (the Vault). ` +
-            `QuickSpin never claims a payment it can’t verify — Stripe is the source of truth.`
-        : `Everything listed exists today; everything else is labeled clearly. ` +
-            `Checkout below is a preview — no real payment is made. Set ` +
-            `<code>VITE_STRIPE_PRO_LINK</code> in <code>.env</code> (see <code>.env.example</code>) ` +
-            `and Pro switches to a real Stripe Payment Link that genuinely generates revenue.`
+        ? `The SDK capabilities shown above stay available in Free. Team Pilot is a service layer for branded setup and integration support; ` +
+            `its live button opens a real Stripe Payment Link. Hosted analytics and extra packs remain explicitly roadmap items.`
+        : `The SDK capabilities shown above stay available in Free. Team Pilot is a service layer for branded setup and integration support. ` +
+            `This checkout is a labeled preview; set <code>VITE_STRIPE_PRO_LINK</code> to use a real Stripe Payment Link.`
     )
   );
   const plansBox = el("div", "");
@@ -450,15 +443,14 @@ session.complete();                <span class="tok-cmt">// the wait ends with t
 function buildThesis(): HTMLElement {
   const t = el("section", "section wrap");
   t.id = "thesis";
-  t.appendChild(el("h2", "", `The wait is an abandoned checkout.`));
+  t.appendChild(el("h2", "", `Don't guess whether the wait felt better. Measure it.`));
   t.appendChild(
     el(
       "p",
       "",
-      `Every AI call already costs you the inference bill. The “thinking…” spinner is where ` +
-        `users leave — and the response you paid for lands on nobody’s screen. QuickSpin gives ` +
-        `that gap something to lose: a score, a streak, a lead your user protects. They stay ` +
-        `through the handoff, and the handoff is where the value — and the revenue — starts.`
+      `A spinner gives the user nothing to do and gives the host almost no evidence about the experience. ` +
+        `QuickSpin turns real execution phases into play, records actual engaged play time, and asks the user how long the wait felt. ` +
+        `The result can be positive, neutral, or negative — the receipt does not force a success story.`
     )
   );
   t.appendChild(
@@ -466,33 +458,23 @@ function buildThesis(): HTMLElement {
       "table",
       "rot-table",
       `<tr><th></th><th class="qs">Classic “thinking…”</th><th class="qs">With QuickSpin</th></tr>` +
-        `<tr><td>During the wait (10–30s)</td><td>Users tab away — nothing to lose</td><td>A game with a real stake: score, streak, best</td></tr>` +
-        `<tr><td>The handoff (response ready)</td><td>Lands on an empty tab</td><td>They stayed to see the answer</td></tr>` +
-        `<tr><td>Your paid inference</td><td>Missed</td><td>Seen — the point of the call</td></tr>` +
-        `<tr><td>Repeat visits</td><td>No reason to return</td><td>Returning for the streak</td></tr>` +
-        `<tr><td>Revenue</td><td>Impossible to meter</td><td>Pro, billed through real Stripe checkout</td></tr>`
+        `<tr><td>During a real wait</td><td>Passive spinner</td><td>Optional play after a short anti-flash delay</td></tr>` +
+        `<tr><td>AI state</td><td>Usually a label</td><td>Real phases can drive game intensity</td></tr>` +
+        `<tr><td>Handoff</td><td>Response appears</td><td>Response ready + explicit handoff</td></tr>` +
+        `<tr><td>Evidence</td><td>Elapsed time at best</td><td>Actual · played · engaged · felt</td></tr>` +
+        `<tr><td>Truthfulness</td><td>Often fake progress %</td><td>Indeterminate mode works without invented progress</td></tr>`
     )
   );
-  t.appendChild(el("div", "steps-hostlabel", "HOW HOSTS MAKE MONEY"));
+  t.appendChild(el("div", "steps-hostlabel", "WHY THIS REPEATS"));
   const steps = el("div", "steps");
   steps.innerHTML =
-    `<div class="step"><div class="n">01</div><div class="t">Embed one div</div>` +
-    `<div class="d"><code>#quickspin</code> in any AI app — npm install, no infra.</div></div>` +
-    `<div class="step"><div class="n">02</div><div class="t">Play on every wait</div>` +
-    `<div class="d">Streaks and bests turn the 10–30s inference gap into daily returns.</div></div>` +
-    `<div class="step"><div class="n">03</div><div class="t">Bill the teams that want it</div>` +
-    `<div class="d">Pro routes to a real Stripe Payment Link. ` +
-    `Revenue generates — and the Vault pays 80% of what you earn.</div></div>`;
+    `<div class="step"><div class="n">01</div><div class="t">Embed once</div>` +
+    `<div class="d"><code>#quickspin</code>, data attribute, or React wrapper.</div></div>` +
+    `<div class="step"><div class="n">02</div><div class="t">Drive it with real AI phases</div>` +
+    `<div class="d">No trustworthy percentage required; phase changes become gameplay intensity.</div></div>` +
+    `<div class="step"><div class="n">03</div><div class="t">Inspect the receipt</div>` +
+    `<div class="d">Measure what actually happened instead of claiming that every game makes every wait better.</div></div>`;
   t.appendChild(steps);
-  t.appendChild(
-    el(
-      "p",
-      "note",
-      LIVE_PAYMENTS
-        ? "Pro checkout is configured and live in this demo."
-        : "Pro checkout is ready in code — set VITE_STRIPE_PRO_LINK in .env and this demo starts accepting real payments."
-    )
-  );
   return t;
 }
 
@@ -508,8 +490,8 @@ function buildStripeToastIfNeeded(): HTMLElement {
     el(
       "span",
       "",
-      `Stripe returned you here after checkout. QuickSpin doesn’t verify payments — ` +
-        `open your Stripe dashboard to confirm the charge and see the revenue attached to this entry.`
+      `Stripe returned you here after checkout. QuickSpin does not infer payment success from the URL — ` +
+        `confirm the charge in Stripe, which remains the payment source of truth.`
     )
   );
   const close = el("button", "", "\u00d7");

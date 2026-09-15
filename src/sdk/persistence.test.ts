@@ -106,6 +106,7 @@ describe("persistence", () => {
         completed: true,
       }).sessionStreak
     ).toBe(2);
+    // loadStorage is a fresh read from localStorage; the next result still derives 3.
     expect(loadStorage().records).toHaveLength(2);
     expect(
       recordSession({
@@ -148,11 +149,29 @@ describe("persistence", () => {
 
   it("computes a calendar-day streak across consecutive days ending today", () => {
     const today = Date.now();
-    recordSession({ gameId: "runner", score: 1, actualWaitMs: 1, engagedPlayMs: 0, completed: true });
+    recordSession({
+      gameId: "runner",
+      score: 1,
+      actualWaitMs: 1,
+      engagedPlayMs: 0,
+      completed: true,
+    });
     Date.now = () => today - DAY;
-    recordSession({ gameId: "runner", score: 2, actualWaitMs: 1, engagedPlayMs: 0, completed: true });
+    recordSession({
+      gameId: "runner",
+      score: 2,
+      actualWaitMs: 1,
+      engagedPlayMs: 0,
+      completed: true,
+    });
     Date.now = () => today - 2 * DAY;
-    recordSession({ gameId: "runner", score: 3, actualWaitMs: 1, engagedPlayMs: 0, completed: true });
+    recordSession({
+      gameId: "runner",
+      score: 3,
+      actualWaitMs: 1,
+      engagedPlayMs: 0,
+      completed: true,
+    });
     Date.now = () => today;
     expect(currentDayStreak()).toBe(3);
   });
@@ -199,7 +218,13 @@ describe("persistence", () => {
   });
 
   it("resetAll clears everything", () => {
-    recordSession({ gameId: "runner", score: 9, actualWaitMs: 1, engagedPlayMs: 0, completed: true });
+    recordSession({
+      gameId: "runner",
+      score: 9,
+      actualWaitMs: 1,
+      engagedPlayMs: 0,
+      completed: true,
+    });
     resetAll();
     expect(totalSessions()).toBe(0);
     expect(bestScore("runner")).toBe(0);

@@ -1,118 +1,96 @@
 # QuickSpin — Demo Recording Script
 
-Use this script to record the demo for the Commonsmade "Make Waiting for AI Fun" challenge.
-`npm run dev` runs the whole thing locally in the browser; nothing else needs installing.
+Target: **2:30–2:55**. Keep the product proof ahead of pricing.
 
-- **Target length: 2:45** (hard floor 2:15, hard ceiling 3:00).
-- Record at 1080p, a maximized browser window, and no other tabs visible.
-- Every timestamp below is a planned cut; if you run long, trim the bullets that start with "(optional)".
+## Prep
 
----
+1. `npm run dev` and open `http://localhost:5173`.
+2. Use a 1280px+ browser window at 100% zoom.
+3. Reset stats once before the take.
+4. Leave the demo in **With QuickSpin** initially.
+5. The local simulated model wait is now exactly **12 seconds** in both modes.
 
-## Prep (before you press record)
+## 0:00 — The problem and the product
 
-1. `npm run dev` → open http://localhost:5173
-2. Window at least 1280px wide, browser zoom at 100%, clean bookmarks bar.
-3. Under **Pricing**, make sure Pro shows "Choose Pro — checkout preview". If it shows
-   "pay with Stripe" instead, either (a) keep it — you have the env var set and want to show a
-   real checkout, or (b) run without the env var to keep the video on the preview.
-4. Leave the mouse still on the **Run demo generation** button, ready to click.
-5. Practice the demo once end-to-end (both modes) so the pacing is smooth.
-6. Silence notifications. If you speak live, use a close-ish mic; otherwise record silent and add
-   captions in your editor.
+Show the hero.
 
----
+> “AI products spend a surprising amount of their experience asking users to stare at a spinner.
+> QuickSpin turns live AI execution into an optional playable waiting layer — and then measures
+> whether the wait actually felt better.”
 
-## The script
+## 0:15 — Same wait, before
 
-### 0:00 — Intro / the hero (15s)
+Switch to **Classic spinner** and run the generation.
 
-Show the landing page hero. Let the animated story run for one loop.
-_On screen:_ the "spinner → play" animation under "Turn AI wait time into **play time**."
+> “This is the control. Exactly twelve seconds: reasoning, search, drafting, polishing. The progress
+> here is only part of the demo simulation — in a real host, QuickSpin never needs to invent a
+> percentage.”
 
-> "Every AI app has a weakest moment: the seconds that vanish on a “thinking…” spinner. That’s
-> where users leave — and where the answer you already paid for lands on nobody’s screen.
-> QuickSpin replaces that dead wait with a playable game, and turns the gap into the moment your
-> users actually stay."
+Let the answer land.
 
-### 0:15 — Set up the comparison (15s)
+## 0:40 — Same wait, QuickSpin
 
-_On screen:_ the demo section labeled "HOST APP — a one-message AI client", the Classic/QuickSpin
-toggle, and the user bubble "Where should five friends eat tonight in Austin?"
+Switch to **With QuickSpin** and run again. Choose **Play while you wait** and play Wait Runner.
 
-> "This is a one-message AI client — nothing special. Same model wait, two different waiting
-> experiences. Let’s show you the one you already have first."
+> “Same twelve seconds. QuickSpin starts in a real waiting state. This demo deliberately leaves
+> progress indeterminate, so the host’s real phase changes drive game intensity instead: reasoning,
+> search, drafting, polishing.”
 
-### 0:30 — Before: the classic spinner (20s)
+Point briefly at the phase label as the pace changes.
 
-_Click:_ **Classic spinner** → **Run demo generation**.
-_On screen:_ a plain spinner ticks through Reasoning → Searching the web → Drafting → Polishing
-at 0% → 100%, then the answer bubble appears.
+## 1:15 — Response ready + Wait Receipt
 
-> "There it is — a dead spinner for twelve seconds. Nothing at stake, nothing to lose, so the
-> natural move is to tab away. And when you do, the response — the whole point of the call — is
-> already missed."
+When the response becomes ready, answer the perceived-wait question once.
 
-### 0:50 — After: with QuickSpin (40s)
+> “The game ends when the request ends — not on a fake timer. Now QuickSpin asks how the wait felt.
+> That answer is persisted onto this exact session.”
 
-_Click:_ **With QuickSpin** → **Run demo generation**.
-_On screen:_ the widget mounts a game (Wait Runner). Play it while the phases tick
-("Reasoning… → Drafting… → Polishing…"). When it finishes, the answer lands as a bubble, then
-the widget asks **"That took 12s. How long did it feel?"**.
+Show the **WAIT RECEIPT**.
 
-> "Same wait, same twelve seconds — but now it’s a game. You’re jumping, you’ve got a real score
-> and a streak you don’t want to lose — so when the eleven-second mark comes, you’re still here.
-> The response lands… and you’re actually looking at it. QuickSpin even asks how the wait felt —
-> real perceived-wait data for the host, straight from the player."
+> “Actual wait. Time actually played. Engagement ratio. Felt wait. And importantly, this metric can
+> say the wait felt shorter, the same, or longer. We don’t force an improvement.”
 
-### 1:30 — Depth: another game, theming (30s)
+Click **View response** so the widget hands off cleanly.
 
-_Click:_ the in-widget **game chooser** (the overlay at the start of a new run), pick **Orbit Catch**,
-play a few catches. Then `setTheme` isn’t visible in the demo UI, so instead make the point with what
-is visible.
+## 1:45 — Repeatability and accessibility
 
-> "Two games ship today — Wait Runner and Orbit Catch — and droppable game packs come later.
-> Every game is keyboard- and tap-friendly, dark and light themed, and the whole widget lives in
-> its own shadow DOM, so your page’s styles can’t leak in. Drop-in means exactly that."
+Run another QuickSpin wait and switch to **Orbit Catch**.
 
-### 2:00 — Why hosts pay / monetization (40s)
+> “Two games ship now. Runner supports Space or pointer. Orbit supports pointer and keyboard too.
+> The widget is Shadow-DOM isolated, themeable, and can collapse to a small live pill without
+> disappearing — the game pauses until you resume.”
 
-_Scroll slowly_ from the stats band ("AI wait turned into play", streaks, best scores) through
-**"The wait is an abandoned checkout"** comparison table and the three "How hosts make money"
-steps, ending at **Pricing**.
-_Click:_ **Choose Pro — checkout preview** (the modal with the red "Checkout preview" tag).
-If you have a real Stripe link configured, do NOT type card details — narrate the redirect instead.
+Collapse and reopen once if pacing allows.
 
-> "Here’s the business case. The classic spinner can’t be measured and churns users. QuickSpin
-> gives you engagement, repeat visits from the streak, and — because only real features are
-> listed — a Pro plan that’s honest. Checkout is wired to actual Stripe checkout: set one
-> environment variable and ‘Choose Pro’ opens a real payment link. No platform tax, no fake
-> payment page. And the SDK never claims a payment it can’t verify — Stripe is the source of truth."
+## 2:10 — Integration proof
 
-### 2:40 — Integrate, and land it (20s)
+Scroll to the SDK block.
 
-_Scroll to the SDK code block._ Point at `createQuickSpin`, `session.setPhase`, and
-`session.complete()` with the mouse cursor.
+> “Production integration has one important guardrail: QuickSpin waits 650 milliseconds by default,
+> so fast AI responses don’t flash a game UI. Mount it once, pass real phases, keep progress
+> indeterminate when you don’t know it, and call complete when the real response resolves.”
 
-> "Integration is one `<div>` and a few lines — `npm install quickspin`, mount the widget, feed it
-> your model’s phases, and call `session.complete()` when the response is ready. There’s a React
-> wrapper too. QuickSpin: turn the weakest moment in every AI app into play time, revenue, and a
-> reason to come back."
+Point to `delayMs`, `setProgress()`, `setPhase()`, and `complete()`.
 
-**End screen:** held on the hero for 3 seconds.
+## 2:35 — Packaging / business model
 
----
+Show pricing briefly.
 
-## Guardrails (keep the video credible)
+> “The SDK features you just saw are honestly available in the open SDK. Team Pilot is support and
+> branded setup, not a fake paywall around APIs that are already public. Hosted analytics and extra
+> game packs are clearly marked as future work. If a Stripe Payment Link is configured, the paid
+> button uses real Stripe; otherwise the demo is labeled preview.”
 
-- Only claim what the demo actually shows. Never say "used by thousands" or invent metrics.
-- Say "the wait is simulated locally" only if you mention the demo setup; the landing already says it.
-- If the Stripe env var is set and a plan says "pay with Stripe", either show the redirect
-  (without completing a charge) or edit the pricing section copy in `.env` before recording.
-- Do not read this document on screen; the mouse should feel deliberate, the cuts smooth.
+## 2:50 — Close
 
-## After recording
+Return to the hero or hold on the Wait Receipt.
 
-- Trim the start/end, add captions if you spoke off-mic, and export a shareable link
-  (unlisted YouTube, Loom, or a raw mp4).
-- Add the URL to the README so judges can watch without running the code.
+> “QuickSpin: make AI waiting playable, couple the play to real execution, and prove what happened.”
+
+## Guardrails
+
+- Never claim npm availability unless the package has actually been published.
+- Never claim every user experiences a shorter wait; show the signed receipt instead.
+- Never call the demo’s simulated model phases “live production AI.”
+- Do not claim hosted analytics or extra game packs exist yet.
+- If Stripe is not configured, say “checkout preview,” not “payment.”

@@ -163,7 +163,9 @@ export function createCheckoutFlow(
     card.appendChild(statusEl);
     root.appendChild(card);
 
-    const focusables = Array.from(card.querySelectorAll<HTMLElement>(".qs-plan, .qs-checkout-close"));
+    const focusables = Array.from(
+      card.querySelectorAll<HTMLElement>(".qs-plan, .qs-checkout-close")
+    );
     root.addEventListener("keydown", (e) => {
       if (e.key === "Escape") close();
       if (e.key === "Tab" && focusables.length > 1) {
