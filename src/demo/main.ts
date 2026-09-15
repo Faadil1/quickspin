@@ -54,6 +54,20 @@ const PHASES: DemoPhase[] = [
   },
 ];
 
+const LAB_THEME = {
+  mode: "light" as const,
+  primary: "#a45f3d",
+  surface: "#e5e5de",
+  elevated: "#d4d5cf",
+  game: "#c7c9c3",
+  text: "#222321",
+  muted: "#62675f",
+  border: "rgba(34, 35, 33, 0.22)",
+  success: "#8fae2e",
+  radius: "2px",
+  font: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
+};
+
 const ROUTES = [
   ["/", "Home"],
   ["/lab/", "Lab"],
@@ -398,6 +412,7 @@ function initLab(app: HTMLElement): void {
   let controller: QuickSpinController = createQuickSpin({
     target: mount,
     delayMs: 0,
+    theme: LAB_THEME,
     onEvent: logEvents(logEl),
   });
   let mode: "classic" | "quickspin" = "quickspin";
@@ -518,7 +533,12 @@ function initLab(app: HTMLElement): void {
     mount.innerHTML = "";
     logEl.innerHTML = "";
     resetAll();
-    controller = createQuickSpin({ target: mount, delayMs: 0, onEvent: logEvents(logEl) });
+    controller = createQuickSpin({
+      target: mount,
+      delayMs: 0,
+      theme: LAB_THEME,
+      onEvent: logEvents(logEl),
+    });
     refreshStats();
   });
   for (const button of segBtns) {
