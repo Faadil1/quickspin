@@ -97,10 +97,11 @@ function shell(content: string, current: string): string {
         <div class="nav-inner">
           <a class="wordmark" href="/"><span class="mark" aria-hidden="true"></span><span>QuickSpin</span></a>
           <div class="nav-links">${links}</div>
-          <a class="nav-proof" href="/proof">Runtime verified</a>
+          <a class="nav-proof" href="/proof">LIVE / 41 TESTS</a>
         </div>
       </nav>
       ${content}
+      <nav class="mobile-dock" aria-label="Mobile navigation">${links}</nav>
       <footer>
         <div class="footer-inner">
           <div>QuickSpin · playable AI wait runtime · evidence before claims.</div>
@@ -123,7 +124,7 @@ function homePage(): string {
       <div>
         <div class="eyebrow">Commonsmade · Make Waiting for AI Fun</div>
         <h1 class="display">Make AI waiting <em>playable.</em><br>Keep the truth.</h1>
-        <p class="lede">QuickSpin turns real host-observed AI execution into optional gameplay, preserves a private Evidence Capsule, and can derive a redacted Wait Ghost you can replay or share without exposing provenance labels or payloads.</p>
+        <p class="lede">A black-box arcade for AI waiting: host-observed events become play, the full run closes into a private Evidence Capsule, and only a redacted Wait Ghost is allowed to travel.</p>
         <div class="route-actions">
           <a class="action signal" href="/lab">Enter the live wait lab →</a>
           <a class="action" href="/proof">Inspect the evidence</a>
@@ -136,9 +137,18 @@ function homePage(): string {
         <div class="instrument-strip">
           <div><strong>12.0s</strong><span>controlled wait</span></div>
           <div><strong>LIVE</strong><span>host signals</span></div>
-          <div><strong>±</strong><span>signed receipt</span></div>
+          <div><strong>±</strong><span>directional delta</span></div>
         </div>
       </div>
+    </section>
+    <section class="signature-rail" aria-label="QuickSpin evidence lifecycle">
+      <article><span>01 / HOST EVENT</span><strong>Observed</strong><small>phase · signal · failure</small></article>
+      <i>→</i>
+      <article><span>02 / PLAY</span><strong>Playable</strong><small>execution becomes game state</small></article>
+      <i>→</i>
+      <article class="private"><span>03 / CAPSULE</span><strong>Private proof</strong><small>full provenance retained</small></article>
+      <i>→</i>
+      <article class="ghost"><span>04 / WAIT GHOST</span><strong>Safe to replay</strong><small>redacted · historical · shareable</small></article>
     </section>
     <section class="proof-band" aria-label="Core QuickSpin proof">
       <article class="proof-card signal"><span class="index">01 / EXECUTION</span><h3>Real events become game mechanics.</h3><p>Tool, retrieval, artifact and warning signals require host-owned provenance before QuickSpin lets them affect play.</p></article>
@@ -158,6 +168,7 @@ function labPage(): string {
     <section class="lab-grid">
       <div class="lab-panel">
         <div class="panel-kicker"><span>EXPERIMENT / QS-12</span><span>CONTROLLED 12.0s</span></div>
+        <div class="lab-storyline" aria-label="QuickSpin lab flow"><span>WAIT</span><i></i><span>PLAY</span><i></i><span>RECORD</span><i></i><span>DERIVE</span></div>
         <div class="seg" role="group" aria-label="Demo mode"><button data-mode="classic">Classic spinner</button><button data-mode="quickspin">QuickSpin</button></div>
         <div id="classic-panel">
           <div class="chat">
@@ -179,7 +190,7 @@ function labPage(): string {
           <button id="replay-ghost">Replay Wait Ghost</button>
           <button id="reset-stats">Reset local evidence</button>
         </div>
-        <div id="ghost-status" class="qs-phase">Wait Ghost: none loaded. Shared ghosts are redacted replay artifacts — never live AI.</div>
+        <section class="ghost-console" aria-label="Wait Ghost boundary"><div class="ghost-console-head"><strong>WAIT GHOST</strong><span>REDACTED DERIVATIVE</span></div><div class="ghost-privacy"><span>NO PROMPT</span><span>NO LABELS</span><span>NO EVIDENCE REFS</span><span>NO PAYLOADS</span></div><div id="ghost-status" class="qs-phase">Wait Ghost: none loaded. Shared ghosts are redacted replay artifacts — never live AI.</div></section>
       </div>
       <aside class="evidence-panel" style="padding:0;overflow:hidden">
         <div class="panel-kicker" style="padding:18px;margin:0"><span>EVIDENCE FEED</span><span>HOST EVENTS</span></div>
@@ -211,6 +222,12 @@ function proofPage(): string {
       <div class="receipt-row"><span>UNKNOWN</span><strong>RETAINED / NOT LAUNDERED</strong></div>
       <div class="receipt-foot">Illustrative receipt layout. The live lab records the actual session values; perceived-wait delta is allowed to be shorter, equal, or longer.</div>
     </section>
+    <section class="evidence-split" aria-label="Private and shareable evidence boundary">
+      <article class="evidence-vessel capsule-vessel"><span>PRIVATE</span><h2>Evidence Capsule</h2><p>Full host-side run record with provenance, outcome and evidence coverage.</p><div><b>provenance</b><b>trail</b><b>outcome</b><b>coverage</b></div></article>
+      <div class="redaction-gate"><span>REDACT</span><strong>→</strong><small>minimum shareable truth</small></div>
+      <article class="evidence-vessel ghost-vessel"><span>SHAREABLE</span><h2>Wait Ghost</h2><p>Historical timing shape without prompts, labels, evidence refs or intervention payloads.</p><div><b>timing</b><b>event types</b><b>outcome</b><b>replay</b></div></article>
+    </section>
+    <div class="trust-boundary">PRIVATE → REDACT → SHARE · GHOST REPLAY IS HISTORICAL, NOT LIVE AI</div>
     <section class="evidence-grid" style="margin-top:54px">
       <article class="evidence-panel"><div class="eyebrow">Reality anchor</div><h2>A real production failure, not a hypothetical risk.</h2><p>OpenAI documented elevated errors and latency on June 2–3, 2026 across Responses API, Codex and ChatGPT. QuickSpin does not claim to repair provider reliability; the incident proves waiting, rejection and degraded flows are real product states.</p><div class="status-line"><span>PRIMARY-SOURCE EVENT</span><span class="status">PASS</span></div></article>
       <article class="evidence-panel"><div class="eyebrow">Negative path</div><h2>Real failure &gt; fake success.</h2><p>The live lab executes an actual rejected Promise. The session persists FAILED, emits structured evidence, and does not append an AI answer.</p><div class="status-line"><span>RUNTIME FAILURE PATH</span><span class="status">PASS</span></div></article>
@@ -227,6 +244,11 @@ function sdkPage(): string {
     ${pageHead("Integration surface", "The product is the runtime contract — not one minigame.", "Runner and Orbit consume the same lifecycle. Hosts can expose real phases and evidence-bearing execution signals without fabricating model progress.", "04 / SDK")}
     <section class="lifecycle">
       ${["IDLE", "WAITING", "PLAYING", "RESPONSE READY", "COMPLETED", "FAILED / CANCELLED"].map((s, i) => `<div class="life"><b>0${i + 1}</b><span>${s}</span></div>`).join("")}
+    </section>
+    <section class="contract-strip" aria-label="Runtime contract principles">
+      <article><span>HOST AUTHORITY</span><strong>Observe. Do not invent.</strong><p>Phases and signals come from the host boundary.</p></article>
+      <article><span>FAIL CLOSED</span><strong>No provenance, no gameplay claim.</strong><p>Insufficient evidence remains UNKNOWN.</p></article>
+      <article><span>PORTABLE PROOF</span><strong>Private Capsule. Redacted Ghost.</strong><p>One contract across multiple waiting surfaces.</p></article>
     </section>
     <section class="code-panel"><div class="code-head"><span>Vanilla integration</span><span>evidence-aware</span></div><pre>${escapeHtml(code)}</pre></section>
     <section class="evidence-grid" style="margin-top:28px">
@@ -306,11 +328,13 @@ function judgesPage(): string {
     [
       "05",
       "Mitigation",
-      "Playable wait, provenance, explicit terminal outcomes and signed receipt.",
+      "Playable wait, provenance, explicit terminal outcomes and directional receipt.",
     ],
   ];
   return `<main class="page">
     ${pageHead("Judge surface", "Every claim has a route to proof.", "This page compresses the build into judge logic: criterion → behavior → evidence → demo. It is intentionally explicit about what is verified, controlled, unknown, or refused.", "05 / JUDGES")}
+    <section class="judge-memory"><span>REMEMBER ONE THING</span><strong>QuickSpin turns AI waiting into a game you can verify afterward.</strong><div>PRIVATE CAPSULE → REDACTED GHOST → REPLAY / COMPARE</div></section>
+    <section class="claim-matrix" aria-label="Claim classes"><article class="verified"><b>VERIFIED</b><strong>Observed execution can become play.</strong></article><article class="unknown"><b>UNKNOWN</b><strong>No evidence stays unresolved.</strong></article><article class="refused"><b>REFUSED</b><strong>QuickSpin does not claim faster models.</strong></article><article class="portable"><b>PORTABLE</b><strong>Capsule → Ghost → replay / compare.</strong></article></section>
     <section class="judge-cycle">${cycle.map((r) => `<div class="judge-row"><div class="stage">${r[0]}</div><div class="why">${r[1]}</div><div class="verdict">${r[2]}</div></div>`).join("")}</section>
     <section class="five-pattern">${pattern.map((p) => `<article class="pattern-step"><div class="n">${p[0]}</div><h3>${p[1]}</h3><p>${p[2]}</p></article>`).join("")}</section>
     <section class="evidence-panel"><div class="eyebrow">Canonical distinction</div><h2>QuickSpin is not trying to be the biggest AI waiting game.</h2><p>It is the reusable waiting layer that makes real execution playable, preserves failure truth, refuses unsupported signals, records a private Evidence Capsule, and derives a privacy-safe Wait Ghost for replay/share/compare. That evidence lifecycle is the product — the minigames are interchangeable implementations of the contract.</p><div class="route-actions"><a class="action signal" href="/lab">See it run →</a><a class="action" href="/proof">Inspect evidence</a><a class="action" href="/sdk">Inspect integration</a></div></section>
