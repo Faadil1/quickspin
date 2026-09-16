@@ -7,6 +7,7 @@ on:
       - native-black-box-consolidation
     paths:
       - scripts/consolidate-native-black-box.mjs
+      - .github/workflows/apply-native-black-box.yml
 
 permissions:
   contents: write
