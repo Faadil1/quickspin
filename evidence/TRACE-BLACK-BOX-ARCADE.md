@@ -1,6 +1,6 @@
 # TRACE — Black Box Arcade
 
-Status: **MERGED / CI + CODEQL PASS / OFFLINE EXACT-ARTIFACT PIXEL PROOF PASS / PUBLIC EXACT-SHA DEPLOY PENDING**
+Status: **MERGED / CI + CODEQL PASS / OFFLINE EXACT-ARTIFACT PIXEL PROOF PASS / PUBLIC EXACT-SHA RUNTIME PASS**
 
 ## Product candidate
 
@@ -8,7 +8,8 @@ Status: **MERGED / CI + CODEQL PASS / OFFLINE EXACT-ARTIFACT PIXEL PROOF PASS / 
 - PR: #16
 - final PR CI: `35046055844` — PASS
 - final PR CodeQL: `35046055937` — PASS
-- post-merge CI: `35046206408` — artifact produced from exact merge SHA
+- post-merge CI: `35046206408` — PASS / artifact produced from exact merge SHA
+- post-merge CodeQL: `35046206399` — PASS
 - tests: **41 / 41**
 - demo artifact: `quickspin-demo-dist-22`
 - artifact id: `10426614209`
@@ -17,31 +18,6 @@ Status: **MERGED / CI + CODEQL PASS / OFFLINE EXACT-ARTIFACT PIXEL PROOF PASS / 
 ## Objective
 
 Push QuickSpin beyond the prior future-classic treatment without changing product mechanics. The visual system must make `play + truth + replay` memorable while preserving the verified SDK/runtime contracts.
-
-## Reference routing used
-
-### Product flow / mobile
-- Mobbin — mobile hierarchy and proven product-flow discipline
-- Pageflows — task sequencing and progressive disclosure
-- Beautiful UI — AI-native state/approval/thinking references
-
-### Art direction
-- Annual Report Gallery — editorial hierarchy, evidence storytelling
-- Studio Thonik — typography as structure/identity
-- Cue Design — premium interaction mechanisms
-- Awwwards — composition ambition only, not UX authority
-- Inspora — uniqueness / anti-generic audit
-
-### Interaction / motion
-- Rare UI — signature interaction language
-- 60FPS Design — micro-interaction quality bar
-- Motion Primitives / transitions.dev — state transition discipline
-- Codrops / React Bits — localized experimental treatment only
-
-### System / implementation
-- shadcn principles — accessible/composable primitives
-- ReUI / OpenSourceUI — information-dense system patterns
-- UI Skills / Design System Checklist — coverage/a11y/motion gap checking
 
 ## Direction
 
@@ -53,6 +29,13 @@ Visual tension:
 - instrumentation
 - redaction / evidence artifacts
 - futuristic color signals without generic AI blue/navy SaaS styling
+
+## Reference routing used
+
+- Product flow / mobile: Mobbin, Pageflows, Beautiful UI
+- Art direction: Annual Report Gallery, Studio Thonik, Cue Design, Awwwards, Inspora
+- Interaction / motion: Rare UI, 60FPS Design, Motion Primitives, transitions.dev, Codrops, React Bits
+- System / implementation: shadcn principles, ReUI, OpenSourceUI, UI Skills / Design System Checklist
 
 ## Palette
 
@@ -83,7 +66,6 @@ Semantic use:
 
 ### Lab
 - clear WAIT → PLAY → RECORD → DERIVE progression
-- action grouping retained from TRACE jury pass
 - evidence ledger treated as an instrument
 - failure and Ghost/replay actions use distinct semantic colors
 
@@ -91,12 +73,10 @@ Semantic use:
 - Capsule vs Ghost remains the primary composition
 - redaction gate is visually explicit
 - trust-boundary seal added
-- Coral reserved for refusal/boundary emphasis
 
 ### SDK
 - contract-first presentation
 - host authority / fail-closed / portable-proof strip
-- petrol technical treatment
 - no change to SDK behavior
 
 ### Judges
@@ -112,8 +92,8 @@ Semantic use:
 - Ghost surface: hover → modest elevation / material shift
 - Global scanline: passive ambient signal only
 - Buttons: hover/focus → short elevation + border emphasis
-- Mobile: motion reduced; no pointer-only dependency
-- `prefers-reduced-motion: reduce`: all ambient and decorative motion disabled
+- Mobile: no pointer-only dependency
+- `prefers-reduced-motion: reduce`: ambient and decorative motion disabled
 
 ## Mobile
 
@@ -121,7 +101,7 @@ Semantic use:
 - stacked proof surfaces
 - no pointer spotlight on mobile
 - action hierarchy preserved
-- bottom padding added to prevent dock overlap
+- bottom padding prevents dock overlap
 
 ## Scope boundary
 
@@ -138,7 +118,7 @@ Only demo/presentation surfaces changed.
 
 ## Exact-artifact pixel proof
 
-The exact post-merge CI demo artifact from `8d5ffd705588f449f54eed3365489e027bc1c84d` was rendered offline because the environment blocks normal localhost/file navigation. The transport was shimmed only to select each existing route; the built JS/CSS bytes were otherwise used as produced by CI.
+The exact post-merge CI demo artifact from `8d5ffd705588f449f54eed3365489e027bc1c84d` was rendered offline before deployment.
 
 Inspected routes:
 - `/`
@@ -157,17 +137,48 @@ Results:
 - **0 horizontal overflow** across all desktop/mobile routes
 - **0 running animations** under `prefers-reduced-motion: reduce`
 - mobile dock does not require pointer interaction
-- Evidence Feed empty state remains explicit rather than reading as a broken panel
 - Home / Proof / Judges hierarchy remains readable without narration
 - Capsule → redaction → Ghost trust boundary remains visible
 
 Pixel verdict: **PASS_OFFLINE_EXACT_CI_ARTIFACT**.
 
-Boundary: this does **not** prove that the public Vercel URL is serving `8d5ffd705588f449f54eed3365489e027bc1c84d`. Public exact-SHA runtime promotion remains open.
+## Public exact-SHA runtime proof
+
+Production deployment:
+- Vercel project: `quickspin-runtime`
+- project id: `prj_7BesKgTL3aTrP6xVZUwIDQSmGQ50`
+- deployment id: `dpl_DyRMr38opKz8kkQjhrKFDSert9Xb`
+- canonical alias: `https://quickspin-runtime.vercel.app`
+- state: **READY**
+
+Build logs explicitly show:
+- `git checkout 8d5ffd705588f449f54eed3365489e027bc1c84d`
+- detached HEAD `feat: Black Box Arcade — all-phase TRACE design pass`
+- `npm ci` with **0 vulnerabilities**
+- TypeScript typecheck PASS
+- Vite 7.3.6 build PASS
+- output assets `/assets/index-B6DEyjeB.js` and `/assets/index-CYrpJ5m5.css`
+
+External production fetches returned **HTTP 200 OK** for:
+- `/`
+- `/lab`
+- `/proof`
+- `/sdk`
+- `/judges`
+
+The served JS asset was fetched directly with HTTP 200 and contains Black Box Arcade markers including:
+- `VERIFIED / 41 TESTS`
+- `PRIVATE → REDACT → SHARE`
+- `WATCH THE STATE, NOT A FAKE PERCENTAGE.`
+- `HOST AUTHORITY`
+- the `VERIFIED / UNKNOWN / REFUSED / PORTABLE` judge matrix
+- the five-route mobile dock.
+
+Public runtime verdict: **PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA**.
 
 ## Failures retained
 
-- PR #16 first CI run `35045685112`: TypeScript + Prettier failed. TypeScript rejected an optional DOM target; formatting also failed.
+- PR #16 first CI run `35045685112`: TypeScript + Prettier failed.
 - PR #16 second CI run `35045823209`: TypeScript was fixed, but Prettier still rejected `black-box-arcade.ts`.
 - Recovery: authoritative Prettier 3.9.6 output was generated in a read-only one-shot workflow, applied exactly, and the workflow was removed before final validation.
 - Final recovery proof: CI `35046055844` + CodeQL `35046055937` both passed before merge.
@@ -186,4 +197,6 @@ Boundary: this does **not** prove that the public Vercel URL is serving `8d5ffd7
 - reduced motion: PASS_OFFLINE_EXACT_ARTIFACT
 - horizontal overflow: NONE OBSERVED
 - unsupported claim introduced: NO
-- public exact-SHA runtime: **PENDING**
+- public exact-SHA runtime: **PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA**
+
+`PROJECT_COMPLETE` remains false until video, live Q&A, Commonsmade/submission asset locks, terminal reconciliation and final QC are complete.

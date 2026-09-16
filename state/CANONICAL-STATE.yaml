@@ -78,13 +78,14 @@ trace_visual_jury_v1:
   test_count: 41
 
 black_box_arcade:
-  status: MERGED_CODE_VALIDATED_OFFLINE_EXACT_ARTIFACT_PIXEL_PASS_PUBLIC_DEPLOY_PENDING
+  status: MERGED_CODE_VALIDATED_PIXEL_PASS_PUBLIC_RUNTIME_VERIFIED
   direction: BLACK_BOX_ARCADE_FORENSIC_PLAY_FOR_AI_WAITING
   merge_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
   pr: 16
   final_pr_ci_run: 35046055844
   final_pr_codeql_run: 35046055937
   post_merge_ci_run: 35046206408
+  post_merge_codeql_run: 35046206399
   test_count: 41
   artifact_id: 10426614209
   artifact_digest: sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8
@@ -96,7 +97,11 @@ black_box_arcade:
   console_errors_observed: 0
   horizontal_overflow_observed: 0
   reduced_motion_running_animations: 0
-  public_exact_sha_runtime: PENDING_NOT_CLAIMED
+  public_exact_sha_runtime: PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA
+  production_deployment_id: dpl_DyRMr38opKz8kkQjhrKFDSert9Xb
+  production_url: https://quickspin-runtime.vercel.app
+  production_bundle_js: /assets/index-B6DEyjeB.js
+  production_bundle_css: /assets/index-CYrpJ5m5.css
   evidence: evidence/TRACE-BLACK-BOX-ARCADE.md
 
 completed:
@@ -124,9 +129,11 @@ completed:
   - BLACK_BOX_ARCADE_PR_CI_CODEQL_PASS_AND_MERGE
   - BLACK_BOX_ARCADE_EXACT_ARTIFACT_DESKTOP_MOBILE_PIXEL_PASS
   - BLACK_BOX_ARCADE_REDUCED_MOTION_PASS
+  - BLACK_BOX_ARCADE_EXACT_SHA_VERCEL_READY
+  - BLACK_BOX_ARCADE_FIVE_ROUTES_HTTP_200
+  - BLACK_BOX_ARCADE_SERVED_BUNDLE_PROOF
 
 open_blocking_gates:
-  - BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
   - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
@@ -146,9 +153,10 @@ closed_risks:
   wi_v3_public_runtime_redeploy_and_route_proof: PASS_EXACT_SHA_READY_5_ROUTES_AND_BUNDLE
   black_box_arcade_code_validation: PASS_PR_CI_CODEQL
   black_box_arcade_visual_inspection: PASS_OFFLINE_EXACT_CI_ARTIFACT
+  black_box_arcade_public_runtime: PASS_EXACT_SHA_READY_5_ROUTES_AND_BUNDLE
   moving_main_head_identity_drift: CLOSED_BY_PRODUCT_SOURCE_SHA_SEPARATION
 
-next_required_gate: BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
+next_required_gate: FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
 
 terminal_sequence:
   - verification-before-completion
@@ -163,19 +171,19 @@ terminal_sequence:
   - project-complete-only-if-all-blocking-gates-pass
 
 security_gate: PASS_ZERO_NPM_AUDIT
-runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_BLACK_BOX_ARCADE
-runtime_source_sha: cb3b322907197e37518e85ddb377def2053edcc3
-runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
+runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_BLACK_BOX_ARCADE_EXACT_SHA
+runtime_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
+runtime_deployment_id: dpl_DyRMr38opKz8kkQjhrKFDSert9Xb
 runtime_url: https://quickspin-runtime.vercel.app
 runtime_routes_verified: [/, /lab, /proof, /sdk, /judges]
-runtime_bundle_asset: /assets/index-CRyhx7en.js
-runtime_bundle_v3_content_verified: true
-runtime_black_box_arcade: NOT_YET_DEPLOYED_NOT_CLAIMED
+runtime_bundle_asset: /assets/index-B6DEyjeB.js
+runtime_black_box_arcade_content_verified: true
+runtime_black_box_arcade: DEPLOYED_VERIFIED
 runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
 visual_direction: BLACK_BOX_ARCADE_PITCH_BLACK_ACID_VIOLET_CORAL_COPPER_PETROL
 visual_architecture: MULTI_PAGE_FORENSIC_ARCADE_INSTRUMENT
-visual_gate: PASS_OFFLINE_EXACT_CI_ARTIFACT_PUBLIC_RUNTIME_PENDING
+visual_gate: PASS_EXACT_ARTIFACT_PIXEL_AND_PUBLIC_EXACT_SHA_RUNTIME
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
 commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF
-submission_gate: COPY_LOCKED_PENDING_FINAL_BLACK_BOX_RUNTIME_VIDEO_AND_COMMONS_LINKS
+submission_gate: COPY_LOCKED_PENDING_VIDEO_QA_COMMONS_AND_FINAL_LINKS

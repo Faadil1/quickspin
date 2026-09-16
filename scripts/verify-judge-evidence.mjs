@@ -17,7 +17,8 @@ const required = {
     "10426614209",
     "sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8",
     "PASS_OFFLINE_EXACT_CI_ARTIFACT",
-    "public exact-SHA runtime: **PENDING**",
+    "PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA",
+    "dpl_DyRMr38opKz8kkQjhrKFDSert9Xb",
   ],
   "evidence/REALITY-ANCHOR.md": [
     "Événement négatif concret, réel et vérifiable",
@@ -33,11 +34,8 @@ const required = {
   ],
   "evidence/CYCLE-GATE-MATRIX.md": [
     "Current iteration: **3 / 3**",
-    "PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA",
     "GHOST_REPLAY_IS_NOT_LIVE_AI",
     "WAIT_DIFF_NO_SYNTHETIC_VERDICT",
-    "cb3b322907197e37518e85ddb377def2053edcc3",
-    "dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
   ],
   "evidence/ORCHESTRATION-JPA.md": [
     "HOI → CHIEF OF STAFF → PROJECT AUTHORIZATION → PBPD → PROJECT FINISHER → HUMAN SUBMIT → POST-MORTEM",
@@ -65,19 +63,18 @@ const required = {
   "evidence/CLAIM-LEDGER.md": [
     "Wait Ghost replay is live AI | REFUSED",
     "wait-to-wait diff decides a winner | REFUSED",
-    "WI V3 merge is green on main | VERIFIED",
-    "public runtime contains WI V3 Wait Ghost changes | VERIFIED",
     "PROJECT_COMPLETE | REFUSED_CURRENTLY",
   ],
   "evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md": [
-    "PASS / V3 PUBLIC_DEPLOYMENT_PROOF CLOSED",
+    "PASS / BLACK BOX ARCADE PUBLIC_DEPLOYMENT_PROOF CLOSED",
     "https://quickspin-runtime.vercel.app",
-    "cb3b322907197e37518e85ddb377def2053edcc3",
-    "dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
+    "8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "dpl_DyRMr38opKz8kkQjhrKFDSert9Xb",
     "All five routes returned **HTTP 200 OK**",
-    "/assets/index-CRyhx7en.js",
-    "Copy redacted Wait Ghost link",
-    "Replay Wait Ghost",
+    "/assets/index-B6DEyjeB.js",
+    "/assets/index-CYrpJ5m5.css",
+    "VERIFIED / 41 TESTS",
+    "PRIVATE → REDACT → SHARE",
   ],
   "evidence/security/SECURITY-GATE.md": ["PASS", "0 vulnerabilities"],
   "submission/VIDEO-SHOT-LOCK.md": [
@@ -88,17 +85,18 @@ const required = {
     "branch: main",
     "product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
     "black_box_arcade:",
-    "status: MERGED_CODE_VALIDATED_OFFLINE_EXACT_ARTIFACT_PIXEL_PASS_PUBLIC_DEPLOY_PENDING",
+    "status: MERGED_CODE_VALIDATED_PIXEL_PASS_PUBLIC_RUNTIME_VERIFIED",
     "final_pr_ci_run: 35046055844",
     "final_pr_codeql_run: 35046055937",
+    "post_merge_codeql_run: 35046206399",
     "artifact_id: 10426614209",
     "pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT",
-    "public_exact_sha_runtime: PENDING_NOT_CLAIMED",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_BLACK_BOX_ARCADE",
-    "runtime_source_sha: cb3b322907197e37518e85ddb377def2053edcc3",
-    "runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
-    "runtime_black_box_arcade: NOT_YET_DEPLOYED_NOT_CLAIMED",
-    "next_required_gate: BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF",
+    "public_exact_sha_runtime: PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_BLACK_BOX_ARCADE_EXACT_SHA",
+    "runtime_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "runtime_deployment_id: dpl_DyRMr38opKz8kkQjhrKFDSert9Xb",
+    "runtime_black_box_arcade: DEPLOYED_VERIFIED",
+    "next_required_gate: FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH",
     "project_complete: false",
   ],
   "state/HANDOVER.yaml": [
@@ -106,30 +104,20 @@ const required = {
     "product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
     "black_box_arcade_merge_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
     "black_box_arcade_pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_BLACK_BOX_ARCADE",
-    "black_box_arcade_public_runtime_deployed: false",
+    "public_runtime: PASS_VERIFIED_VERCEL_BLACK_BOX_ARCADE_EXACT_SHA",
+    "production_deployment_id: dpl_DyRMr38opKz8kkQjhrKFDSert9Xb",
+    "black_box_arcade_public_runtime_deployed: true",
     "feature_scope: FROZEN_AFTER_WINNING_INTELLIGENCE_3_OF_3",
     "project_complete: false",
     "rollback",
   ],
   ".pbpd/state/ACTIVITY-TRACE.yaml": [
     "workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK",
-    "v3-exact-production-deploy",
-    "v3-five-route-runtime-proof",
-    "v3-served-bundle-proof",
-    "v3-feature-freeze",
-    "github-actions:35006274961",
-    "github-actions:35006274850",
-    "vercel-deployment:dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
     "PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION",
   ],
   "HACKATHON-STATE.yaml": [
     "candidate_branch: main",
     "iteration: 3_OF_3",
-    "v3_code_correctness: PASS_MAIN_CI_35006274961_NODE_22_24_41_TESTS",
-    "v3_codeql: PASS_MAIN_35006274850",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA",
-    "public_runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
     "project_complete: false",
   ],
   "HACKATHON-HANDOFF.yaml": [
@@ -140,11 +128,9 @@ const required = {
   ],
   "HACKATHON-OPERATING-GATES.yaml": [
     "winning_intelligence_iteration: 3_OF_3",
-    "PASS_VERIFIED_VERCEL_RUNTIME_V3_EXACT_SHA",
     "WAIT_GHOST_PRIVACY_REDUCTION",
     "WAIT_GHOST_REPLAY_TRUTH",
     "WAIT_DIFF_NO_SYNTHETIC_VERDICT",
-    "V3_EXACT_RUNTIME_PROVENANCE",
     "V3_FEATURE_FREEZE",
     "COMMONS_SUBMISSION_LOCK",
     "PROJECT_COMPLETE",
@@ -176,35 +162,38 @@ for (const [name, text] of [
   if (/project_complete:\s*true/.test(text)) throw new Error(`${name} illegally promotes PROJECT_COMPLETE`);
 }
 
-if (canonical.includes("runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3")) {
-  throw new Error("canonical state regressed to pre-V3 runtime");
-}
-if (canonical.includes("runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58")) {
-  throw new Error("canonical state regressed to the pre-V3 runtime source SHA");
-}
-if (canonical.includes("runtime_black_box_arcade: DEPLOYED_VERIFIED") || handover.includes("black_box_arcade_public_runtime_deployed: true")) {
-  throw new Error("Black Box Arcade public runtime cannot be promoted before exact 8d5ffd70 deployment evidence is locked");
-}
 if (!canonical.includes("product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d")) {
   throw new Error("canonical state is missing the Black Box Arcade product source SHA");
 }
 if (!canonical.includes("pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT")) {
   throw new Error("canonical state is missing exact-artifact Black Box Arcade pixel proof");
 }
-if (hackathon.includes("public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3")) {
-  throw new Error("hackathon state regressed public runtime to pre-V3");
+if (!canonical.includes("runtime_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d")) {
+  throw new Error("canonical runtime source SHA is not the Black Box Arcade product SHA");
 }
-if (claims.includes("public runtime contains WI V3 Wait Ghost changes | UNKNOWN")) {
-  throw new Error("claim ledger regressed exact V3 runtime proof to unknown");
+if (!canonical.includes("runtime_deployment_id: dpl_DyRMr38opKz8kkQjhrKFDSert9Xb")) {
+  throw new Error("canonical runtime is missing the Black Box Arcade Vercel deployment id");
 }
-if (!runtime.includes("cb3b322907197e37518e85ddb377def2053edcc3")) {
-  throw new Error("runtime evidence is missing exact V3 merge SHA");
+if (!canonical.includes("runtime_black_box_arcade: DEPLOYED_VERIFIED")) {
+  throw new Error("canonical runtime has not promoted the verified Black Box Arcade deployment");
 }
-if (!runtime.includes("dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG")) {
-  throw new Error("runtime evidence is missing exact V3 deployment id");
+if (!handover.includes("black_box_arcade_public_runtime_deployed: true")) {
+  throw new Error("handover has not promoted the verified Black Box Arcade deployment");
 }
-if (operatingGates.includes("WI_V3_PUBLIC_RUNTIME_REDEPLOY_AND_ROUTE_PROOF")) {
-  throw new Error("operating gates still list closed V3 runtime proof as blocking");
+if (!runtime.includes("8d5ffd705588f449f54eed3365489e027bc1c84d")) {
+  throw new Error("runtime evidence is missing exact Black Box Arcade source SHA");
+}
+if (!runtime.includes("dpl_DyRMr38opKz8kkQjhrKFDSert9Xb")) {
+  throw new Error("runtime evidence is missing exact Black Box Arcade deployment id");
+}
+if (canonical.includes("runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_BLACK_BOX_ARCADE")) {
+  throw new Error("canonical state still treats the older V3 runtime as production authority");
+}
+if (canonical.includes("runtime_black_box_arcade: NOT_YET_DEPLOYED_NOT_CLAIMED")) {
+  throw new Error("canonical state regressed Black Box Arcade runtime to pending");
+}
+if (claims.includes("Wait Ghost replay is live AI | VERIFIED")) {
+  throw new Error("claim ledger illegally promotes historical Ghost replay as live AI");
 }
 if (operatingGates.includes("status: PASS_VERIFIED_LIVE_AI")) {
   throw new Error("operating gates illegally describe historical Ghost replay as live AI");
@@ -217,5 +206,5 @@ if (!orchestration.includes("UNKNOWN_IN_REPO")) {
 }
 
 console.log(
-  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + V3 runtime provenance + Black Box Arcade exact-artifact pixel lock + public-runtime hold + final-gate invariants`
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + Black Box Arcade exact-artifact pixel proof + exact Vercel runtime provenance + final-gate invariants`
 );
