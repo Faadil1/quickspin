@@ -1,4 +1,5 @@
 import "./black-box-arcade.css";
+import "./black-box-luxury.css";
 
 function insertAfter(target: Element | null, html: string): void {
   if (!target) return;
