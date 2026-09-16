@@ -1,9 +1,9 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: WINNING_INTELLIGENCE_V3_OPEN_SPACE
-to: FINAL_RUNTIME_VISUAL_PROOF_LOCK
-handoff_status: ACTIVE_WITH_ONLY_FINAL_PRESENTATION_AND_SUBMISSION_GATES
-readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
+from: NATIVE_VISUAL_COMPLETION_MERGED
+to: EXACT_PUBLIC_RUNTIME_REDEPLOY_AND_VISUAL_QA
+handoff_status: ACTIVE_FINAL_RUNTIME_PROMOTION
+readiness: BUILD_CANDIDATE_READY_PENDING_RUNTIME_PROMOTION
 project_complete: false
 
 what_is_verified:
@@ -20,14 +20,23 @@ what_is_verified:
   - historical_replay_not_live_ai
   - signed_wait_diff_without_winner_score
   - persisted_intervention_payload_removed
-  - v3_final_pr_ci_35006098609
-  - v3_final_pr_codeql_35006098565
-  - v3_merge_sha_cb3b322907197e37518e85ddb377def2053edcc3
-  - v3_post_merge_ci_35006274961
-  - v3_post_merge_codeql_35006274850
-  - exact_v3_production_deployment_dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG_ready
-  - five_public_routes_http_200_v3
-  - served_v3_bundle_wait_ghost_replay_diff_content_verified
+  - native_black_box_consolidation_pr18_merged
+  - native_visual_completion_pr19_merged
+  - native_visual_pr_ci_35154939604_green
+  - native_visual_pr_codeql_35154939600_green
+  - native_visual_merge_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
+  - single_runtime_entry_main_ts
+  - single_presentation_stylesheet_site_css
+  - native_home_lifecycle_rail
+  - native_mobile_dock
+  - native_lab_storyline
+  - native_wait_ghost_privacy_console
+  - native_capsule_redact_ghost_composition
+  - native_proof_trust_boundary
+  - native_sdk_contract_strip
+  - native_judge_memory_and_claim_matrix
+  - decorative_coral_removed_from_hero
+  - build_json_runtime_attestation_implemented
 
 canonical_evidence:
   - evidence/WINNING-INTELLIGENCE-V2.md
@@ -42,10 +51,14 @@ canonical_evidence:
   - evidence/Q&A-REHEARSAL.md
   - evidence/CLAIM-LEDGER.md
   - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
+  - evidence/runtime/NATIVE-VISUAL-COMPLETION-2026-09-16.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
+  - deploy_exact_merge_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3_to_quickspin_runtime
+  - verify_public_build_json_source_sha_and_deployment_metadata
+  - verify_home_lab_proof_sdk_judges_http_200_after_redeploy
   - inspect_final_runtime_desktop_mobile_reduced_motion
   - capture_capsule_to_ghost_replay_compare_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
@@ -58,6 +71,7 @@ nonblocking_followup:
   - exhaustive_commons_submission_gallery_not_publicly_indexable
   - live_provider_integration_not_claimed
   - open_space_exclusivity_not_claimed
+  - legacy_github_vercel_project_red_status_is_not_quickspin_runtime
 
 forbidden_claims:
   - QuickSpin reduces provider latency
@@ -84,7 +98,7 @@ failure_policy:
 
 scope_policy:
   differentiation_iteration: 3_OF_3
-  after_v3_proof: FEATURE_FREEZE_FOR_TRACE_VISUAL_JURY_PASS
+  after_native_visual_completion: FEATURE_FREEZE_EXCEPT_RUNTIME_PROMOTION_AND_PROOF_FIXES
   exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Retain merge SHA cb3b322907197e37518e85ddb377def2053edcc3 and production deployment dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the verified functional fallback if later visual-only work regresses judge proof.
+rollback: Retain native visual merge SHA a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3 and prior verified runtime deployment dpl_BBNqChyLe225dzpu3SMXXF2ZB6xr. If runtime promotion regresses proof, roll back public serving while preserving the merged source and evidence trail.
