@@ -17,6 +17,37 @@ function enhanceGlobal(app: HTMLElement): void {
 
   const navProof = app.querySelector<HTMLElement>(".nav-proof");
   if (navProof) navProof.textContent = "VERIFIED / 41 TESTS";
+
+  const current = route();
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `<nav class="bb-mobile-dock" aria-label="QuickSpin mobile routes">
+      ${[
+        ["/", "HOME"],
+        ["/lab", "LAB"],
+        ["/proof", "PROOF"],
+        ["/sdk", "SDK"],
+        ["/judges", "JUDGE"],
+      ]
+        .map(
+          ([path, label]) =>
+            `<a href="${path}" ${path === current ? 'aria-current="page"' : ""}>${label}</a>`
+        )
+        .join("")}
+    </nav>`
+  );
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const reactive = app.querySelectorAll<HTMLElement>(".instrument, .ghost-console, .evidence-vessel");
+    for (const target of reactive) {
+      target.classList.add("bb-reactive");
+      target.addEventListener("pointermove", (event) => {
+        const rect = target.getBoundingClientRect();
+        target.style.setProperty("--bb-x", `${event.clientX - rect.left}px`);
+        target.style.setProperty("--bb-y", `${event.clientY - rect.top}px`);
+      });
+    }
+  }
 }
 
 function enhanceHome(app: HTMLElement): void {
@@ -41,6 +72,12 @@ function enhanceHome(app: HTMLElement): void {
 
   const instrument = app.querySelector<HTMLElement>(".instrument");
   if (instrument) instrument.classList.add("bb-orbit-node");
+
+  const proofBand = app.querySelector<HTMLElement>(".proof-band");
+  proofBand?.insertAdjacentHTML(
+    "beforebegin",
+    `<div class="bb-editorial-note" role="note"><span>DESIGN THESIS</span><strong>PLAY WITHOUT LYING ABOUT PROGRESS.</strong><small>QuickSpin makes the waiting surface expressive while keeping success, failure and uncertainty semantically separate.</small></div>`
+  );
 }
 
 function enhanceLab(app: HTMLElement): void {
@@ -57,6 +94,12 @@ function enhanceLab(app: HTMLElement): void {
 
   const feed = app.querySelector<HTMLElement>("#event-log");
   feed?.setAttribute("aria-label", "Observed QuickSpin runtime event ledger");
+
+  const lab = app.querySelector<HTMLElement>(".lab-grid");
+  lab?.insertAdjacentHTML(
+    "beforebegin",
+    `<div class="bb-lab-callout"><span>LIVE / CONTROLLED 12s</span><strong>WATCH THE STATE, NOT A FAKE PERCENTAGE.</strong></div>`
+  );
 }
 
 function enhanceProof(app: HTMLElement): void {
