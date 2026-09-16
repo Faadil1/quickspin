@@ -4,7 +4,7 @@ canonical_base:
   sha_at_v3_start: 2ee56ce711e6ee495f38908b21767698da9fe394
 candidate:
   branch: main
-  product_source_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
+  product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
   state_head_policy: TRACK_MAIN_HEAD
   deployment_policy: EXACT_PRODUCT_SOURCE_SHA
 workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK
@@ -33,7 +33,8 @@ invariants:
   - FULL_CAPSULE_IS_PRIVATE_EVIDENCE_WAIT_GHOST_IS_REDACTED_DERIVATIVE
   - GHOST_REPLAY_IS_NOT_LIVE_AI
   - SHOW_THE_DELTA_DO_NOT_INVENT_THE_VERDICT
-  - VISUAL_IMPLEMENTATION_IS_NOT_RUNTIME_PIXEL_PROOF
+  - VISUAL_IMPLEMENTATION_IS_NOT_PUBLIC_RUNTIME_PROOF
+  - OFFLINE_EXACT_ARTIFACT_PIXEL_PROOF_IS_NOT_PUBLIC_URL_PROOF
   - MOVING_MAIN_HEAD_IS_NOT_PRODUCT_CANDIDATE_IDENTITY
   - PROJECT_COMPLETE_REQUIRES_TERMINAL_RECONCILIATION
 
@@ -53,10 +54,9 @@ winning_intelligence_v2:
   test_count: 35
 
 winning_intelligence_v3:
-  status: MERGED_AND_PUBLIC_RUNTIME_VERIFIED_PRE_TRACE_VISUAL
+  status: MERGED_AND_PUBLIC_RUNTIME_VERIFIED_PRE_BLACK_BOX_ARCADE
   merge_sha: cb3b322907197e37518e85ddb377def2053edcc3
   evidence: evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
-  transient_validation_run: 35003001488
   permanent_pr_ci_run: 35006098609
   permanent_pr_codeql_run: 35006098565
   post_merge_main_ci_run: 35006274961
@@ -68,7 +68,7 @@ winning_intelligence_v3:
   feature_scope: FROZEN_AFTER_3_OF_3
 
 trace_visual_jury_v1:
-  status: MERGED_CODE_VALIDATED_RUNTIME_REFRESH_PENDING
+  status: SUPERSEDED_BY_BLACK_BOX_ARCADE_PRESENTATION_LAYER
   merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
   pr: 14
   final_pr_ci_run: 35010476926
@@ -76,23 +76,28 @@ trace_visual_jury_v1:
   post_merge_main_ci_run: 35010625808
   post_merge_main_codeql_run: 35010625877
   test_count: 41
+
+black_box_arcade:
+  status: MERGED_CODE_VALIDATED_OFFLINE_EXACT_ARTIFACT_PIXEL_PASS_PUBLIC_DEPLOY_PENDING
+  direction: BLACK_BOX_ARCADE_FORENSIC_PLAY_FOR_AI_WAITING
+  merge_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
+  pr: 16
+  final_pr_ci_run: 35046055844
+  final_pr_codeql_run: 35046055937
+  post_merge_ci_run: 35046206408
+  test_count: 41
+  artifact_id: 10426614209
+  artifact_digest: sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8
   scope_lock: DEMO_PRESENTATION_ONLY_NO_SDK_RUNTIME_CONTRACT_CHANGE
-  changed_files:
-    - index.html
-    - src/demo/jury.ts
-    - src/demo/jury.css
-  visual_deltas:
-    - ABOVE_FOLD_HOST_EVENT_TO_PLAY_TO_PRIVATE_CAPSULE_TO_REDACTED_GHOST
-    - LAB_RUN_VS_AFTER_WAIT_ACTION_HIERARCHY
-    - VISIBLE_CAPSULE_TO_GHOST_REDACTION_BOUNDARY
-    - JUDGE_MEMORY_SENTENCE_SURFACE
-    - KEYBOARD_FOCUS_TOUCH_TARGETS_MOBILE_STACKING_REDUCED_MOTION_SAFE
-    - SIGNED_RECEIPT_WORDING_REMOVED_FROM_METADATA_AND_INSTRUMENT
-  failure_evidence:
-    - PR14_FORMAT_GATE_RED_RUN_35009685840
-    - PR14_FORMAT_GATE_RED_RUN_35009845739
-    - FINAL_FORMAT_RECOVERY_PASS_35010476926
-    - STATE_PROMOTION_STALE_VERIFIER_RUN_35010862486
+  pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT
+  desktop_routes_checked: [/, /lab, /proof, /sdk, /judges]
+  mobile_routes_checked: [/, /lab, /proof, /sdk, /judges]
+  reduced_motion_checked: [/, /lab]
+  console_errors_observed: 0
+  horizontal_overflow_observed: 0
+  reduced_motion_running_animations: 0
+  public_exact_sha_runtime: PENDING_NOT_CLAIMED
+  evidence: evidence/TRACE-BLACK-BOX-ARCADE.md
 
 completed:
   - P0_P1_PRODUCT_PROOF_PASS
@@ -115,11 +120,13 @@ completed:
   - WI_V3_FIVE_ROUTES_HTTP_200
   - WI_V3_BUNDLE_CONTENT_PROOF
   - TRACE_VISUAL_JURY_V1_PR_CI_CODEQL_PASS_AND_MERGE
-  - TRACE_VISUAL_JURY_V1_POST_MERGE_CI_CODEQL_PASS
+  - BLACK_BOX_ARCADE_ALL_PHASES_IMPLEMENTED
+  - BLACK_BOX_ARCADE_PR_CI_CODEQL_PASS_AND_MERGE
+  - BLACK_BOX_ARCADE_EXACT_ARTIFACT_DESKTOP_MOBILE_PIXEL_PASS
+  - BLACK_BOX_ARCADE_REDUCED_MOTION_PASS
 
 open_blocking_gates:
-  - TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
-  - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
+  - BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
   - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
@@ -137,10 +144,11 @@ closed_risks:
   wi_v3_product_validation: PASS_CI_CODEQL_41_TESTS
   arbitrary_intervention_payload_persistence: CLOSED_V3_REDACTED_RECORD
   wi_v3_public_runtime_redeploy_and_route_proof: PASS_EXACT_SHA_READY_5_ROUTES_AND_BUNDLE
-  trace_visual_jury_v1_code_validation: PASS_PR_AND_POST_MERGE_CI_CODEQL
+  black_box_arcade_code_validation: PASS_PR_CI_CODEQL
+  black_box_arcade_visual_inspection: PASS_OFFLINE_EXACT_CI_ARTIFACT
   moving_main_head_identity_drift: CLOSED_BY_PRODUCT_SOURCE_SHA_SEPARATION
 
-next_required_gate: TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
+next_required_gate: BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF
 
 terminal_sequence:
   - verification-before-completion
@@ -155,19 +163,19 @@ terminal_sequence:
   - project-complete-only-if-all-blocking-gates-pass
 
 security_gate: PASS_ZERO_NPM_AUDIT
-runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_TRACE_VISUAL
+runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_BLACK_BOX_ARCADE
 runtime_source_sha: cb3b322907197e37518e85ddb377def2053edcc3
 runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
 runtime_url: https://quickspin-runtime.vercel.app
 runtime_routes_verified: [/, /lab, /proof, /sdk, /judges]
 runtime_bundle_asset: /assets/index-CRyhx7en.js
 runtime_bundle_v3_content_verified: true
-runtime_trace_visual_v1: NOT_YET_DEPLOYED_NOT_CLAIMED
+runtime_black_box_arcade: NOT_YET_DEPLOYED_NOT_CLAIMED
 runtime_evidence: evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
-visual_direction: SMOKED_PEARL_GRAPHITE_OXIDIZED_COPPER_ELECTRIC_SIGNAL
-visual_architecture: FUTURE_CLASSIC_MULTI_PAGE_PLUS_TRACE_JURY_LAYER
-visual_gate: CODE_PASS_RUNTIME_PIXEL_PROOF_PENDING
+visual_direction: BLACK_BOX_ARCADE_PITCH_BLACK_ACID_VIOLET_CORAL_COPPER_PETROL
+visual_architecture: MULTI_PAGE_FORENSIC_ARCADE_INSTRUMENT
+visual_gate: PASS_OFFLINE_EXACT_CI_ARTIFACT_PUBLIC_RUNTIME_PENDING
 video_gate: PENDING_CAPTURE
 qa_gate: PREPARED_PENDING_LIVE_REHEARSAL
 commons_submission_gate: PENDING_HUMAN_PUBLISH_ATTACH_AND_SUBMIT_PROOF
-submission_gate: COPY_LOCKED_PENDING_FINAL_TRACE_RUNTIME_VIDEO_AND_COMMONS_LINKS
+submission_gate: COPY_LOCKED_PENDING_FINAL_BLACK_BOX_RUNTIME_VIDEO_AND_COMMONS_LINKS
