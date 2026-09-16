@@ -1,55 +1,57 @@
 project: QuickSpin
 workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK
-source_main_sha: f8b07abee09821be7ac0ea179f05359cecc2d203
 candidate_branch: main
+product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
 objective: >-
-  Keep product functionality frozen after Winning Intelligence iteration 3/3, preserve the
-  private Evidence Capsule → redacted Wait Ghost → historical replay → directional-delta
-  distinction, and finish the exact TRACE Visual Jury V1 candidate through production runtime
-  proof, pixel inspection, final capture, Q&A rehearsal and submission locks.
+  Keep product functionality frozen after Winning Intelligence iteration 3/3 and finish the
+  Black Box Arcade candidate through exact public-runtime provenance, final capture, Q&A
+  rehearsal and Commonsmade/submission locks.
 
 current_truth:
   wi_v2_merged_to_fork_main: true
   wi_v3_merged_to_fork_main: true
   wi_v3_merge_sha: cb3b322907197e37518e85ddb377def2053edcc3
-  trace_visual_jury_v1_merged_to_fork_main: true
-  trace_visual_jury_v1_merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056
-  trace_visual_jury_v1_final_pr_ci: github-actions:35010476926
-  trace_visual_jury_v1_final_pr_codeql: github-actions:35010476921
-  trace_visual_jury_v1_post_merge_ci: github-actions:35010625808
-  trace_visual_jury_v1_post_merge_codeql: PENDING_AT_HANDOVER_WRITE
+  black_box_arcade_merged_to_fork_main: true
+  black_box_arcade_merge_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d
+  black_box_arcade_pr: 16
+  black_box_arcade_final_pr_ci: github-actions:35046055844
+  black_box_arcade_final_pr_codeql: github-actions:35046055937
+  black_box_arcade_post_merge_ci: github-actions:35046206408
+  black_box_arcade_test_count: 41
+  black_box_arcade_artifact_id: 10426614209
+  black_box_arcade_artifact_digest: sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8
+  black_box_arcade_pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT
   project_complete: false
   readiness: BUILD_CANDIDATE_READY_WITH_LIMITATIONS
   security_gate: PASS_ZERO_NPM_AUDIT
   real_external_negative_event: PASS_PRIMARY_SOURCE
   runtime_negative_path: PASS
   unknown_abstention: PASS
-  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_TRACE_VISUAL
+  public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_BLACK_BOX_ARCADE
   production_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG
   production_url: https://quickspin-runtime.vercel.app
-  production_routes_http_200: [/, /lab, /proof, /sdk, /judges]
   production_source_sha: cb3b322907197e37518e85ddb377def2053edcc3
-  trace_visual_runtime_deployed: false
-  trace_visual_runtime_claim: NOT_YET_CLAIMED
+  black_box_arcade_public_runtime_deployed: false
+  black_box_arcade_public_runtime_claim: NOT_YET_CLAIMED
   feature_scope: FROZEN_AFTER_WINNING_INTELLIGENCE_3_OF_3
 
-trace_visual_jury_v1_truth:
+black_box_arcade_truth:
   scope: DEMO_PRESENTATION_ONLY_NO_SDK_RUNTIME_CONTRACT_CHANGE
-  changed_files: [index.html, src/demo/jury.ts, src/demo/jury.css]
-  above_fold_signature_path: HOST_EVENT_TO_PLAY_TO_PRIVATE_CAPSULE_TO_REDACTED_GHOST
-  lab_actions_grouped_into_run_and_after_wait: true
-  visible_capsule_to_ghost_redaction_boundary: true
-  judge_memory_sentence_surface: true
-  keyboard_focus_and_touch_hierarchy: true
-  mobile_stacking: true
-  reduced_motion_safe: true
-  signed_receipt_ambiguous_copy_removed: true
-  prior_format_gate_failures_retained_in_state: [35009685840, 35009845739]
-  recovery_ci: 35010476926
+  direction: BLACK_BOX_ARCADE_FORENSIC_PLAY_FOR_AI_WAITING
+  palette: PITCH_BLACK_ACID_VIOLET_CORAL_COPPER_PETROL
+  routes: [/, /lab, /proof, /sdk, /judges]
+  desktop_pixel_proof: PASS_OFFLINE_EXACT_ARTIFACT
+  mobile_pixel_proof: PASS_OFFLINE_EXACT_ARTIFACT
+  reduced_motion: PASS_ZERO_RUNNING_ANIMATIONS_IN_CHECKED_HOME_AND_LAB
+  horizontal_overflow_observed: 0
+  console_errors_observed: 0
+  public_exact_sha_runtime: PENDING
+  evidence: evidence/TRACE-BLACK-BOX-ARCADE.md
 
 proof_paths:
   - evidence/WINNING-INTELLIGENCE-V2.md
   - evidence/WINNING-INTELLIGENCE-V3-OPEN-SPACE.md
+  - evidence/TRACE-BLACK-BOX-ARCADE.md
   - evidence/REALITY-ANCHOR.md
   - evidence/FAILURE-LEDGER.md
   - evidence/CLAIM-LEDGER.md
@@ -59,7 +61,6 @@ proof_paths:
   - evidence/GATE-REPORT.md
   - evidence/JUDGE-QA.md
   - evidence/Q&A-REHEARSAL.md
-  - evidence/VISUAL-JURY-REVIEW.md
   - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
@@ -74,9 +75,8 @@ v3_product_truth:
   malformed_share_token_fail_closed: true
 
 blocking_open_items:
-  - deploy_exact_trace_visual_jury_v1_merge_sha_c34012a732e8bb7cd2b5601f1a8f9862a87e4056
-  - verify_five_public_routes_and_trace_visual_bundle
-  - inspect_final_runtime_desktop_mobile_and_reduced_motion
+  - deploy_exact_black_box_arcade_merge_sha_8d5ffd705588f449f54eed3365489e027bc1c84d
+  - verify_five_public_routes_and_black_box_bundle
   - capture_capsule_to_ghost_replay_compare_and_negative_path_video
   - perform_live_qa_rehearsal_against_claim_ledger
   - obtain_commonsmade_publish_attach_submit_proof
@@ -90,11 +90,12 @@ nonblocking_open_items:
   - exclusivity_of_open_space_not_claimed
 
 next_action: >-
-  Deploy exactly c34012a732e8bb7cd2b5601f1a8f9862a87e4056 to quickspin-runtime, prove the
-  five canonical routes and the TRACE jury bundle, then perform desktop/mobile/reduced-motion
-  inspection. Fix only visual/accessibility/judge-legibility defects; do not expand functionality.
+  Deploy exactly 8d5ffd705588f449f54eed3365489e027bc1c84d to the public QuickSpin runtime,
+  prove all five canonical routes and served Black Box Arcade bundle, then proceed directly to
+  final video capture, live Q&A rehearsal and Commonsmade/submission lock. No feature expansion.
 
 rollback: >-
-  If TRACE visual changes regress product proof, keep cb3b322907197e37518e85ddb377def2053edcc3
-  and Vercel deployment dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the verified functional fallback.
-  Do not reopen Winning Intelligence product scope without new high-signal evidence.
+  If the Black Box Arcade public deployment regresses product proof, retain the V3 runtime
+  cb3b322907197e37518e85ddb377def2053edcc3 / dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG as the
+  verified functional fallback. Do not reopen Winning Intelligence product scope without new
+  high-signal evidence.
