@@ -1,9 +1,9 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: NATIVE_VISUAL_COMPLETION_MERGED
-to: EXACT_PUBLIC_RUNTIME_REDEPLOY_AND_VISUAL_QA
-handoff_status: ACTIVE_FINAL_RUNTIME_PROMOTION
-readiness: BUILD_CANDIDATE_READY_PENDING_RUNTIME_PROMOTION
+from: PUBLIC_RUNTIME_NATIVE_VISUAL_VERIFIED
+to: FINAL_VISUAL_QA_AND_DEMO_CAPTURE
+handoff_status: ACTIVE_FINAL_VISUAL_QA
+readiness: PUBLIC_BUILD_CANDIDATE_VERIFIED
 project_complete: false
 
 what_is_verified:
@@ -24,19 +24,41 @@ what_is_verified:
   - native_visual_completion_pr19_merged
   - native_visual_pr_ci_35154939604_green
   - native_visual_pr_codeql_35154939600_green
-  - native_visual_merge_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
+  - native_visual_product_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
+  - exact_runtime_build_35156186426_green
+  - immutable_artifact_commit_24fff5448af26b6d584dfa43eb5f2c6dc9a85699
   - single_runtime_entry_main_ts
   - single_presentation_stylesheet_site_css
-  - native_home_lifecycle_rail
-  - native_mobile_dock
-  - native_lab_storyline
-  - native_wait_ghost_privacy_console
-  - native_capsule_redact_ghost_composition
-  - native_proof_trust_boundary
-  - native_sdk_contract_strip
-  - native_judge_memory_and_claim_matrix
+  - native_home_lifecycle_rail_served
+  - native_mobile_dock_served
+  - native_lab_storyline_served
+  - native_wait_ghost_privacy_console_served
+  - native_capsule_redact_ghost_composition_served
+  - native_proof_trust_boundary_served
+  - native_sdk_contract_strip_served
+  - native_judge_memory_and_claim_matrix_served
   - decorative_coral_removed_from_hero
-  - build_json_runtime_attestation_implemented
+  - public_build_json_source_attestation_verified
+  - public_home_lab_proof_sdk_judges_http_200
+  - public_js_css_http_200_with_correct_mime
+  - runtime_deployment_dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws_ready
+
+canonical_runtime:
+  url: https://quickspin-runtime-native.vercel.app
+  project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
+  deployment_id: dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws
+  source_sha: a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
+  artifact_commit: 24fff5448af26b6d584dfa43eb5f2c6dc9a85699
+  js_bundle: index-CAcZB-rj.js
+  css_bundle: index-BenuXaCM.css
+  packaging: vercel_proxy_to_immutable_jsdelivr_commit
+
+preserved_red_run:
+  deployment_id: dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn
+  legacy_project: quickspin-runtime
+  result: ERROR_BUILD_UTILS_SPAWN_128
+  cause: stale_custom_build_command_forced_obsolete_sha_83da2b807e2072bde30a76c72937c3cbe74ff389
+  policy: retain_as_failure_evidence_do_not_relabel_success
 
 canonical_evidence:
   - evidence/WINNING-INTELLIGENCE-V2.md
@@ -52,15 +74,14 @@ canonical_evidence:
   - evidence/CLAIM-LEDGER.md
   - evidence/runtime/VERCEL-PRODUCTION-RUNTIME.md
   - evidence/runtime/NATIVE-VISUAL-COMPLETION-2026-09-16.md
+  - evidence/runtime/NATIVE-RUNTIME-PROMOTION-2026-09-16.md
   - evidence/security/SECURITY-GATE.md
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
-  - deploy_exact_merge_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3_to_quickspin_runtime
-  - verify_public_build_json_source_sha_and_deployment_metadata
-  - verify_home_lab_proof_sdk_judges_http_200_after_redeploy
   - inspect_final_runtime_desktop_mobile_reduced_motion
-  - capture_capsule_to_ghost_replay_compare_negative_path_video
+  - rehearse_full_lab_happy_negative_capsule_ghost_replay_compare_sequence
+  - capture_final_demo_video
   - perform_live_qa_rehearsal_against_claim_ledger
   - obtain_commonsmade_publish_attach_submit_proof
   - lock_submission_runtime_repo_video_copy_and_evidence_links
@@ -71,7 +92,7 @@ nonblocking_followup:
   - exhaustive_commons_submission_gallery_not_publicly_indexable
   - live_provider_integration_not_claimed
   - open_space_exclusivity_not_claimed
-  - legacy_github_vercel_project_red_status_is_not_quickspin_runtime
+  - legacy_quickspin_runtime_project_requires_build_command_cleanup_if_reused
 
 forbidden_claims:
   - QuickSpin reduces provider latency
@@ -88,6 +109,7 @@ forbidden_claims:
   - npm package is published without registry evidence
   - hosted analytics exist today
   - absolute_security_complete
+  - browser_visual_quality_verified_until_human_or_browser_inspection_occurs
   - PROJECT_COMPLETE before all blocking final gates pass
 
 failure_policy:
@@ -98,7 +120,7 @@ failure_policy:
 
 scope_policy:
   differentiation_iteration: 3_OF_3
-  after_native_visual_completion: FEATURE_FREEZE_EXCEPT_RUNTIME_PROMOTION_AND_PROOF_FIXES
+  after_public_runtime_verification: FEATURE_FREEZE_EXCEPT_PROOF_OR_BLOCKING_VISUAL_FIXES
   exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Retain native visual merge SHA a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3 and prior verified runtime deployment dpl_BBNqChyLe225dzpu3SMXXF2ZB6xr. If runtime promotion regresses proof, roll back public serving while preserving the merged source and evidence trail.
+rollback: Product source remains pinned to a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3 and immutable runtime artifact commit 24fff5448af26b6d584dfa43eb5f2c6dc9a85699. Prior runtime dpl_BBNqChyLe225dzpu3SMXXF2ZB6xr remains recoverable; failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn is preserved as red evidence.
