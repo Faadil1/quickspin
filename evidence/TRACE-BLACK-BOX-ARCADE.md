@@ -1,6 +1,18 @@
 # TRACE — Black Box Arcade
 
-Status: **IMPLEMENTED / PENDING PR CI + CODEQL + PIXEL INSPECTION**
+Status: **MERGED / CI + CODEQL PASS / OFFLINE EXACT-ARTIFACT PIXEL PROOF PASS / PUBLIC EXACT-SHA DEPLOY PENDING**
+
+## Product candidate
+
+- merge SHA: `8d5ffd705588f449f54eed3365489e027bc1c84d`
+- PR: #16
+- final PR CI: `35046055844` — PASS
+- final PR CodeQL: `35046055937` — PASS
+- post-merge CI: `35046206408` — artifact produced from exact merge SHA
+- tests: **41 / 41**
+- demo artifact: `quickspin-demo-dist-22`
+- artifact id: `10426614209`
+- artifact digest: `sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8`
 
 ## Objective
 
@@ -122,14 +134,56 @@ No changes to:
 - replay semantics
 - tests
 
-Only demo/presentation surfaces are changed.
+Only demo/presentation surfaces changed.
+
+## Exact-artifact pixel proof
+
+The exact post-merge CI demo artifact from `8d5ffd705588f449f54eed3365489e027bc1c84d` was rendered offline because the environment blocks normal localhost/file navigation. The transport was shimmed only to select each existing route; the built JS/CSS bytes were otherwise used as produced by CI.
+
+Inspected routes:
+- `/`
+- `/lab`
+- `/proof`
+- `/sdk`
+- `/judges`
+
+Inspected modes:
+- desktop `1440 × 1000`
+- mobile `390 × 844`
+- reduced-motion mobile for Home + Lab
+
+Results:
+- **0 console/page errors** across all inspected routes
+- **0 horizontal overflow** across all desktop/mobile routes
+- **0 running animations** under `prefers-reduced-motion: reduce`
+- mobile dock does not require pointer interaction
+- Evidence Feed empty state remains explicit rather than reading as a broken panel
+- Home / Proof / Judges hierarchy remains readable without narration
+- Capsule → redaction → Ghost trust boundary remains visible
+
+Pixel verdict: **PASS_OFFLINE_EXACT_CI_ARTIFACT**.
+
+Boundary: this does **not** prove that the public Vercel URL is serving `8d5ffd705588f449f54eed3365489e027bc1c84d`. Public exact-SHA runtime promotion remains open.
+
+## Failures retained
+
+- PR #16 first CI run `35045685112`: TypeScript + Prettier failed. TypeScript rejected an optional DOM target; formatting also failed.
+- PR #16 second CI run `35045823209`: TypeScript was fixed, but Prettier still rejected `black-box-arcade.ts`.
+- Recovery: authoritative Prettier 3.9.6 output was generated in a read-only one-shot workflow, applied exactly, and the workflow was removed before final validation.
+- Final recovery proof: CI `35046055844` + CodeQL `35046055937` both passed before merge.
 
 ## Acceptance gates
 
-- branch diff remains presentation-only
-- format + Node 22/24 + 41 tests + judge verifier + SDK/demo builds pass
-- CodeQL passes
-- desktop + mobile pixel inspection
-- reduced-motion inspection
-- no horizontal overflow
-- no unsupported claim introduced
+- presentation-only diff: PASS
+- format: PASS
+- Node 22/24: PASS
+- 41 tests: PASS
+- judge verifier: PASS
+- SDK/demo builds: PASS
+- CodeQL: PASS
+- desktop pixel inspection: PASS_OFFLINE_EXACT_ARTIFACT
+- mobile pixel inspection: PASS_OFFLINE_EXACT_ARTIFACT
+- reduced motion: PASS_OFFLINE_EXACT_ARTIFACT
+- horizontal overflow: NONE OBSERVED
+- unsupported claim introduced: NO
+- public exact-SHA runtime: **PENDING**
