@@ -9,6 +9,16 @@ const required = {
     "SHOW THE DELTA. DO NOT INVENT THE VERDICT.",
     "differentiation loop **3 / 3**",
   ],
+  "evidence/TRACE-BLACK-BOX-ARCADE.md": [
+    "BLACK BOX ARCADE",
+    "8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "35046055844",
+    "35046055937",
+    "10426614209",
+    "sha256:519d81e124b251b5ffec8ea38874186d22fca5e0108a36ec69220f1cb48a49e8",
+    "PASS_OFFLINE_EXACT_CI_ARTIFACT",
+    "public exact-SHA runtime: **PENDING**",
+  ],
   "evidence/REALITY-ANCHOR.md": [
     "Événement négatif concret, réel et vérifiable",
     "June 2–3, 2026",
@@ -76,24 +86,28 @@ const required = {
   "state/CANONICAL-STATE.yaml": [
     "workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK",
     "branch: main",
-    "trace_visual_jury_v1:",
-    "status: MERGED_CODE_VALIDATED_RUNTIME_REFRESH_PENDING",
-    "merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056",
-    "final_pr_ci_run: 35010476926",
-    "final_pr_codeql_run: 35010476921",
-    "test_count: 41",
-    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_TRACE_VISUAL",
+    "product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "black_box_arcade:",
+    "status: MERGED_CODE_VALIDATED_OFFLINE_EXACT_ARTIFACT_PIXEL_PASS_PUBLIC_DEPLOY_PENDING",
+    "final_pr_ci_run: 35046055844",
+    "final_pr_codeql_run: 35046055937",
+    "artifact_id: 10426614209",
+    "pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT",
+    "public_exact_sha_runtime: PENDING_NOT_CLAIMED",
+    "runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_V3_PRE_BLACK_BOX_ARCADE",
     "runtime_source_sha: cb3b322907197e37518e85ddb377def2053edcc3",
     "runtime_deployment_id: dpl_5rFD3bRMCHK5m6esVazZjz8E6kZG",
-    "runtime_trace_visual_v1: NOT_YET_DEPLOYED_NOT_CLAIMED",
-    "next_required_gate: TRACE_VISUAL_JURY_V1_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF",
+    "runtime_black_box_arcade: NOT_YET_DEPLOYED_NOT_CLAIMED",
+    "next_required_gate: BLACK_BOX_ARCADE_EXACT_MERGE_SHA_PUBLIC_RUNTIME_DEPLOY_AND_ROUTE_PROOF",
     "project_complete: false",
   ],
   "state/HANDOVER.yaml": [
     "workstream: FINAL_RUNTIME_VISUAL_PROOF_LOCK",
-    "trace_visual_jury_v1_merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056",
-    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_TRACE_VISUAL",
-    "trace_visual_runtime_deployed: false",
+    "product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "black_box_arcade_merge_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d",
+    "black_box_arcade_pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT",
+    "public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_V3_PRE_BLACK_BOX_ARCADE",
+    "black_box_arcade_public_runtime_deployed: false",
     "feature_scope: FROZEN_AFTER_WINNING_INTELLIGENCE_3_OF_3",
     "project_complete: false",
     "rollback",
@@ -168,11 +182,14 @@ if (canonical.includes("runtime_gate: PASS_VERIFIED_PUBLIC_RUNTIME_PRE_V3")) {
 if (canonical.includes("runtime_source_sha: 27de7b3b4119b6499eda79effccadf262028de58")) {
   throw new Error("canonical state regressed to the pre-V3 runtime source SHA");
 }
-if (canonical.includes("runtime_trace_visual_v1: DEPLOYED_VERIFIED") || handover.includes("trace_visual_runtime_deployed: true")) {
-  throw new Error("TRACE visual runtime cannot be promoted before exact c34012a deployment evidence is locked");
+if (canonical.includes("runtime_black_box_arcade: DEPLOYED_VERIFIED") || handover.includes("black_box_arcade_public_runtime_deployed: true")) {
+  throw new Error("Black Box Arcade public runtime cannot be promoted before exact 8d5ffd70 deployment evidence is locked");
 }
-if (!canonical.includes("merge_sha: c34012a732e8bb7cd2b5601f1a8f9862a87e4056")) {
-  throw new Error("canonical state is missing the TRACE Visual Jury V1 merge SHA");
+if (!canonical.includes("product_source_sha: 8d5ffd705588f449f54eed3365489e027bc1c84d")) {
+  throw new Error("canonical state is missing the Black Box Arcade product source SHA");
+}
+if (!canonical.includes("pixel_proof: PASS_OFFLINE_EXACT_CI_ARTIFACT")) {
+  throw new Error("canonical state is missing exact-artifact Black Box Arcade pixel proof");
 }
 if (hackathon.includes("public_runtime: PASS_VERIFIED_VERCEL_RUNTIME_PRE_V3")) {
   throw new Error("hackathon state regressed public runtime to pre-V3");
@@ -200,5 +217,5 @@ if (!orchestration.includes("UNKNOWN_IN_REPO")) {
 }
 
 console.log(
-  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + V3 runtime provenance + TRACE visual runtime-proof lock + final-gate invariants`
+  `judge evidence verified: ${Object.keys(required).length} canonical artifacts + V3 runtime provenance + Black Box Arcade exact-artifact pixel lock + public-runtime hold + final-gate invariants`
 );
