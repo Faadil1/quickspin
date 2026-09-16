@@ -172,7 +172,9 @@ function enhance(): void {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(enhance), { once: true });
+  document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(enhance), {
+    once: true,
+  });
 } else {
   requestAnimationFrame(enhance);
 }
