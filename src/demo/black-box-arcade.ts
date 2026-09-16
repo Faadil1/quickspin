@@ -1,7 +1,7 @@
 import "./black-box-arcade.css";
 import "./black-box-luxury.css";
 
-function insertAfter(target: Element | null, html: string): void {
+function insertAfter(target: Element | null | undefined, html: string): void {
   if (!target) return;
   target.insertAdjacentHTML("afterend", html);
 }
@@ -14,7 +14,10 @@ function enhanceGlobal(app: HTMLElement): void {
   const main = app.querySelector<HTMLElement>("main.page");
   if (main) main.dataset.bbRoute = route().replace(/^\//, "").toUpperCase() || "HOME";
 
-  document.body.insertAdjacentHTML("beforeend", '<div class="bb-scanline" aria-hidden="true"></div>');
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    '<div class="bb-scanline" aria-hidden="true"></div>'
+  );
 
   const navProof = app.querySelector<HTMLElement>(".nav-proof");
   if (navProof) navProof.textContent = "VERIFIED / 41 TESTS";
@@ -39,7 +42,9 @@ function enhanceGlobal(app: HTMLElement): void {
   );
 
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const reactive = app.querySelectorAll<HTMLElement>(".instrument, .ghost-console, .evidence-vessel");
+    const reactive = app.querySelectorAll<HTMLElement>(
+      ".instrument, .ghost-console, .evidence-vessel"
+    );
     for (const target of reactive) {
       target.classList.add("bb-reactive");
       target.addEventListener("pointermove", (event) => {
