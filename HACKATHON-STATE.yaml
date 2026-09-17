@@ -78,17 +78,17 @@ gates:
   custom_prompt_result_truthfulness: PASS_LIVE_RESULTS_ONLY_AFTER_PROVIDER_SUCCESS_NO_FABRICATED_SUCCESS
   exact_tavily_ci_run: PASS_35179790534_CLOUDFLARE_WORKER_DRY_RUN
   exact_runtime_build_run: PASS_35203974036_AND_35204077032_MICROWAIT_HARDENING
-  immutable_runtime_artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
-  runtime_build_attestation: PASS_PUBLIC_BUILD_JSON
+  secondary_vercel_immutable_runtime_artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
+  runtime_build_attestation: PENDING_CANONICAL_1012C491_CLOUDFLARE_BUILD_JSON_SMOKE
   public_runtime: PASS_CLOUDFLARE_TAVILY_E2E_PRE_HARDENING_CANONICAL_HARDENING_PENDING_SMOKE
   public_runtime_url: https://quickspin.faadil-casecraft.workers.dev
   public_runtime_project_id: CLOUDFLARE_WORKER_QUICKSPIN
   public_runtime_deployment_id: PENDING_EXACT_1012C49_CANONICAL_DEPLOYMENT_ID
   public_runtime_source_sha: 1012c491f01cd3e1572d86a1ed43089007922868_PENDING_CANONICAL_SMOKE
   public_runtime_routes: PASS_HOME_LAB_PROOF_SDK_HTTP_200_JUDGES_INTERNAL_DIRECT_ROUTE
-  public_runtime_assets: PASS_IMMUTABLE_JS_CSS_REFERENCED_FROM_ARTIFACT_COMMIT
-  public_runtime_js_bundle: index-DNWGy0HB.js
-  public_runtime_css_bundle: index-Dd1XOf5h.css
+  public_runtime_assets: PASS_CLOUDFLARE_ASSETS_PRE_HARDENING_HARDENED_ASSETS_PENDING_CANONICAL_SMOKE
+  public_runtime_js_bundle: PENDING_CANONICAL_1012C491_DEPLOY_OBSERVATION
+  public_runtime_css_bundle: PENDING_CANONICAL_1012C491_DEPLOY_OBSERVATION
   public_runtime_packaging: CLOUDFLARE_WORKER_PLUS_ASSETS_BINDING_RUN_WORKER_FIRST_API
   public_search_route_get_probe: SUPERSEDED_BY_SUCCESSFUL_CLOUDFLARE_POST_E2E
   search_result_limit: MAX_5
@@ -132,6 +132,6 @@ nonblocking_open_items:
   - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
   - WAIT_GHOST_OPEN_SPACE_EXCLUSIVITY_NOT_CLAIMED
   - LEGACY_QUICKSPIN_RUNTIME_PROJECT_HAS_STALE_CUSTOM_BUILD_COMMAND
-  - SOFT_RATE_LIMIT_IS_PER_SERVERLESS_INSTANCE_NOT_DISTRIBUTED_WAF
+  - SOFT_RATE_LIMIT_IS_PER_WORKER_ISOLATE_NOT_DISTRIBUTED_WAF
 
 next_decision: Deploy main product SHA 1012c491f01cd3e1572d86a1ed43089007922868 to the canonical Cloudflare Worker, then open https://quickspin.faadil-casecraft.workers.dev/lab. Run two back-to-back queries to verify stale results clear immediately, verify a sub-1800ms response stays passive with no Wait Ghost, and verify a slower response still mounts QuickSpin and produces Capsule plus redacted Ghost. Then complete desktop/mobile/reduced-motion inspection, rehearsal, and final demo capture.

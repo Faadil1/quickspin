@@ -59,11 +59,11 @@ canonical_runtime:
   project_id: CLOUDFLARE_WORKER_QUICKSPIN
   deployment_id: PENDING_EXACT_1012C491_CANONICAL_DEPLOYMENT_ID
   source_sha: 1012c491f01cd3e1572d86a1ed43089007922868
-  artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
-  exact_ci_run: 35178217467
-  exact_runtime_build_run: 35178451390
-  js_bundle: index-DNWGy0HB.js
-  css_bundle: index-Dd1XOf5h.css
+  secondary_vercel_artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
+  exact_cloudflare_worker_ci_run: 35179790534
+  exact_hardening_validation_runs: [35203974036, 35204077032]
+  js_bundle: PENDING_CANONICAL_1012C491_DEPLOY_OBSERVATION
+  css_bundle: PENDING_CANONICAL_1012C491_DEPLOY_OBSERVATION
   packaging: cloudflare_worker_plus_assets_binding_run_worker_first_api
   search_provider: Tavily
   search_secret: TAVILY_API_KEY_SERVER_ONLY
@@ -159,7 +159,7 @@ forbidden_claims:
   - QuickSpin reduces provider latency
   - every wait feels shorter
   - controlled demo failure is a live Tavily outage
-  - successful Tavily production POST is end_to_end verified before one is observed
+  - micro_wait_hardening_is_live_on_the_canonical_cloudflare_url_before_the_1012c491_smoke_is_observed
   - Evidence Capsule is cryptographically signed
   - Wait Ghost is cryptographically signed or tamper proof
   - Wait Ghost proves host honesty
@@ -171,7 +171,7 @@ forbidden_claims:
   - npm package is published without registry evidence
   - hosted analytics exist today
   - absolute_security_complete
-  - soft_per_instance_rate_limit_is_a_global_distributed_abuse_barrier
+  - soft_per_worker_isolate_rate_limit_is_a_global_distributed_abuse_barrier
   - browser_visual_quality_verified_until_human_or_browser_inspection_occurs
   - PROJECT_COMPLETE before all blocking final gates pass
 
