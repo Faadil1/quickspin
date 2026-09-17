@@ -1,9 +1,9 @@
 project: QuickSpin
 framework: HACKATHON_STATE
-canonical_main_sha: a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
+canonical_main_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
 candidate_branch: main
 candidate_head_policy: EXACT_PRODUCT_MERGE_SHA_PLUS_EVIDENCE_COMMITS
-state: PUBLIC_RUNTIME_NATIVE_VISUAL_VERIFIED
+state: PUBLIC_RUNTIME_USER_DRIVEN_LAB_VERIFIED
 project_complete: false
 
 orchestration_route:
@@ -21,10 +21,10 @@ cycle:
   PAIN: PASS
   PROBLEM: PASS
   DIFFERENTIATOR: PASS_STRENGTHENED_WI_V3_OPEN_SPACE
-  EXECUTION: PASS_NATIVE_VISUAL_COMPLETION_MERGED_AND_RUNTIME_VERIFIED
+  EXECUTION: PASS_USER_DRIVEN_LAB_AND_PUBLIC_SURFACE_CLEANUP
   EVIDENCE: PASS_WITH_LIMITATIONS
   STORY: PASS_STRENGTHENED_WI_V3
-  DEMO: PUBLIC_NATIVE_RUNTIME_VERIFIED_PENDING_VISUAL_REHEARSAL
+  DEMO: PUBLIC_USER_DRIVEN_RUNTIME_VERIFIED_PENDING_VISUAL_REHEARSAL
   QA: PREPARED_PENDING_BROWSER_LEVEL_VISUAL_REHEARSAL
 
 winning_intelligence_cycle:
@@ -33,8 +33,8 @@ winning_intelligence_cycle:
   DECIDE: PASS
   DISTINCTION_GATE: PASS_OPEN_SPACE_HYPOTHESIS_IMPLEMENTED
   DESIGN: PASS_CAPSULE_GHOST_REPLAY_DIFF_CONTRACT
-  DELIVER: PASS_NATIVE_VISUAL_RUNTIME_PROMOTED
-  AUDIT: PASS_HTTP_SOURCE_AND_BUNDLE_PROOF
+  DELIVER: PASS_USER_DRIVEN_RUNTIME_PROMOTED
+  AUDIT: PASS_HTTP_SOURCE_BUNDLE_AND_BUILD_JSON_PROOF
   EXPAND: STOP_AFTER_V3_PROOF_UNLESS_NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE
 
 reality_pattern:
@@ -45,7 +45,7 @@ reality_pattern:
   response_mitigation: PASS_WITH_EXPLICIT_SCOPE_BOUNDARY
 
 judge_performance_assurance:
-  judge_coverage: PASS
+  judge_coverage: PASS_INTERNAL_ROUTE_RETAINED
   critical_path_assurance: PASS_WITH_FINAL_VISUAL_CAPTURE_PENDING
   technical_ownership: PASS_WITH_REHEARSAL_PENDING
   session_continuity: PASS
@@ -60,28 +60,31 @@ gates:
   wait_ghost_share: PASS_URL_HASH_NO_BACKEND_UPLOAD
   wait_ghost_replay: PASS_HISTORICAL_NOT_LIVE_AI
   wait_regression_diff: PASS_SIGNED_DELTAS_NO_WINNER_SCORE
+  wait_ghost_empty_state: PASS_HIDDEN_UNTIL_GHOST_EXISTS
   intervention_payload_persistence: PASS_REDACTED
   malformed_ghost_token: PASS_FAIL_CLOSED
   security_dependency: PASS_ZERO_NPM_AUDIT
   supply_chain_install_script_policy: REVIEWED_WARNING_NONRUNTIME
   native_black_box_consolidation: PASS_MERGED_PR18
   native_visual_component_completion: PASS_MERGED_PR19
-  native_visual_pr_ci: PASS_RUN_35154939604
-  native_visual_pr_codeql: PASS_RUN_35154939600
-  native_visual_merge_sha: a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
-  exact_runtime_build_run: PASS_35156186426
-  immutable_runtime_artifact_commit: 24fff5448af26b6d584dfa43eb5f2c6dc9a85699
   presentation_architecture: PASS_SINGLE_MAIN_TS_SINGLE_SITE_CSS
+  public_surface_cleanup: PASS_HOME_LAB_PROOF_SDK_ONLY
+  judge_surface_public_visibility: PASS_HIDDEN_FROM_PUBLIC_NAV_FOOTER_AND_PRODUCT_CTAS_INTERNAL_ROUTE_RETAINED
+  user_driven_lab: PASS_CUSTOM_PROMPT_INPUT_AND_VISIBLE_FIVE_RESULT_DEMO
+  custom_prompt_result_truthfulness: PASS_EXPLICIT_ILLUSTRATIVE_LOCAL_RESPONSE_NOT_LIVE_WEB_SEARCH
+  exact_ux_validation_run: PASS_35173503496
+  exact_runtime_build_run: PASS_35174825318
+  immutable_runtime_artifact_commit: f6fa995aed0cc93204d039e6b848877b3f6e1d4d
   runtime_build_attestation: PASS_PUBLIC_BUILD_JSON
-  public_runtime: PASS_NATIVE_VISUAL_RUNTIME
+  public_runtime: PASS_USER_DRIVEN_NATIVE_RUNTIME
   public_runtime_url: https://quickspin-runtime-native.vercel.app
   public_runtime_project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
-  public_runtime_deployment_id: dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws
-  public_runtime_source_sha: a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
-  public_runtime_routes: PASS_HOME_LAB_PROOF_SDK_JUDGES_HTTP_200
+  public_runtime_deployment_id: dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4
+  public_runtime_source_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+  public_runtime_routes: PASS_HOME_LAB_PROOF_SDK_HTTP_200_JUDGES_INTERNAL_DIRECT_ROUTE
   public_runtime_assets: PASS_JS_CSS_HTTP_200_CORRECT_MIME
-  public_runtime_js_bundle: index-CAcZB-rj.js
-  public_runtime_css_bundle: index-BenuXaCM.css
+  public_runtime_js_bundle: index-COYJL-bC.js
+  public_runtime_css_bundle: index-DstD1-k8.css
   public_runtime_packaging: VERCEL_PROXY_TO_IMMUTABLE_JSDLIVR_COMMIT
   preserved_failed_runtime_promotion: dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn_BUILD_UTILS_SPAWN_128
   legacy_runtime_project: STALE_BUILD_COMMAND_DO_NOT_PROMOTE_WITHOUT_RECONFIGURATION
@@ -90,7 +93,7 @@ gates:
   fast_response_anti_flash: PASS_IN_IMPLEMENTATION
   failure_persistence: PASS
   rollback_recoverability: PASS_PRODUCT_SHA_ARTIFACT_COMMIT_AND_PRIOR_RUNTIME_RETAINED
-  ux_ui: PASS_NATIVE_COMPONENT_CSS_SERVED_PENDING_BROWSER_VISUAL_INSPECTION
+  ux_ui: PASS_UPDATED_LAB_BUNDLE_SERVED_PENDING_BROWSER_VISUAL_INSPECTION
   demo_path: PUBLIC_RUNTIME_READY_PENDING_FINAL_REHEARSAL_AND_CAPTURE
   video: PENDING_CAPTURE
   qa_rehearsal: PREPARED_PENDING_LIVE_REHEARSAL
@@ -105,7 +108,7 @@ gates:
 
 blocking_remaining:
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
-  - FINAL_DEMO_VIDEO_CAPTURE_WITH_GHOST_AND_NEGATIVE_PATH
+  - FINAL_DEMO_VIDEO_CAPTURE_WITH_CUSTOM_PROMPT_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
@@ -118,5 +121,6 @@ nonblocking_open_items:
   - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED
   - WAIT_GHOST_OPEN_SPACE_EXCLUSIVITY_NOT_CLAIMED
   - LEGACY_QUICKSPIN_RUNTIME_PROJECT_HAS_STALE_CUSTOM_BUILD_COMMAND
+  - OPTIONAL_REAL_SEARCH_PROVIDER_BACKEND_IF_SCOPE_REOPENS
 
-next_decision: Inspect https://quickspin-runtime-native.vercel.app visually on desktop and mobile, including reduced-motion behavior and the full Lab negative path / Capsule / Ghost replay sequence. If clean, capture final demo and proceed to submission lock.
+next_decision: Inspect https://quickspin-runtime-native.vercel.app/lab visually on desktop and mobile. Verify custom prompt composition, five visible demo-result cards, absence of Judges from public navigation, and hidden Wait Ghost controls before a run. Then rehearse the QuickSpin happy path, Capsule, Ghost replay, negative path, and capture the final demo.
