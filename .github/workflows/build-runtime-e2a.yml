@@ -39,3 +39,5 @@ jobs:
           git add runtime-ready
           git commit -m "build: stage exact e2a runtime bundle [skip ci]"
           git push origin HEAD:runtime-deploy-e2a
+
+# one-shot build trigger
