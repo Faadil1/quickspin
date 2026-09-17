@@ -9,9 +9,11 @@ const mustReplace = (pattern, replacement, label) => {
   s = next;
 };
 
+mustReplace("  ExecutionSignal,\n", "", "unused execution signal import");
+
 mustReplace(
   /interface DemoPhase[\s\S]*?const GENERAL_DEMO_RESULTS = \[[\s\S]*?\] as const;\n\n/,
-  `interface SearchResult {\n  rank: number;\n  title: string;\n  url: string;\n  snippet: string;\n  score: number | null;\n  favicon: string | null;\n}\n\ninterface SearchSuccess {\n  ok: true;\n  provider: \"tavily\";\n  query: string;\n  answer: string;\n  results: SearchResult[];\n  requestId: string | null;\n  responseTime: number | string | null;\n  elapsedMs: number;\n}\n\ninterface SearchFailure {\n  ok: false;\n  code: string;\n  message: string;\n}\n\ntype SearchResponse = SearchSuccess | SearchFailure;\n\nconst DEFAULT_PROMPT = \"Where should five friends eat tonight in Austin?\";\n\n`,
+  `interface SearchResult {\n  rank: number;\n  title: string;\n  url: string;\n  snippet: string;\n  score: number | null;\n  favicon: string | null;\n}\n\ninterface SearchSuccess {\n  ok: true;\n  provider: \"tavily\";\n  query: string;\n  answer: string;\n  results: SearchResult[];\n  requestId: string | null;\n  responseTime: number | string | null;\n  elapsedMs: number;\n}\n\ninterface SearchFailure {\n  ok: false;\n  code: string;\n  message: string;\n}\n\ntype SearchResponse = SearchSuccess | SearchFailure;\n\nconst PUBLIC_ROUTES = [\n  { path: \"/\", label: \"Home\" },\n  { path: \"/lab\", label: \"Lab\" },\n  { path: \"/proof\", label: \"Proof\" },\n  { path: \"/sdk\", label: \"SDK\" },\n] as const;\n\nconst INTERNAL_ROUTES = [{ path: \"/judges\", label: \"Judges\" }] as const;\nconst ALL_ROUTES = [...PUBLIC_ROUTES, ...INTERNAL_ROUTES];\n\nconst DEFAULT_PROMPT = \"Where should five friends eat tonight in Austin?\";\n\n`,
   "demo constants"
 );
 
