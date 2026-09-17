@@ -1,9 +1,9 @@
 project: QuickSpin
 framework: HACKATHON_STATE
-canonical_main_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+canonical_main_sha: bd34a8e0cb901630dd49945fd66fc8821e437a31
 candidate_branch: main
 candidate_head_policy: EXACT_PRODUCT_MERGE_SHA_PLUS_EVIDENCE_COMMITS
-state: PUBLIC_RUNTIME_USER_DRIVEN_LAB_VERIFIED
+state: PUBLIC_RUNTIME_TAVILY_SEARCH_DEPLOYED_PENDING_E2E_POST_VERIFY
 project_complete: false
 
 orchestration_route:
@@ -12,7 +12,7 @@ orchestration_route:
   CHIEF_OF_STAFF: UNKNOWN_IN_REPO_LEGACY_IMPORT
   PROJECT_AUTHORIZATION: VERIFIED_EXTERNAL_CONTEXT_NOT_REPO_LOCAL
   PBPD: ACTIVE_PASS_WITH_CONDITIONS
-  PROJECT_FINISHER: ACTIVE_FINAL_VISUAL_QA_AND_CAPTURE
+  PROJECT_FINISHER: ACTIVE_LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
   HUMAN_SUBMIT: PENDING_HUMAN_ACTION
   POST_MORTEM: PENDING_AFTER_SUBMISSION
 
@@ -21,11 +21,11 @@ cycle:
   PAIN: PASS
   PROBLEM: PASS
   DIFFERENTIATOR: PASS_STRENGTHENED_WI_V3_OPEN_SPACE
-  EXECUTION: PASS_USER_DRIVEN_LAB_AND_PUBLIC_SURFACE_CLEANUP
+  EXECUTION: PASS_REAL_SEARCH_PROVIDER_DEPLOYED
   EVIDENCE: PASS_WITH_LIMITATIONS
   STORY: PASS_STRENGTHENED_WI_V3
-  DEMO: PUBLIC_USER_DRIVEN_RUNTIME_VERIFIED_PENDING_VISUAL_REHEARSAL
-  QA: PREPARED_PENDING_BROWSER_LEVEL_VISUAL_REHEARSAL
+  DEMO: PUBLIC_TAVILY_RUNTIME_DEPLOYED_PENDING_LIVE_POST_AND_VISUAL_REHEARSAL
+  QA: PREPARED_PENDING_BROWSER_LEVEL_REAL_SEARCH_REHEARSAL
 
 winning_intelligence_cycle:
   iteration: 3_OF_3
@@ -33,9 +33,9 @@ winning_intelligence_cycle:
   DECIDE: PASS
   DISTINCTION_GATE: PASS_OPEN_SPACE_HYPOTHESIS_IMPLEMENTED
   DESIGN: PASS_CAPSULE_GHOST_REPLAY_DIFF_CONTRACT
-  DELIVER: PASS_USER_DRIVEN_RUNTIME_PROMOTED
-  AUDIT: PASS_HTTP_SOURCE_BUNDLE_AND_BUILD_JSON_PROOF
-  EXPAND: STOP_AFTER_V3_PROOF_UNLESS_NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE
+  DELIVER: PASS_REAL_SEARCH_RUNTIME_PROMOTED
+  AUDIT: PASS_HTTP_SOURCE_FUNCTION_BUILD_JSON_AND_IMMUTABLE_ASSET_PROOF
+  EXPAND: STOP_AFTER_USER_AUTHORIZED_TAVILY_INTEGRATION_UNLESS_NEW_HIGH_SIGNAL_EVIDENCE
 
 reality_pattern:
   signal_positive_opportunity: PASS
@@ -46,7 +46,7 @@ reality_pattern:
 
 judge_performance_assurance:
   judge_coverage: PASS_INTERNAL_ROUTE_RETAINED
-  critical_path_assurance: PASS_WITH_FINAL_VISUAL_CAPTURE_PENDING
+  critical_path_assurance: PASS_WITH_LIVE_POST_AND_FINAL_VISUAL_CAPTURE_PENDING
   technical_ownership: PASS_WITH_REHEARSAL_PENDING
   session_continuity: PASS
 
@@ -70,45 +70,55 @@ gates:
   presentation_architecture: PASS_SINGLE_MAIN_TS_SINGLE_SITE_CSS
   public_surface_cleanup: PASS_HOME_LAB_PROOF_SDK_ONLY
   judge_surface_public_visibility: PASS_HIDDEN_FROM_PUBLIC_NAV_FOOTER_AND_PRODUCT_CTAS_INTERNAL_ROUTE_RETAINED
-  user_driven_lab: PASS_CUSTOM_PROMPT_INPUT_AND_VISIBLE_FIVE_RESULT_DEMO
-  custom_prompt_result_truthfulness: PASS_EXPLICIT_ILLUSTRATIVE_LOCAL_RESPONSE_NOT_LIVE_WEB_SEARCH
-  exact_ux_validation_run: PASS_35173503496
-  exact_runtime_build_run: PASS_35174825318
-  immutable_runtime_artifact_commit: f6fa995aed0cc93204d039e6b848877b3f6e1d4d
+  user_driven_lab: PASS_CUSTOM_PROMPT_INPUT
+  real_search_provider_backend: PASS_VERCEL_FUNCTION_DEPLOYED
+  tavily_server_secret_boundary: PASS_SERVER_ONLY_ENV_REFERENCE_NO_CLIENT_KEY
+  tavily_function_route: PASS_GET_405_POST_OPTIONS_ALLOWED_NO_STORE
+  tavily_live_post_e2e: PENDING_BROWSER_OR_POST_CAPABLE_VERIFICATION
+  custom_prompt_result_truthfulness: PASS_LIVE_RESULTS_ONLY_AFTER_PROVIDER_SUCCESS_NO_FABRICATED_SUCCESS
+  exact_tavily_ci_run: PASS_35178217467
+  exact_runtime_build_run: PASS_35178451390
+  immutable_runtime_artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
   runtime_build_attestation: PASS_PUBLIC_BUILD_JSON
-  public_runtime: PASS_USER_DRIVEN_NATIVE_RUNTIME
+  public_runtime: PASS_TAVILY_VERCEL_RUNTIME_DEPLOYED
   public_runtime_url: https://quickspin-runtime-native.vercel.app
   public_runtime_project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
-  public_runtime_deployment_id: dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4
-  public_runtime_source_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+  public_runtime_deployment_id: dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu
+  public_runtime_source_sha: bd34a8e0cb901630dd49945fd66fc8821e437a31
   public_runtime_routes: PASS_HOME_LAB_PROOF_SDK_HTTP_200_JUDGES_INTERNAL_DIRECT_ROUTE
-  public_runtime_assets: PASS_JS_CSS_HTTP_200_CORRECT_MIME
-  public_runtime_js_bundle: index-COYJL-bC.js
-  public_runtime_css_bundle: index-DstD1-k8.css
-  public_runtime_packaging: VERCEL_PROXY_TO_IMMUTABLE_JSDLIVR_COMMIT
+  public_runtime_assets: PASS_IMMUTABLE_JS_CSS_REFERENCED_FROM_ARTIFACT_COMMIT
+  public_runtime_js_bundle: index-DNWGy0HB.js
+  public_runtime_css_bundle: index-Dd1XOf5h.css
+  public_runtime_packaging: VERCEL_FUNCTION_PLUS_IMMUTABLE_JSDLIVR_COMMIT
+  public_search_route_get_probe: PASS_HTTP_405_ALLOW_POST_OPTIONS_NO_STORE
+  search_result_limit: MAX_5
+  search_upstream_timeout: 12_SECONDS
+  search_function_max_duration: 15_SECONDS
+  search_rate_limit: SOFT_PER_SERVERLESS_INSTANCE_8_PER_60_SECONDS
   preserved_failed_runtime_promotion: dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn_BUILD_UTILS_SPAWN_128
   legacy_runtime_project: STALE_BUILD_COMMAND_DO_NOT_PROMOTE_WITHOUT_RECONFIGURATION
   accessibility_input_parity: PASS_IMPLEMENTATION_AND_BUNDLE_EVIDENCE_PENDING_FINAL_VISUAL_INSPECTION
   reduced_motion: PASS_IMPLEMENTATION_AND_SERVED_CSS_PENDING_FINAL_BROWSER_INSPECTION
   fast_response_anti_flash: PASS_IN_IMPLEMENTATION
   failure_persistence: PASS
-  rollback_recoverability: PASS_PRODUCT_SHA_ARTIFACT_COMMIT_AND_PRIOR_RUNTIME_RETAINED
-  ux_ui: PASS_UPDATED_LAB_BUNDLE_SERVED_PENDING_BROWSER_VISUAL_INSPECTION
-  demo_path: PUBLIC_RUNTIME_READY_PENDING_FINAL_REHEARSAL_AND_CAPTURE
+  rollback_recoverability: PASS_CURRENT_AND_PRIOR_RUNTIME_RETAINED
+  ux_ui: PASS_TAVILY_LAB_BUNDLE_SERVED_PENDING_BROWSER_VISUAL_INSPECTION
+  demo_path: PUBLIC_RUNTIME_READY_PENDING_LIVE_TAVILY_POST_REHEARSAL_AND_CAPTURE
   video: PENDING_CAPTURE
   qa_rehearsal: PREPARED_PENDING_LIVE_REHEARSAL
   commons_submission_lock: PENDING_HUMAN_PLATFORM_PROOF
   submission_package: DRAFT_READY_PENDING_FINAL_LINKS
   claim_evidence_reconciliation: PASS_WITH_LIMITATIONS
   verification_before_completion: PASS_WITH_CONDITIONS
-  build_readiness: PUBLIC_BUILD_CANDIDATE_VERIFIED
-  handoff_to_finisher: ACTIVE_FINAL_VISUAL_QA_AND_CAPTURE
-  final_qc: READY_FOR_VISUAL_QA
+  build_readiness: PUBLIC_TAVILY_BUILD_DEPLOYED_PENDING_POST_VERIFY
+  handoff_to_finisher: ACTIVE_LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
+  final_qc: READY_FOR_LIVE_POST_AND_VISUAL_QA
   project_complete_gate: BLOCKED_UNTIL_ALL_BLOCKING_GATES_PASS
 
 blocking_remaining:
+  - LIVE_TAVILY_POST_E2E_VERIFY_FROM_PUBLIC_LAB
   - FINAL_RUNTIME_VISUAL_INSPECTION_DESKTOP_MOBILE_REDUCED_MOTION
-  - FINAL_DEMO_VIDEO_CAPTURE_WITH_CUSTOM_PROMPT_GHOST_AND_NEGATIVE_PATH
+  - FINAL_DEMO_VIDEO_CAPTURE_WITH_REAL_QUERY_GHOST_AND_NEGATIVE_PATH
   - QA_LIVE_REHEARSAL
   - COMMONS_SUBMISSION_LOCK
   - FINAL_SUBMISSION_LINK_AND_ASSET_LOCK
@@ -118,9 +128,8 @@ nonblocking_open_items:
   - STRICT_INSTALL_SCRIPT_POLICY_OPTIONAL_HARDENING
   - UPSTREAM_ORCHESTRATION_PROVENANCE_NOT_REPO_LOCAL
   - EXHAUSTIVE_COMMONS_SUBMISSION_GALLERY_NOT_PUBLICLY_INDEXABLE
-  - LIVE_PROVIDER_INTEGRATION_NOT_CLAIMED
   - WAIT_GHOST_OPEN_SPACE_EXCLUSIVITY_NOT_CLAIMED
   - LEGACY_QUICKSPIN_RUNTIME_PROJECT_HAS_STALE_CUSTOM_BUILD_COMMAND
-  - OPTIONAL_REAL_SEARCH_PROVIDER_BACKEND_IF_SCOPE_REOPENS
+  - SOFT_RATE_LIMIT_IS_PER_SERVERLESS_INSTANCE_NOT_DISTRIBUTED_WAF
 
-next_decision: Inspect https://quickspin-runtime-native.vercel.app/lab visually on desktop and mobile. Verify custom prompt composition, five visible demo-result cards, absence of Judges from public navigation, and hidden Wait Ghost controls before a run. Then rehearse the QuickSpin happy path, Capsule, Ghost replay, negative path, and capture the final demo.
+next_decision: Open https://quickspin-runtime-native.vercel.app/lab and run a real query. Confirm Tavily returns one to five sourced result cards with working source links, that the wait duration follows the real provider request, that Evidence Capsule and redacted Wait Ghost still work, and that provider failure never fabricates results. Then complete desktop/mobile/reduced-motion inspection, rehearsal, and final demo capture.
