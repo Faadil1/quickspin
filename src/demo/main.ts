@@ -64,6 +64,7 @@ const INTERNAL_ROUTES = [{ path: "/judges", label: "Judges" }] as const;
 const ALL_ROUTES = [...PUBLIC_ROUTES, ...INTERNAL_ROUTES];
 
 const DEFAULT_PROMPT = "Where should five friends eat tonight in Austin?";
+const PLAYABLE_WAIT_THRESHOLD_MS = 1800;
 
 function controlledProviderFailure(): Promise<never> {
   return new Promise((_, reject) => {
@@ -388,7 +389,7 @@ function mountLab(app: HTMLElement): void {
 
   const controllerOptions = {
     target: mount,
-    delayMs: 650,
+    delayMs: PLAYABLE_WAIT_THRESHOLD_MS,
     onEvent: logEvents,
     onIntervention: (intent: { id: string; kind: string }) => ({
       id: intent.id,
@@ -433,6 +434,27 @@ function mountLab(app: HTMLElement): void {
       throw new Error(`${code}: ${message}`);
     }
     return payload;
+  };
+
+  const clearSearchOutput = (): void => {
+    for (const panel of [classicPanel, qsPanel]) {
+      panel
+        .querySelectorAll<HTMLElement>(".demo-results, .search-failure, .search-pending")
+        .forEach((node) => node.remove());
+    }
+  };
+
+  const showSearchPending = (prompt: string): void => {
+    const panel = mode === "classic" ? classicPanel : qsPanel;
+    const chat = panel.querySelector<HTMLElement>(".chat")!;
+    const pending = document.createElement("div");
+    pending.className = "bubble ai search-pending";
+    pending.textContent = `Searching Tavily for “${prompt}”…`;
+    chat.appendChild(pending);
+  };
+
+  const clearSearchPending = (): void => {
+    app.querySelectorAll<HTMLElement>(".search-pending").forEach((node) => node.remove());
   };
 
   const appendSearchResults = (search: SearchSuccess): void => {
@@ -488,7 +510,12 @@ function mountLab(app: HTMLElement): void {
   };
 
   const appendSearchFailure = (message: string): void => {
-    appendBubble(`Search failed: ${message}`, "ai");
+    const panel = mode === "classic" ? classicPanel : qsPanel;
+    const chat = panel.querySelector<HTMLElement>(".chat")!;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble ai search-failure";
+    bubble.textContent = `Search failed: ${message}`;
+    chat.appendChild(bubble);
   };
 
   const revealGhostTools = (): void => {
@@ -511,8 +538,12 @@ function mountLab(app: HTMLElement): void {
     set("stat-sessions", String(totalSessions()));
     set("stat-wait", formatMs(totalWaitTurnedToPlayMs()));
     set("stat-best", bestLabel("runner") ?? "—");
+    const playedWait = totalWaitTurnedToPlayMs();
     const perceived = perceivedWaitStats();
-    set("stat-felt", perceived.samples > 0 ? `${Math.round(perceived.avgRatio * 100)}%` : "—");
+    set(
+      "stat-felt",
+      playedWait > 0 && perceived.samples > 0 ? `${Math.round(perceived.avgRatio * 100)}%` : "—"
+    );
     set("stat-streak", String(currentDayStreak()));
   };
 
@@ -576,11 +607,13 @@ function mountLab(app: HTMLElement): void {
       fill.style.width = "100%";
       label.textContent = "DONE";
       classicPhase.textContent = `Tavily returned ${search.results.length} sourced result(s) in ${search.elapsedMs} ms.`;
+      clearSearchPending();
       appendSearchResults(search);
     } catch (error) {
       track.style.display = "none";
       const failure = error instanceof Error ? error : new Error(String(error));
       classicPhase.textContent = `FAILED — ${failure.message}`;
+      clearSearchPending();
       appendSearchFailure(failure.message);
       throw failure;
     }
@@ -612,14 +645,21 @@ function mountLab(app: HTMLElement): void {
       }
       session.setPhase("Rendering sourced answer…");
       session.complete();
+      clearSearchPending();
       appendSearchResults(search);
       const capsule = ctrl.getLastCapsule();
-      phaseEl.innerHTML = `Phase: <strong>Done</strong> — Tavily returned <strong>${search.results.length}</strong> sourced result(s) in <strong>${search.elapsedMs} ms</strong>. Evidence Capsule retained <strong>${capsule?.evidenceCoverage.acceptedSignals ?? 0}</strong> accepted signal(s).`;
-      revealGhostTools();
-      ghostStatus.textContent =
-        "Replay-safe Wait Ghost ready from this real search run. The Ghost excludes the prompt, result titles and source URLs.";
+      const playableWait = search.elapsedMs >= PLAYABLE_WAIT_THRESHOLD_MS;
+      if (playableWait) {
+        phaseEl.innerHTML = `Phase: <strong>Done</strong> — Tavily returned <strong>${search.results.length}</strong> sourced result(s) in <strong>${search.elapsedMs} ms</strong>. Evidence Capsule retained <strong>${capsule?.evidenceCoverage.acceptedSignals ?? 0}</strong> accepted signal(s).`;
+        revealGhostTools();
+        ghostStatus.textContent =
+          "Replay-safe Wait Ghost ready from this real search run. The Ghost excludes the prompt, result titles and source URLs.";
+        showGhostComparison();
+      } else {
+        hideGhostTools();
+        phaseEl.innerHTML = `Phase: <strong>Done</strong> — Tavily returned <strong>${search.results.length}</strong> sourced result(s) in <strong>${search.elapsedMs} ms</strong>. Fast path: response arrived before the <strong>${PLAYABLE_WAIT_THRESHOLD_MS} ms</strong> play threshold, so the game stayed passive. The Evidence Capsule still records the real wait.`;
+      }
       refreshStats();
-      showGhostComparison();
     } catch (error) {
       const failure = error instanceof Error ? error : new Error(String(error));
       session.signal({
@@ -629,6 +669,7 @@ function mountLab(app: HTMLElement): void {
       });
       session.fail(failure);
       phaseEl.innerHTML = `Phase: <strong>FAILED</strong> — ${failure.message}. No search results were fabricated.`;
+      clearSearchPending();
       appendSearchFailure(failure.message);
       refreshStats();
       throw failure;
@@ -643,7 +684,10 @@ function mountLab(app: HTMLElement): void {
     runBtn.textContent = "Running…";
     const prompt = promptInput.value.trim() || DEFAULT_PROMPT;
     promptInput.value = prompt;
+    clearSearchOutput();
+    hideGhostTools();
     appendBubble(prompt, "user");
+    showSearchPending(prompt);
     try {
       if (mode === "classic") await runClassic(prompt);
       else await runQuickSpin(prompt);
@@ -662,6 +706,8 @@ function mountLab(app: HTMLElement): void {
     runBtn.disabled = true;
     failureBtn.disabled = true;
     failureBtn.textContent = "Failure in flight…";
+    clearSearchOutput();
+    hideGhostTools();
     appendBubble(
       "Find dinner options, but preserve failure truth if the provider rejects.",
       "user"
