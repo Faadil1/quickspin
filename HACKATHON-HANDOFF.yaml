@@ -1,71 +1,90 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: PUBLIC_RUNTIME_USER_DRIVEN_LAB_VERIFIED
-to: FINAL_VISUAL_QA_AND_DEMO_CAPTURE
-handoff_status: ACTIVE_FINAL_VISUAL_QA
-readiness: PUBLIC_BUILD_CANDIDATE_VERIFIED
+from: PUBLIC_RUNTIME_TAVILY_SEARCH_DEPLOYED_PENDING_E2E_POST_VERIFY
+to: LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
+handoff_status: ACTIVE_LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
+readiness: PUBLIC_TAVILY_BUILD_DEPLOYED_PENDING_POST_VERIFY
 project_complete: false
 
 what_is_verified:
-  - exact_12_second_control_and_quickspin_happy_path
-  - five_part_reality_anchor_pattern
-  - primary_source_real_negative_event
-  - explicit_failed_outcome_persistence
-  - controlled_real_promise_rejection_negative_path
-  - unknown_insufficient_evidence_signal_rejection
-  - dependency_security_zero_full_and_production_audit
-  - wi_v2_evidence_capsule_observe_intervention_contract_merged
-  - wi_v3_wait_ghost_redacted_derivative
-  - wi_v3_privacy_fixture_tests
-  - historical_replay_not_live_ai
-  - signed_wait_diff_without_winner_score
-  - persisted_intervention_payload_removed
-  - native_black_box_consolidation_pr18_merged
-  - native_visual_completion_pr19_merged
-  - single_runtime_entry_main_ts
-  - single_presentation_stylesheet_site_css
-  - user_driven_lab_product_sha_e2a115cccbc3daa547cea42a5c1d966e8a7d4987
-  - ux_validation_run_35173503496_green_with_41_tests
-  - exact_runtime_build_35174825318_green
-  - immutable_artifact_commit_f6fa995aed0cc93204d039e6b848877b3f6e1d4d
-  - public_navigation_home_lab_proof_sdk_only
-  - judges_removed_from_public_nav_footer_home_and_proof_ctas
-  - internal_judges_direct_route_retained
-  - custom_prompt_composer_served_in_lab
-  - five_visible_demo_results_rendered_after_run
-  - custom_prompt_results_explicitly_labeled_illustrative_not_live_web_search
-  - wait_ghost_console_hidden_until_ghost_exists
-  - wait_ghost_copy_and_replay_controls_hidden_until_available
-  - native_home_lifecycle_rail_served
-  - native_mobile_dock_served_with_four_public_routes
-  - native_lab_storyline_served
-  - native_capsule_redact_ghost_composition_served
-  - native_proof_trust_boundary_served
-  - native_sdk_contract_strip_served
-  - decorative_coral_removed_from_hero
-  - public_build_json_source_and_artifact_attestation_verified
+  - exact_product_source_sha_bd34a8e0cb901630dd49945fd66fc8821e437a31
+  - pr20_vercel_tavily_runtime_merged
+  - ci_run_35178217467_green_format_node22_node24_tests_judge_build_sdk
+  - runtime_build_run_35178451390_green_check_and_build
+  - immutable_artifact_commit_83dba91c52b013314cec4278245f627788e69c33
+  - production_deployment_dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu_ready
   - public_lab_http_200
-  - public_js_http_200_application_javascript
-  - runtime_deployment_dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4_ready
+  - public_build_json_http_200_with_source_and_artifact_attestation
+  - vercel_function_api_search_registered
+  - api_search_get_probe_http_405_with_allow_post_options_and_no_store
+  - tavily_api_key_reference_is_server_only_process_env
+  - no_client_side_tavily_key
+  - max_five_results
+  - tavily_fast_search_configured
+  - upstream_timeout_12_seconds
+  - vercel_function_max_duration_15_seconds
+  - same_origin_browser_guard
+  - soft_per_instance_rate_limit_8_per_60_seconds
+  - source_urls_become_quickspin_evidence_refs
+  - tavily_request_id_becomes_artifact_evidence_ref_when_returned
+  - provider_failure_path_remains_fail_closed_without_fabricated_results
+  - classic_and_quickspin_modes_target_same_real_api_search_route
+  - quickspin_uses_real_provider_latency_not_fixed_12_second_happy_path
+  - wait_ghost_redaction_excludes_prompt_result_titles_and_source_urls
+  - public_navigation_home_lab_proof_sdk_only
+  - judges_hidden_from_public_nav_footer_and_product_ctas
+  - internal_judges_direct_route_retained
+  - prior_verified_runtime_retained_for_rollback
+  - historical_failed_runtime_promotion_retained_as_red_evidence
+
+not_yet_verified:
+  - successful_production_post_to_api_search_with_tavily_response
+  - user_visible_one_to_five_real_result_cards_from_public_lab
+  - working_outbound_source_links_from_a_successful_live_query
+  - browser_level_real_search_timing_and_quickspin_transition
+  - desktop_mobile_reduced_motion_visual_quality
+  - final_demo_capture
 
 canonical_runtime:
   url: https://quickspin-runtime-native.vercel.app
   lab_url: https://quickspin-runtime-native.vercel.app/lab
+  api_search_url: https://quickspin-runtime-native.vercel.app/api/search
+  build_attestation_url: https://quickspin-runtime-native.vercel.app/build.json
   project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
-  deployment_id: dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4
-  source_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
-  artifact_commit: f6fa995aed0cc93204d039e6b848877b3f6e1d4d
-  exact_build_run: 35174825318
-  js_bundle: index-COYJL-bC.js
-  css_bundle: index-DstD1-k8.css
-  packaging: vercel_proxy_to_immutable_jsdelivr_commit
+  deployment_id: dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu
+  source_sha: bd34a8e0cb901630dd49945fd66fc8821e437a31
+  artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
+  exact_ci_run: 35178217467
+  exact_runtime_build_run: 35178451390
+  js_bundle: index-DNWGy0HB.js
+  css_bundle: index-Dd1XOf5h.css
+  packaging: vercel_function_plus_immutable_jsdelivr_commit
+  search_provider: Tavily
+  search_secret: TAVILY_API_KEY_SERVER_ONLY
 
 lab_truth_boundary:
   custom_prompt_input: REAL_USER_INPUT
-  wait_runtime: CONTROLLED_12_SECOND_DEMO
-  result_cards: ILLUSTRATIVE_LOCAL_DEMO_OUTPUT
-  live_web_search: NOT_IMPLEMENTED_NOT_CLAIMED
-  policy: NEVER_PRESENT_DEMO_RESULTS_AS_LIVE_RETRIEVAL
+  wait_runtime: REAL_PROVIDER_LATENCY_FOR_TAVILY_PATH
+  result_cards: LIVE_TAVILY_RESULTS_ONLY_AFTER_PROVIDER_SUCCESS
+  result_sources: RETURNED_TAVILY_URLS
+  evidence_refs: REAL_RESULT_URLS_PLUS_TAVILY_REQUEST_ID_WHEN_PRESENT
+  live_web_search: IMPLEMENTED_AND_DEPLOYED_PENDING_SUCCESSFUL_POST_E2E_CONFIRMATION
+  classic_mode: REAL_TAVILY_REQUEST_WITH_PASSIVE_SPINNER
+  quickspin_mode: REAL_TAVILY_REQUEST_WITH_PLAYABLE_WAIT
+  controlled_negative_path: DEMO_PROMISE_REJECTION_PROOF_REMAINS_SEPARATE
+  policy: NEVER_FABRICATE_RESULTS_ON_PROVIDER_FAILURE
+
+search_runtime_policy:
+  method: POST_ONLY_WITH_OPTIONS
+  cache: NO_STORE
+  max_results: 5
+  search_depth: fast
+  topic: general
+  upstream_timeout_seconds: 12
+  function_max_duration_seconds: 15
+  same_origin_guard: ENABLED_FOR_BROWSER_ORIGIN
+  rate_limit: SOFT_IN_MEMORY_PER_SERVERLESS_INSTANCE_8_REQUESTS_PER_60_SECONDS
+  security_limit: NOT_A_DISTRIBUTED_GLOBAL_QUOTA_OR_AUTH_BARRIER
 
 judge_surface_policy:
   public_navigation: HIDDEN
@@ -79,6 +98,7 @@ wait_ghost_visibility_policy:
   after_successful_quickspin_run: REVEALED
   shared_ghost_hash_present: REVEALED
   after_reset: HIDDEN
+  live_search_redaction: EXCLUDES_PROMPT_RESULT_TITLES_SOURCE_URLS
 
 preserved_red_run:
   deployment_id: dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn
@@ -106,11 +126,13 @@ canonical_evidence:
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
+  - run_successful_real_tavily_query_from_public_lab
+  - confirm_one_to_five_sourced_result_cards_and_outbound_links
+  - confirm_real_provider_latency_drives_wait_and_quickspin_transition
+  - confirm_evidence_capsule_after_live_search
+  - confirm_wait_ghost_redaction_after_live_search
   - inspect_updated_lab_desktop_mobile_reduced_motion
-  - verify_custom_prompt_and_five_result_layout_visually
-  - verify_judges_absent_from_public_navigation_visually
-  - verify_wait_ghost_absent_before_run_and_revealed_after_run
-  - rehearse_full_lab_happy_negative_capsule_ghost_replay_compare_sequence
+  - rehearse_full_live_search_capsule_ghost_negative_path_sequence
   - capture_final_demo_video
   - perform_live_qa_rehearsal_against_claim_ledger
   - obtain_commonsmade_publish_attach_submit_proof
@@ -120,15 +142,15 @@ must_finish_before_project_complete:
 nonblocking_followup:
   - broader_user_validation_of_perceived_wait_effect
   - exhaustive_commons_submission_gallery_not_publicly_indexable
-  - optional_real_search_provider_backend_if_scope_reopens
+  - distributed_rate_limit_or_waf_if_public_usage_grows
   - open_space_exclusivity_not_claimed
   - legacy_quickspin_runtime_project_requires_build_command_cleanup_if_reused
 
 forbidden_claims:
   - QuickSpin reduces provider latency
   - every wait feels shorter
-  - controlled demo failure is a live provider outage
-  - custom prompt demo results are live web search results
+  - controlled demo failure is a live Tavily outage
+  - successful Tavily production POST is end_to_end verified before one is observed
   - Evidence Capsule is cryptographically signed
   - Wait Ghost is cryptographically signed or tamper proof
   - Wait Ghost proves host honesty
@@ -140,6 +162,7 @@ forbidden_claims:
   - npm package is published without registry evidence
   - hosted analytics exist today
   - absolute_security_complete
+  - soft_per_instance_rate_limit_is_a_global_distributed_abuse_barrier
   - browser_visual_quality_verified_until_human_or_browser_inspection_occurs
   - PROJECT_COMPLETE before all blocking final gates pass
 
@@ -152,6 +175,7 @@ failure_policy:
 scope_policy:
   differentiation_iteration: 3_OF_3
   after_public_runtime_verification: FEATURE_FREEZE_EXCEPT_PROOF_OR_BLOCKING_VISUAL_FIXES
-  exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
+  feature_freeze_exception: USER_AUTHORIZED_TAVILY_REAL_SEARCH_INTEGRATION
+  future_exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Current product source is pinned to e2a115cccbc3daa547cea42a5c1d966e8a7d4987 and immutable runtime artifact f6fa995aed0cc93204d039e6b848877b3f6e1d4d. Previous verified runtime deployment dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws and artifact 24fff5448af26b6d584dfa43eb5f2c6dc9a85699 remain recoverable; failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn remains preserved as red evidence.
+rollback: Current product source is bd34a8e0cb901630dd49945fd66fc8821e437a31, immutable asset artifact is 83dba91c52b013314cec4278245f627788e69c33, and production deployment is dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu. Previous verified production deployment dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4 with source e2a115cccbc3daa547cea42a5c1d966e8a7d4987 and artifact f6fa995aed0cc93204d039e6b848877b3f6e1d4d remains recoverable. Failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn remains preserved as red evidence.
