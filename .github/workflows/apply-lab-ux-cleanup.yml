@@ -1,0 +1,35 @@
+name: Apply lab UX cleanup
+
+on:
+  push:
+    branches: [lab-user-search-cleanup]
+    paths:
+      - scripts/apply-lab-ux-cleanup.mjs
+      - .github/workflows/apply-lab-ux-cleanup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: lab-user-search-cleanup
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/apply-lab-ux-cleanup.mjs
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - name: Commit patched UX and remove temporary patch machinery
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/demo/main.ts src/demo/site.css
+          git rm scripts/apply-lab-ux-cleanup.mjs .github/workflows/apply-lab-ux-cleanup.yml
+          git commit -m "ux: make lab user-driven and hide internal judge surface"
+          git push origin lab-user-search-cleanup
