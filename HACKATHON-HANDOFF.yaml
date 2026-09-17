@@ -1,6 +1,6 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: PUBLIC_RUNTIME_NATIVE_VISUAL_VERIFIED
+from: PUBLIC_RUNTIME_USER_DRIVEN_LAB_VERIFIED
 to: FINAL_VISUAL_QA_AND_DEMO_CAPTURE
 handoff_status: ACTIVE_FINAL_VISUAL_QA
 readiness: PUBLIC_BUILD_CANDIDATE_VERIFIED
@@ -22,36 +22,63 @@ what_is_verified:
   - persisted_intervention_payload_removed
   - native_black_box_consolidation_pr18_merged
   - native_visual_completion_pr19_merged
-  - native_visual_pr_ci_35154939604_green
-  - native_visual_pr_codeql_35154939600_green
-  - native_visual_product_sha_a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
-  - exact_runtime_build_35156186426_green
-  - immutable_artifact_commit_24fff5448af26b6d584dfa43eb5f2c6dc9a85699
   - single_runtime_entry_main_ts
   - single_presentation_stylesheet_site_css
+  - user_driven_lab_product_sha_e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+  - ux_validation_run_35173503496_green_with_41_tests
+  - exact_runtime_build_35174825318_green
+  - immutable_artifact_commit_f6fa995aed0cc93204d039e6b848877b3f6e1d4d
+  - public_navigation_home_lab_proof_sdk_only
+  - judges_removed_from_public_nav_footer_home_and_proof_ctas
+  - internal_judges_direct_route_retained
+  - custom_prompt_composer_served_in_lab
+  - five_visible_demo_results_rendered_after_run
+  - custom_prompt_results_explicitly_labeled_illustrative_not_live_web_search
+  - wait_ghost_console_hidden_until_ghost_exists
+  - wait_ghost_copy_and_replay_controls_hidden_until_available
   - native_home_lifecycle_rail_served
-  - native_mobile_dock_served
+  - native_mobile_dock_served_with_four_public_routes
   - native_lab_storyline_served
-  - native_wait_ghost_privacy_console_served
   - native_capsule_redact_ghost_composition_served
   - native_proof_trust_boundary_served
   - native_sdk_contract_strip_served
-  - native_judge_memory_and_claim_matrix_served
   - decorative_coral_removed_from_hero
-  - public_build_json_source_attestation_verified
-  - public_home_lab_proof_sdk_judges_http_200
-  - public_js_css_http_200_with_correct_mime
-  - runtime_deployment_dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws_ready
+  - public_build_json_source_and_artifact_attestation_verified
+  - public_lab_http_200
+  - public_js_http_200_application_javascript
+  - runtime_deployment_dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4_ready
 
 canonical_runtime:
   url: https://quickspin-runtime-native.vercel.app
+  lab_url: https://quickspin-runtime-native.vercel.app/lab
   project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
-  deployment_id: dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws
-  source_sha: a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3
-  artifact_commit: 24fff5448af26b6d584dfa43eb5f2c6dc9a85699
-  js_bundle: index-CAcZB-rj.js
-  css_bundle: index-BenuXaCM.css
+  deployment_id: dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4
+  source_sha: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+  artifact_commit: f6fa995aed0cc93204d039e6b848877b3f6e1d4d
+  exact_build_run: 35174825318
+  js_bundle: index-COYJL-bC.js
+  css_bundle: index-DstD1-k8.css
   packaging: vercel_proxy_to_immutable_jsdelivr_commit
+
+lab_truth_boundary:
+  custom_prompt_input: REAL_USER_INPUT
+  wait_runtime: CONTROLLED_12_SECOND_DEMO
+  result_cards: ILLUSTRATIVE_LOCAL_DEMO_OUTPUT
+  live_web_search: NOT_IMPLEMENTED_NOT_CLAIMED
+  policy: NEVER_PRESENT_DEMO_RESULTS_AS_LIVE_RETRIEVAL
+
+judge_surface_policy:
+  public_navigation: HIDDEN
+  public_footer: HIDDEN
+  public_product_ctas: HIDDEN
+  internal_direct_route: /judges
+  rationale: INTERNAL_EVALUATION_MATERIAL_NOT_PRODUCT_FACING
+
+wait_ghost_visibility_policy:
+  before_ghost_exists: HIDDEN
+  after_successful_quickspin_run: REVEALED
+  shared_ghost_hash_present: REVEALED
+  after_reset: HIDDEN
 
 preserved_red_run:
   deployment_id: dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn
@@ -79,7 +106,10 @@ canonical_evidence:
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
-  - inspect_final_runtime_desktop_mobile_reduced_motion
+  - inspect_updated_lab_desktop_mobile_reduced_motion
+  - verify_custom_prompt_and_five_result_layout_visually
+  - verify_judges_absent_from_public_navigation_visually
+  - verify_wait_ghost_absent_before_run_and_revealed_after_run
   - rehearse_full_lab_happy_negative_capsule_ghost_replay_compare_sequence
   - capture_final_demo_video
   - perform_live_qa_rehearsal_against_claim_ledger
@@ -90,7 +120,7 @@ must_finish_before_project_complete:
 nonblocking_followup:
   - broader_user_validation_of_perceived_wait_effect
   - exhaustive_commons_submission_gallery_not_publicly_indexable
-  - live_provider_integration_not_claimed
+  - optional_real_search_provider_backend_if_scope_reopens
   - open_space_exclusivity_not_claimed
   - legacy_quickspin_runtime_project_requires_build_command_cleanup_if_reused
 
@@ -98,6 +128,7 @@ forbidden_claims:
   - QuickSpin reduces provider latency
   - every wait feels shorter
   - controlled demo failure is a live provider outage
+  - custom prompt demo results are live web search results
   - Evidence Capsule is cryptographically signed
   - Wait Ghost is cryptographically signed or tamper proof
   - Wait Ghost proves host honesty
@@ -123,4 +154,4 @@ scope_policy:
   after_public_runtime_verification: FEATURE_FREEZE_EXCEPT_PROOF_OR_BLOCKING_VISUAL_FIXES
   exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Product source remains pinned to a15d48a5090e6a9e7ce0c5bc803aa52f8ebb98c3 and immutable runtime artifact commit 24fff5448af26b6d584dfa43eb5f2c6dc9a85699. Prior runtime dpl_BBNqChyLe225dzpu3SMXXF2ZB6xr remains recoverable; failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn is preserved as red evidence.
+rollback: Current product source is pinned to e2a115cccbc3daa547cea42a5c1d966e8a7d4987 and immutable runtime artifact f6fa995aed0cc93204d039e6b848877b3f6e1d4d. Previous verified runtime deployment dpl_GXWDnXQxaiMMUK7kZfhztUm1Pgws and artifact 24fff5448af26b6d584dfa43eb5f2c6dc9a85699 remain recoverable; failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn remains preserved as red evidence.
