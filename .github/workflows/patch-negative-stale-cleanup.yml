@@ -1,0 +1,44 @@
+name: Patch negative stale cleanup
+
+on:
+  push:
+    branches: [quickspin-microwait-hardening]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: quickspin-microwait-hardening
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Patch negative-path cleanup
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("src/demo/main.ts")
+          s = p.read_text()
+          old = '''    failureBtn.disabled = true;\n    failureBtn.textContent = "Failure in flight…";\n    appendBubble(\n'''
+          new = '''    failureBtn.disabled = true;\n    failureBtn.textContent = "Failure in flight…";\n    clearSearchOutput();\n    hideGhostTools();\n    appendBubble(\n'''
+          if s.count(old) != 1:
+              raise SystemExit(f"expected 1 match, got {s.count(old)}")
+          p.write_text(s.replace(old, new, 1))
+      - run: npx prettier --write src/demo/main.ts
+      - run: npm run check
+      - run: npm run build
+      - name: Commit product patch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/patch-negative-stale-cleanup.yml
+          git add src/demo/main.ts
+          git commit -m "ux: clear stale output before failure proof [skip ci]"
+          git push origin HEAD:quickspin-microwait-hardening
