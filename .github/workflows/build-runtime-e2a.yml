@@ -1,0 +1,41 @@
+name: Build exact runtime bundle e2a
+
+on:
+  push:
+    branches:
+      - runtime-deploy-e2a
+    paths:
+      - .github/workflows/build-runtime-e2a.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: runtime-deploy-e2a
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build exact user-driven runtime
+        env:
+          GIT_COMMIT: e2a115cccbc3daa547cea42a5c1d966e8a7d4987
+          DEPLOYMENT_ID: PENDING_DIRECT_VERCEL_DEPLOY
+        run: npm run build
+      - name: Stage deployable static bundle
+        run: |
+          rm -rf runtime-ready
+          mkdir -p runtime-ready
+          cp -R dist-demo/. runtime-ready/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/build-runtime-e2a.yml
+          git add runtime-ready
+          git commit -m "build: stage exact e2a runtime bundle [skip ci]"
+          git push origin HEAD:runtime-deploy-e2a
