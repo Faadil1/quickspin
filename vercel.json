@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/search.js": {
+      "maxDuration": 15
+    }
+  },
   "rewrites": [
     { "source": "/lab", "destination": "/" },
     { "source": "/proof", "destination": "/" },
