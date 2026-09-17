@@ -1,13 +1,19 @@
 project: QuickSpin
 framework: HACKATHON_HANDOFF
-from: PUBLIC_RUNTIME_TAVILY_SEARCH_DEPLOYED_PENDING_E2E_POST_VERIFY
-to: LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
-handoff_status: ACTIVE_LIVE_TAVILY_E2E_AND_FINAL_VISUAL_QA
-readiness: PUBLIC_TAVILY_BUILD_DEPLOYED_PENDING_POST_VERIFY
+from: CLOUDFLARE_TAVILY_E2E_VERIFIED_PRE_HARDENING
+to: CANONICAL_CLOUDFLARE_MICROWAIT_SMOKE_AND_FINAL_VISUAL_QA
+handoff_status: ACTIVE_CLOUDFLARE_MICROWAIT_SMOKE_AND_FINAL_VISUAL_QA
+readiness: PRODUCT_HARDENING_MERGED_GREEN_PENDING_CANONICAL_CLOUDFLARE_SMOKE
 project_complete: false
 
 what_is_verified:
-  - exact_product_source_sha_bd34a8e0cb901630dd49945fd66fc8821e437a31
+  - exact_product_source_sha_1012c491f01cd3e1572d86a1ed43089007922868
+  - cloudflare_worker_tavily_post_e2e_observed_in_user_video
+  - live_sourced_result_cards_and_urls_observed
+  - result_urls_observed_as_quickspin_evidence_refs
+  - pr22_micro_wait_and_stale_output_hardening_merged
+  - hardening_workflow_35203974036_check_and_build_green
+  - hardening_workflow_35204077032_check_and_build_green
   - pr20_vercel_tavily_runtime_merged
   - ci_run_35178217467_green_format_node22_node24_tests_judge_build_sdk
   - runtime_build_run_35178451390_green_check_and_build
@@ -38,27 +44,27 @@ what_is_verified:
   - historical_failed_runtime_promotion_retained_as_red_evidence
 
 not_yet_verified:
-  - successful_production_post_to_api_search_with_tavily_response
-  - user_visible_one_to_five_real_result_cards_from_public_lab
-  - working_outbound_source_links_from_a_successful_live_query
-  - browser_level_real_search_timing_and_quickspin_transition
+  - canonical_cloudflare_deployment_of_source_1012c491_and_exact_deployment_id
+  - stale_result_cleanup_on_two_back_to_back_queries_on_canonical_runtime
+  - sub_1800ms_fast_path_stays_passive_without_wait_ghost
+  - slower_than_1800ms_query_still_mounts_quickspin_and_derives_ghost
   - desktop_mobile_reduced_motion_visual_quality
   - final_demo_capture
 
 canonical_runtime:
-  url: https://quickspin-runtime-native.vercel.app
-  lab_url: https://quickspin-runtime-native.vercel.app/lab
-  api_search_url: https://quickspin-runtime-native.vercel.app/api/search
-  build_attestation_url: https://quickspin-runtime-native.vercel.app/build.json
-  project_id: prj_fBE7dDskvIkzFDTubRmI88MRUM31
-  deployment_id: dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu
-  source_sha: bd34a8e0cb901630dd49945fd66fc8821e437a31
+  url: https://quickspin.faadil-casecraft.workers.dev
+  lab_url: https://quickspin.faadil-casecraft.workers.dev/lab
+  api_search_url: https://quickspin.faadil-casecraft.workers.dev/api/search
+  build_attestation_url: https://quickspin.faadil-casecraft.workers.dev/build.json
+  project_id: CLOUDFLARE_WORKER_QUICKSPIN
+  deployment_id: PENDING_EXACT_1012C491_CANONICAL_DEPLOYMENT_ID
+  source_sha: 1012c491f01cd3e1572d86a1ed43089007922868
   artifact_commit: 83dba91c52b013314cec4278245f627788e69c33
   exact_ci_run: 35178217467
   exact_runtime_build_run: 35178451390
   js_bundle: index-DNWGy0HB.js
   css_bundle: index-Dd1XOf5h.css
-  packaging: vercel_function_plus_immutable_jsdelivr_commit
+  packaging: cloudflare_worker_plus_assets_binding_run_worker_first_api
   search_provider: Tavily
   search_secret: TAVILY_API_KEY_SERVER_ONLY
 
@@ -68,22 +74,24 @@ lab_truth_boundary:
   result_cards: LIVE_TAVILY_RESULTS_ONLY_AFTER_PROVIDER_SUCCESS
   result_sources: RETURNED_TAVILY_URLS
   evidence_refs: REAL_RESULT_URLS_PLUS_TAVILY_REQUEST_ID_WHEN_PRESENT
-  live_web_search: IMPLEMENTED_AND_DEPLOYED_PENDING_SUCCESSFUL_POST_E2E_CONFIRMATION
+  live_web_search: IMPLEMENTED_AND_E2E_OBSERVED_ON_CLOUDFLARE
   classic_mode: REAL_TAVILY_REQUEST_WITH_PASSIVE_SPINNER
-  quickspin_mode: REAL_TAVILY_REQUEST_WITH_PLAYABLE_WAIT
+  quickspin_mode: REAL_TAVILY_REQUEST_WITH_1800MS_PLAYABLE_THRESHOLD
   controlled_negative_path: DEMO_PROMISE_REJECTION_PROOF_REMAINS_SEPARATE
   policy: NEVER_FABRICATE_RESULTS_ON_PROVIDER_FAILURE
 
 search_runtime_policy:
+  platform: CLOUDFLARE_WORKER
   method: POST_ONLY_WITH_OPTIONS
   cache: NO_STORE
   max_results: 5
   search_depth: fast
   topic: general
   upstream_timeout_seconds: 12
-  function_max_duration_seconds: 15
+  function_max_duration_seconds: PLATFORM_MANAGED
+  keep_vars: true
   same_origin_guard: ENABLED_FOR_BROWSER_ORIGIN
-  rate_limit: SOFT_IN_MEMORY_PER_SERVERLESS_INSTANCE_8_REQUESTS_PER_60_SECONDS
+  rate_limit: SOFT_IN_MEMORY_PER_WORKER_ISOLATE_8_REQUESTS_PER_60_SECONDS
   security_limit: NOT_A_DISTRIBUTED_GLOBAL_QUOTA_OR_AUTH_BARRIER
 
 judge_surface_policy:
@@ -95,7 +103,7 @@ judge_surface_policy:
 
 wait_ghost_visibility_policy:
   before_ghost_exists: HIDDEN
-  after_successful_quickspin_run: REVEALED
+  after_successful_quickspin_run: REVEALED_ONLY_WHEN_PROVIDER_WAIT_REACHES_1800MS_PLAY_THRESHOLD
   shared_ghost_hash_present: REVEALED
   after_reset: HIDDEN
   live_search_redaction: EXCLUDES_PROMPT_RESULT_TITLES_SOURCE_URLS
@@ -126,9 +134,10 @@ canonical_evidence:
   - .pbpd/state/ACTIVITY-TRACE.yaml
 
 must_finish_before_project_complete:
-  - run_successful_real_tavily_query_from_public_lab
-  - confirm_one_to_five_sourced_result_cards_and_outbound_links
-  - confirm_real_provider_latency_drives_wait_and_quickspin_transition
+  - deploy_source_1012c491_to_canonical_cloudflare_worker_and_record_exact_version
+  - verify_two_back_to_back_queries_clear_stale_results_immediately
+  - verify_sub_1800ms_fast_path_stays_passive_and_suppresses_wait_ghost
+  - verify_slower_query_still_drives_playable_quickspin_transition
   - confirm_evidence_capsule_after_live_search
   - confirm_wait_ghost_redaction_after_live_search
   - inspect_updated_lab_desktop_mobile_reduced_motion
@@ -178,4 +187,4 @@ scope_policy:
   feature_freeze_exception: USER_AUTHORIZED_TAVILY_REAL_SEARCH_INTEGRATION
   future_exception: NEW_HIGH_SIGNAL_COMPETITOR_EVIDENCE_INVALIDATES_DISTINCTION
 
-rollback: Current product source is bd34a8e0cb901630dd49945fd66fc8821e437a31, immutable asset artifact is 83dba91c52b013314cec4278245f627788e69c33, and production deployment is dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu. Previous verified production deployment dpl_8XjpBY4rsghPn4sgjDt1q7s4F5B4 with source e2a115cccbc3daa547cea42a5c1d966e8a7d4987 and artifact f6fa995aed0cc93204d039e6b848877b3f6e1d4d remains recoverable. Failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn remains preserved as red evidence.
+rollback: Cloudflare pre-hardening Tavily E2E remains the last observed live success surface. Product source 1012c491f01cd3e1572d86a1ed43089007922868 is the current hardening target pending canonical smoke. Vercel deployment dpl_9eBrosDYyFKs6i4bBkYbWkLim5iu and prior verified Vercel deployments remain secondary rollback references; failed promotion dpl_G5aLCDikz3tMgGBSC2vBjRsXxgyn remains preserved as red evidence.
