@@ -8,7 +8,6 @@ import {
   encodeWaitGhost,
 } from "../sdk/index";
 import type {
-  ExecutionSignal,
   QuickSpinController,
   WaitEventHandler,
   WaitGhost,
@@ -26,46 +25,33 @@ import {
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
-interface DemoPhase {
-  status: string;
-  ms: number;
-  signal: ExecutionSignal;
+interface SearchResult {
+  rank: number;
+  title: string;
+  url: string;
+  snippet: string;
+  score: number | null;
+  favicon: string | null;
 }
 
-const PHASES: DemoPhase[] = [
-  {
-    status: "Reasoning…",
-    ms: 2600,
-    signal: { kind: "tool", label: "Planned constraints", evidenceRef: "demo:phase:reasoning" },
-  },
-  {
-    status: "Searching the web…",
-    ms: 3100,
-    signal: {
-      kind: "retrieval",
-      label: "Retrieved demo candidates",
-      evidenceRef: "demo:phase:retrieval",
-    },
-  },
-  {
-    status: "Drafting…",
-    ms: 3400,
-    signal: {
-      kind: "artifact",
-      label: "Assembled five demo candidates",
-      evidenceRef: "demo:phase:draft",
-    },
-  },
-  {
-    status: "Polishing…",
-    ms: 2900,
-    signal: {
-      kind: "artifact",
-      label: "Final answer assembled",
-      evidenceRef: "demo:phase:final",
-    },
-  },
-];
+interface SearchSuccess {
+  ok: true;
+  provider: "tavily";
+  query: string;
+  answer: string;
+  results: SearchResult[];
+  requestId: string | null;
+  responseTime: number | string | null;
+  elapsedMs: number;
+}
+
+interface SearchFailure {
+  ok: false;
+  code: string;
+  message: string;
+}
+
+type SearchResponse = SearchSuccess | SearchFailure;
 
 const PUBLIC_ROUTES = [
   { path: "/", label: "Home" },
@@ -78,62 +64,6 @@ const INTERNAL_ROUTES = [{ path: "/judges", label: "Judges" }] as const;
 const ALL_ROUTES = [...PUBLIC_ROUTES, ...INTERNAL_ROUTES];
 
 const DEFAULT_PROMPT = "Where should five friends eat tonight in Austin?";
-
-const DINNER_DEMO_RESULTS = [
-  {
-    title: "Eastside taco patio",
-    meta: "CASUAL · SHAREABLE",
-    detail: "A lively first stop built around tacos, patio energy and easy group ordering.",
-  },
-  {
-    title: "Neighborhood izakaya",
-    meta: "SMALL PLATES · SOCIAL",
-    detail: "A more intimate option for skewers, small plates and a slower group dinner.",
-  },
-  {
-    title: "Mediterranean table",
-    meta: "SHARED PLATES · FLEXIBLE",
-    detail: "A share-forward direction with vegetarian-friendly options and broad group appeal.",
-  },
-  {
-    title: "Food hall mix",
-    meta: "CHOICE · LOW FRICTION",
-    detail: "Useful when five people want different cuisines without splitting the group.",
-  },
-  {
-    title: "Late-night pizza room",
-    meta: "EASY · LATE",
-    detail: "The low-planning fallback: slices, communal seating and an easy second stop.",
-  },
-] as const;
-
-const GENERAL_DEMO_RESULTS = [
-  {
-    title: "Best direct match",
-    meta: "PRIMARY",
-    detail: "The strongest answer direction for the request as written.",
-  },
-  {
-    title: "Alternative angle",
-    meta: "OPTION B",
-    detail: "A meaningfully different route with a different trade-off profile.",
-  },
-  {
-    title: "Fastest path",
-    meta: "LOW FRICTION",
-    detail: "The option optimized for speed, simplicity and minimum setup.",
-  },
-  {
-    title: "Most flexible path",
-    meta: "ADAPTABLE",
-    detail: "The option that leaves the most room to refine constraints after the first pass.",
-  },
-  {
-    title: "Wildcard",
-    meta: "EXPLORE",
-    detail: "A deliberately different direction worth checking before committing.",
-  },
-] as const;
 
 function controlledProviderFailure(): Promise<never> {
   return new Promise((_, reject) => {
@@ -224,20 +154,20 @@ function homePage(): string {
 
 function labPage(): string {
   return `<main class="page">
-    ${pageHead("Live wait lab", "Same wait. Different experience.", "Run the exact 12-second control, then the QuickSpin path. The product can also demonstrate a real rejected-Promise failure without fabricating success.", "02 / LAB")}
+    ${pageHead("Live wait lab", "Real search. Play the real wait.", "Ask a real question. QuickSpin stays active while Tavily searches the web, then the sourced results replace the waiting state. The negative path still proves that failure remains failure.", "02 / LAB")}
     <section class="lab-grid">
       <div class="lab-panel">
-        <div class="panel-kicker"><span>EXPERIMENT / QS-12</span><span>CONTROLLED 12.0s</span></div>
+        <div class="panel-kicker"><span>LIVE SEARCH / TAVILY</span><span>REAL PROVIDER LATENCY</span></div>
         <div class="lab-storyline" aria-label="QuickSpin lab flow"><span>WAIT</span><i></i><span>PLAY</span><i></i><span>RECORD</span><i></i><span>DERIVE</span></div>
         <form id="prompt-form" class="prompt-composer">
           <label for="prompt-input">Try your own prompt</label>
           <textarea id="prompt-input" rows="2" maxlength="240" spellcheck="true">${DEFAULT_PROMPT}</textarea>
-          <div class="prompt-meta"><span>Same controlled 12-second wait · your prompt drives the demo</span><button id="run-demo" class="run" type="submit">Run my prompt</button></div>
+          <div class="prompt-meta"><span>Real Tavily search · sourced results · no fabricated answer</span><button id="run-demo" class="run" type="submit">Search with QuickSpin</button></div>
         </form>
         <div class="seg" role="group" aria-label="Demo mode"><button data-mode="classic">Classic spinner</button><button data-mode="quickspin">QuickSpin</button></div>
         <div id="classic-panel">
           <div class="chat">
-            <div class="bubble ai">Ask for dinner ideas. The wait is deliberately fixed at twelve seconds.</div>
+            <div class="bubble ai">Classic mode shows the same real Tavily request with a passive spinner.</div>
             <div class="thinking"><span class="spinner"></span><span class="spinner-label">Reasoning…</span></div>
             <div class="progress-track"><div class="fill"></div></div><div class="progress-label">0%</div>
           </div>
@@ -458,7 +388,7 @@ function mountLab(app: HTMLElement): void {
 
   const controllerOptions = {
     target: mount,
-    delayMs: 0,
+    delayMs: 650,
     onEvent: logEvents,
     onIntervention: (intent: { id: string; kind: string }) => ({
       id: intent.id,
@@ -490,12 +420,22 @@ function mountLab(app: HTMLElement): void {
     chat.appendChild(bubble);
   };
 
-  const demoResultsFor = (prompt: string) =>
-    /dinner|restaurant|eat|food|taco|lunch|brunch/i.test(prompt)
-      ? DINNER_DEMO_RESULTS
-      : GENERAL_DEMO_RESULTS;
+  const searchWeb = async (prompt: string): Promise<SearchSuccess> => {
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query: prompt, maxResults: 5 }),
+    });
+    const payload = (await response.json().catch(() => null)) as SearchResponse | null;
+    if (!response.ok || !payload || !payload.ok) {
+      const message = payload && !payload.ok ? payload.message : "Real search is unavailable.";
+      const code = payload && !payload.ok ? payload.code : `HTTP_${response.status}`;
+      throw new Error(`${code}: ${message}`);
+    }
+    return payload;
+  };
 
-  const appendDemoResults = (prompt: string): void => {
+  const appendSearchResults = (search: SearchSuccess): void => {
     const panel = mode === "classic" ? classicPanel : qsPanel;
     const chat = panel.querySelector<HTMLElement>(".chat")!;
     const wrap = document.createElement("section");
@@ -503,33 +443,52 @@ function mountLab(app: HTMLElement): void {
     const head = document.createElement("div");
     head.className = "demo-results-head";
     const title = document.createElement("strong");
-    title.textContent = "Five demo results";
+    title.textContent = `${search.results.length} live result${search.results.length === 1 ? "" : "s"}`;
     const note = document.createElement("span");
-    note.textContent = "Illustrative local response · not a live web search";
+    note.textContent = `Tavily · sourced web search${search.responseTime ? ` · ${search.responseTime}s` : ""}`;
     head.append(title, note);
     const query = document.createElement("p");
     query.className = "demo-results-query";
-    query.textContent = `For: “${prompt}”`;
+    query.textContent = `For: “${search.query}”`;
+    wrap.append(head, query);
+    if (search.answer) {
+      const answer = document.createElement("p");
+      answer.className = "search-answer";
+      answer.textContent = search.answer;
+      wrap.appendChild(answer);
+    }
     const list = document.createElement("div");
     list.className = "demo-results-list";
-    demoResultsFor(prompt).forEach((result, index) => {
+    for (const result of search.results) {
       const item = document.createElement("article");
       item.className = "demo-result";
       const rank = document.createElement("b");
-      rank.textContent = String(index + 1).padStart(2, "0");
+      rank.textContent = String(result.rank).padStart(2, "0");
       const body = document.createElement("div");
-      const name = document.createElement("strong");
+      const name = document.createElement("a");
+      name.className = "search-result-link";
+      name.href = result.url;
+      name.target = "_blank";
+      name.rel = "noopener noreferrer";
       name.textContent = result.title;
       const meta = document.createElement("span");
-      meta.textContent = result.meta;
+      try {
+        meta.textContent = new URL(result.url).hostname.replace(/^www\./, "");
+      } catch {
+        meta.textContent = "source";
+      }
       const detail = document.createElement("p");
-      detail.textContent = result.detail;
+      detail.textContent = result.snippet || "Open source result";
       body.append(name, meta, detail);
       item.append(rank, body);
       list.appendChild(item);
-    });
-    wrap.append(head, query, list);
+    }
+    wrap.appendChild(list);
     chat.appendChild(wrap);
+  };
+
+  const appendSearchFailure = (message: string): void => {
+    appendBubble(`Search failed: ${message}`, "ai");
   };
 
   const revealGhostTools = (): void => {
@@ -602,55 +561,78 @@ function mountLab(app: HTMLElement): void {
   };
 
   const runClassic = async (prompt: string): Promise<void> => {
-    classicPhase.textContent = "";
+    classicPhase.textContent = "Searching the web with Tavily…";
     const chat = classicPanel.querySelector<HTMLElement>(".chat")!;
     const track = chat.querySelector<HTMLElement>(".thinking")!;
     const fill = chat.querySelector<HTMLElement>(".fill")!;
     const label = chat.querySelector<HTMLElement>(".progress-label")!;
     track.style.display = "flex";
-    let elapsed = 0;
-    for (const phase of PHASES) {
-      track.querySelector<HTMLElement>(".spinner-label")!.textContent = phase.status;
-      elapsed += phase.ms;
-      const ratio = elapsed / 12000;
-      fill.style.width = `${Math.round(ratio * 100)}%`;
-      label.textContent = `${Math.round(ratio * 100)}%`;
-      await sleep(phase.ms);
+    track.querySelector<HTMLElement>(".spinner-label")!.textContent = "Searching the web…";
+    fill.style.width = "34%";
+    label.textContent = "LIVE";
+    try {
+      const search = await searchWeb(prompt);
+      track.style.display = "none";
+      fill.style.width = "100%";
+      label.textContent = "DONE";
+      classicPhase.textContent = `Tavily returned ${search.results.length} sourced result(s) in ${search.elapsedMs} ms.`;
+      appendSearchResults(search);
+    } catch (error) {
+      track.style.display = "none";
+      const failure = error instanceof Error ? error : new Error(String(error));
+      classicPhase.textContent = `FAILED — ${failure.message}`;
+      appendSearchFailure(failure.message);
+      throw failure;
     }
-    track.style.display = "none";
-    appendDemoResults(prompt);
   };
 
   const runQuickSpin = async (prompt: string): Promise<void> => {
-    const session = ctrl.start({ status: PHASES[0].status });
+    const session = ctrl.start({ status: "Searching the web with Tavily…" });
     session.setProgress();
-    session.signal({ kind: "retrieval", label: "Unproven retrieval candidate", evidenceRef: "" });
-    const intervention = await session.intervene({
-      kind: "refine",
-      label: "Apply the user-requested constraints in the final ranking",
-    });
-    for (const phase of PHASES) {
-      session.setPhase(phase.status);
-      session.signal(phase.signal);
-      phaseEl.innerHTML = `Phase: <strong>${phase.status}</strong> · signal: <strong>${phase.signal.kind}</strong> — ${phase.signal.label}`;
-      await sleep(phase.ms);
-    }
-    session.complete();
-    const capsule = ctrl.getLastCapsule();
+    session.setPhase("Calling Tavily Search…");
     phaseEl.innerHTML =
-      "Phase: <strong>Done</strong> — Evidence Capsule retained <strong>" +
-      String(capsule?.evidenceCoverage.acceptedSignals ?? 0) +
-      "</strong> accepted signal(s), <strong>" +
-      String(capsule?.evidenceCoverage.rejectedSignals ?? 0) +
-      "</strong> UNKNOWN/rejected signal(s), and host intervention <strong>" +
-      (intervention.accepted ? "ACKNOWLEDGED" : "REJECTED") +
-      "</strong>.";
-    appendDemoResults(prompt);
-    revealGhostTools();
-    ghostStatus.textContent =
-      "Replay-safe Wait Ghost ready from this run. Share it only if you want to compare the waiting experience.";
-    refreshStats();
-    showGhostComparison();
+      "Phase: <strong>Calling Tavily Search…</strong> · real provider request in flight.";
+    try {
+      const search = await searchWeb(prompt);
+      session.setPhase("Receiving sourced results…");
+      for (const result of search.results) {
+        if (!result.url) continue;
+        session.signal({
+          kind: "retrieval",
+          label: `Result ${result.rank}: ${result.title}`.slice(0, 64),
+          evidenceRef: result.url,
+        });
+      }
+      if (search.requestId) {
+        session.signal({
+          kind: "artifact",
+          label: `Tavily response assembled · ${search.results.length} results`,
+          evidenceRef: `tavily:request:${search.requestId}`,
+        });
+      }
+      session.setPhase("Rendering sourced answer…");
+      session.complete();
+      appendSearchResults(search);
+      const capsule = ctrl.getLastCapsule();
+      phaseEl.innerHTML = `Phase: <strong>Done</strong> — Tavily returned <strong>${search.results.length}</strong> sourced result(s) in <strong>${search.elapsedMs} ms</strong>. Evidence Capsule retained <strong>${capsule?.evidenceCoverage.acceptedSignals ?? 0}</strong> accepted signal(s).`;
+      revealGhostTools();
+      ghostStatus.textContent =
+        "Replay-safe Wait Ghost ready from this real search run. The Ghost excludes the prompt, result titles and source URLs.";
+      refreshStats();
+      showGhostComparison();
+    } catch (error) {
+      const failure = error instanceof Error ? error : new Error(String(error));
+      session.signal({
+        kind: "warning",
+        label: "Tavily search request failed",
+        evidenceRef: "provider:tavily:request-failed",
+      });
+      session.fail(failure);
+      phaseEl.innerHTML = `Phase: <strong>FAILED</strong> — ${failure.message}. No search results were fabricated.`;
+      appendSearchFailure(failure.message);
+      refreshStats();
+      throw failure;
+    }
   };
 
   const runDemo = async (): Promise<void> => {
@@ -662,12 +644,15 @@ function mountLab(app: HTMLElement): void {
     const prompt = promptInput.value.trim() || DEFAULT_PROMPT;
     promptInput.value = prompt;
     appendBubble(prompt, "user");
-    if (mode === "classic") await runClassic(prompt);
-    else await runQuickSpin(prompt);
-    running = false;
-    runBtn.disabled = false;
-    failureBtn.disabled = false;
-    runBtn.textContent = "Run my prompt";
+    try {
+      if (mode === "classic") await runClassic(prompt);
+      else await runQuickSpin(prompt);
+    } finally {
+      running = false;
+      runBtn.disabled = false;
+      failureBtn.disabled = false;
+      runBtn.textContent = "Search with QuickSpin";
+    }
   };
 
   const runFailure = async (): Promise<void> => {
