@@ -33,6 +33,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/demo/main.ts src/demo/site.css
-          git rm scripts/apply-lab-ux-cleanup.mjs scripts/repair-lab-patch.mjs .github/workflows/apply-lab-ux-cleanup.yml
+          git rm -f scripts/apply-lab-ux-cleanup.mjs scripts/repair-lab-patch.mjs .github/workflows/apply-lab-ux-cleanup.yml
           git commit -m "ux: make lab user-driven and hide internal judge surface"
           git push origin lab-user-search-cleanup
