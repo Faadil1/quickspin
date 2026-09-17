@@ -25,6 +25,7 @@ jobs:
       - run: node scripts/repair-lab-patch.mjs
       - run: node scripts/apply-lab-ux-cleanup.mjs
       - run: npm ci
+      - run: npx prettier --write src/demo/main.ts src/demo/site.css
       - run: npm run check
       - run: npm run build
       - name: Commit patched UX and remove temporary patch machinery
