@@ -1,0 +1,7 @@
+{
+  "product": "QuickSpin",
+  "sourceSha": "c40527eedad89341ddb5d8f09f4889717cb60a52",
+  "environment": "production",
+  "searchProvider": "Tavily",
+  "runtimeMode": "Vercel function + immutable GitHub assets"
+}
