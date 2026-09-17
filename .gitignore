@@ -8,6 +8,7 @@ dist-demo/
 .env
 .env.*
 !.env.example
+.dev.vars*
 
 # Editor / OS
 .DS_Store
