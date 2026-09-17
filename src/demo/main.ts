@@ -43,7 +43,7 @@ const PHASES: DemoPhase[] = [
     ms: 3100,
     signal: {
       kind: "retrieval",
-      label: "Retrieved Austin dinner options",
+      label: "Retrieved demo candidates",
       evidenceRef: "demo:phase:retrieval",
     },
   },
@@ -52,7 +52,7 @@ const PHASES: DemoPhase[] = [
     ms: 3400,
     signal: {
       kind: "artifact",
-      label: "Ranked five candidate spots",
+      label: "Assembled five demo candidates",
       evidenceRef: "demo:phase:draft",
     },
   },
@@ -67,12 +67,72 @@ const PHASES: DemoPhase[] = [
   },
 ];
 
-const ROUTES = [
+const PUBLIC_ROUTES = [
   { path: "/", label: "Home" },
   { path: "/lab", label: "Lab" },
   { path: "/proof", label: "Proof" },
   { path: "/sdk", label: "SDK" },
-  { path: "/judges", label: "Judges" },
+] as const;
+
+const INTERNAL_ROUTES = [{ path: "/judges", label: "Judges" }] as const;
+const ALL_ROUTES = [...PUBLIC_ROUTES, ...INTERNAL_ROUTES];
+
+const DEFAULT_PROMPT = "Where should five friends eat tonight in Austin?";
+
+const DINNER_DEMO_RESULTS = [
+  {
+    title: "Eastside taco patio",
+    meta: "CASUAL · SHAREABLE",
+    detail: "A lively first stop built around tacos, patio energy and easy group ordering.",
+  },
+  {
+    title: "Neighborhood izakaya",
+    meta: "SMALL PLATES · SOCIAL",
+    detail: "A more intimate option for skewers, small plates and a slower group dinner.",
+  },
+  {
+    title: "Mediterranean table",
+    meta: "SHARED PLATES · FLEXIBLE",
+    detail: "A share-forward direction with vegetarian-friendly options and broad group appeal.",
+  },
+  {
+    title: "Food hall mix",
+    meta: "CHOICE · LOW FRICTION",
+    detail: "Useful when five people want different cuisines without splitting the group.",
+  },
+  {
+    title: "Late-night pizza room",
+    meta: "EASY · LATE",
+    detail: "The low-planning fallback: slices, communal seating and an easy second stop.",
+  },
+] as const;
+
+const GENERAL_DEMO_RESULTS = [
+  {
+    title: "Best direct match",
+    meta: "PRIMARY",
+    detail: "The strongest answer direction for the request as written.",
+  },
+  {
+    title: "Alternative angle",
+    meta: "OPTION B",
+    detail: "A meaningfully different route with a different trade-off profile.",
+  },
+  {
+    title: "Fastest path",
+    meta: "LOW FRICTION",
+    detail: "The option optimized for speed, simplicity and minimum setup.",
+  },
+  {
+    title: "Most flexible path",
+    meta: "ADAPTABLE",
+    detail: "The option that leaves the most room to refine constraints after the first pass.",
+  },
+  {
+    title: "Wildcard",
+    meta: "EXPLORE",
+    detail: "A deliberately different direction worth checking before committing.",
+  },
 ] as const;
 
 function controlledProviderFailure(): Promise<never> {
@@ -83,11 +143,11 @@ function controlledProviderFailure(): Promise<never> {
 
 function route(): string {
   const clean = window.location.pathname.replace(/\/+$/, "") || "/";
-  return ROUTES.some((r) => r.path === clean) ? clean : "/";
+  return ALL_ROUTES.some((r) => r.path === clean) ? clean : "/";
 }
 
 function shell(content: string, current: string): string {
-  const links = ROUTES.map(
+  const links = PUBLIC_ROUTES.map(
     (item) =>
       `<a href="${item.path}" ${item.path === current ? 'aria-current="page"' : ""}>${item.label}</a>`
   ).join("");
@@ -105,7 +165,7 @@ function shell(content: string, current: string): string {
       <footer>
         <div class="footer-inner">
           <div>QuickSpin · playable AI wait runtime · evidence before claims.</div>
-          <div class="footer-links"><a href="/lab">Live lab</a><a href="/proof">Evidence</a><a href="/sdk">SDK</a><a href="/judges">Judge view</a></div>
+          <div class="footer-links"><a href="/lab">Live lab</a><a href="/proof">Evidence</a><a href="/sdk">SDK</a></div>
         </div>
       </footer>
     </div>`;
@@ -156,8 +216,8 @@ function homePage(): string {
       <article class="proof-card"><span class="index">03 / MEASURE</span><h3>Wait gets a receipt.</h3><p>Actual wait, played time, engagement and felt wait stay directional — and a redacted Wait Ghost can replay the run without pretending it is live AI.</p></article>
     </section>
     <section class="page-head" style="margin-bottom:0">
-      <div><div class="eyebrow">Five surfaces / one product truth</div><h1>Not a landing page.<br>A product instrument.</h1><p>Each route has one job: explain, demonstrate, prove, integrate, or defend. The judge never has to excavate a single scrolling page to find the evidence.</p></div>
-      <div class="page-index">HOME → thesis<br>LAB → interaction<br>PROOF → evidence<br>SDK → repeatability<br>JUDGES → rubric</div>
+      <div><div class="eyebrow">Four public surfaces / one product truth</div><h1>Not a landing page.<br>A product instrument.</h1><p>Each public route has one job: explain, demonstrate, prove, or integrate. Internal evaluation material stays out of the product-facing experience.</p></div>
+      <div class="page-index">HOME → thesis<br>LAB → interaction<br>PROOF → evidence<br>SDK → repeatability</div>
     </section>
   </main>`;
 }
@@ -169,6 +229,11 @@ function labPage(): string {
       <div class="lab-panel">
         <div class="panel-kicker"><span>EXPERIMENT / QS-12</span><span>CONTROLLED 12.0s</span></div>
         <div class="lab-storyline" aria-label="QuickSpin lab flow"><span>WAIT</span><i></i><span>PLAY</span><i></i><span>RECORD</span><i></i><span>DERIVE</span></div>
+        <form id="prompt-form" class="prompt-composer">
+          <label for="prompt-input">Try your own prompt</label>
+          <textarea id="prompt-input" rows="2" maxlength="240" spellcheck="true">${DEFAULT_PROMPT}</textarea>
+          <div class="prompt-meta"><span>Same controlled 12-second wait · your prompt drives the demo</span><button id="run-demo" class="run" type="submit">Run my prompt</button></div>
+        </form>
         <div class="seg" role="group" aria-label="Demo mode"><button data-mode="classic">Classic spinner</button><button data-mode="quickspin">QuickSpin</button></div>
         <div id="classic-panel">
           <div class="chat">
@@ -183,14 +248,13 @@ function labPage(): string {
           <div id="qs-phase" class="qs-phase">Phase: ready.</div>
         </div>
         <div class="lab-actions">
-          <button id="run-demo" class="run">Run 12-second comparison</button>
           <button id="run-failure" class="failure">Run negative-path proof</button>
           <button id="copy-capsule">Copy Evidence Capsule</button>
-          <button id="copy-ghost">Copy redacted Wait Ghost link</button>
-          <button id="replay-ghost">Replay Wait Ghost</button>
+          <button id="copy-ghost" hidden>Copy redacted Wait Ghost link</button>
+          <button id="replay-ghost" hidden>Replay Wait Ghost</button>
           <button id="reset-stats">Reset local evidence</button>
         </div>
-        <section class="ghost-console" aria-label="Wait Ghost boundary"><div class="ghost-console-head"><strong>WAIT GHOST</strong><span>REDACTED DERIVATIVE</span></div><div class="ghost-privacy"><span>NO PROMPT</span><span>NO LABELS</span><span>NO EVIDENCE REFS</span><span>NO PAYLOADS</span></div><div id="ghost-status" class="qs-phase">Wait Ghost: none loaded. Shared ghosts are redacted replay artifacts — never live AI.</div></section>
+        <section id="ghost-console" class="ghost-console" aria-label="Wait Ghost boundary" hidden><div class="ghost-console-head"><strong>WAIT GHOST</strong><span>REDACTED DERIVATIVE</span></div><div class="ghost-privacy"><span>NO PROMPT</span><span>NO LABELS</span><span>NO EVIDENCE REFS</span><span>NO PAYLOADS</span></div><div id="ghost-status" class="qs-phase">Replay-safe Wait Ghost ready from this run.</div></section>
       </div>
       <aside class="evidence-panel" style="padding:0;overflow:hidden">
         <div class="panel-kicker" style="padding:18px;margin:0"><span>EVIDENCE FEED</span><span>HOST EVENTS</span></div>
@@ -234,7 +298,7 @@ function proofPage(): string {
       <article class="evidence-panel"><div class="eyebrow">Abstention</div><h2>No provenance? No claim.</h2><p>Execution signals without a valid evidenceRef are rejected as UNKNOWN / INSUFFICIENT_EVIDENCE and do not mutate gameplay.</p><div class="status-line"><span>UNKNOWN / REFUSAL</span><span class="status">PASS</span></div></article>
       <article class="evidence-panel"><div class="eyebrow">Boundary</div><h2>What QuickSpin refuses to claim.</h2><p>It does not make the model faster, guarantee every user feels less wait, or convert a controlled demo failure into evidence of a live provider outage.</p><div class="status-line"><span>CLAIM DISCIPLINE</span><span class="status">PASS</span></div></article>
     </section>
-    <div class="route-actions"><a class="action signal" href="/lab">Run the live negative path →</a><a class="action" href="/judges">See rubric traceability</a></div>
+    <div class="route-actions"><a class="action signal" href="/lab">Run the live negative path →</a><a class="action" href="/sdk">Inspect the runtime contract</a></div>
   </main>`;
 }
 
@@ -372,12 +436,15 @@ function mountLab(app: HTMLElement): void {
   const classicPanel = app.querySelector<HTMLElement>("#classic-panel")!;
   const qsPanel = app.querySelector<HTMLElement>("#qs-panel")!;
   const segBtns = Array.from(app.querySelectorAll<HTMLButtonElement>(".seg button"));
+  const promptForm = app.querySelector<HTMLFormElement>("#prompt-form")!;
+  const promptInput = app.querySelector<HTMLTextAreaElement>("#prompt-input")!;
   const runBtn = app.querySelector<HTMLButtonElement>("#run-demo")!;
   const failureBtn = app.querySelector<HTMLButtonElement>("#run-failure")!;
   const copyCapsuleBtn = app.querySelector<HTMLButtonElement>("#copy-capsule")!;
   const copyGhostBtn = app.querySelector<HTMLButtonElement>("#copy-ghost")!;
   const replayGhostBtn = app.querySelector<HTMLButtonElement>("#replay-ghost")!;
   const ghostStatus = app.querySelector<HTMLElement>("#ghost-status")!;
+  const ghostConsole = app.querySelector<HTMLElement>("#ghost-console")!;
   const resetBtn = app.querySelector<HTMLButtonElement>("#reset-stats")!;
   const phaseEl = app.querySelector<HTMLElement>("#qs-phase")!;
   const classicPhase = app.querySelector<HTMLElement>("#classic-phase")!;
@@ -421,6 +488,60 @@ function mountLab(app: HTMLElement): void {
     bubble.className = `bubble ${kind}`;
     bubble.textContent = label;
     chat.appendChild(bubble);
+  };
+
+  const demoResultsFor = (prompt: string) =>
+    /dinner|restaurant|eat|food|taco|lunch|brunch/i.test(prompt)
+      ? DINNER_DEMO_RESULTS
+      : GENERAL_DEMO_RESULTS;
+
+  const appendDemoResults = (prompt: string): void => {
+    const panel = mode === "classic" ? classicPanel : qsPanel;
+    const chat = panel.querySelector<HTMLElement>(".chat")!;
+    const wrap = document.createElement("section");
+    wrap.className = "demo-results";
+    const head = document.createElement("div");
+    head.className = "demo-results-head";
+    const title = document.createElement("strong");
+    title.textContent = "Five demo results";
+    const note = document.createElement("span");
+    note.textContent = "Illustrative local response · not a live web search";
+    head.append(title, note);
+    const query = document.createElement("p");
+    query.className = "demo-results-query";
+    query.textContent = `For: “${prompt}”`;
+    const list = document.createElement("div");
+    list.className = "demo-results-list";
+    demoResultsFor(prompt).forEach((result, index) => {
+      const item = document.createElement("article");
+      item.className = "demo-result";
+      const rank = document.createElement("b");
+      rank.textContent = String(index + 1).padStart(2, "0");
+      const body = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = result.title;
+      const meta = document.createElement("span");
+      meta.textContent = result.meta;
+      const detail = document.createElement("p");
+      detail.textContent = result.detail;
+      body.append(name, meta, detail);
+      item.append(rank, body);
+      list.appendChild(item);
+    });
+    wrap.append(head, query, list);
+    chat.appendChild(wrap);
+  };
+
+  const revealGhostTools = (): void => {
+    ghostConsole.hidden = false;
+    copyGhostBtn.hidden = false;
+    replayGhostBtn.hidden = false;
+  };
+
+  const hideGhostTools = (): void => {
+    ghostConsole.hidden = true;
+    copyGhostBtn.hidden = true;
+    replayGhostBtn.hidden = true;
   };
 
   const refreshStats = (): void => {
@@ -480,7 +601,7 @@ function mountLab(app: HTMLElement): void {
     showGhostComparison();
   };
 
-  const runClassic = async (): Promise<void> => {
+  const runClassic = async (prompt: string): Promise<void> => {
     classicPhase.textContent = "";
     const chat = classicPanel.querySelector<HTMLElement>(".chat")!;
     const track = chat.querySelector<HTMLElement>(".thinking")!;
@@ -497,16 +618,16 @@ function mountLab(app: HTMLElement): void {
       await sleep(phase.ms);
     }
     track.style.display = "none";
-    appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
+    appendDemoResults(prompt);
   };
 
-  const runQuickSpin = async (): Promise<void> => {
+  const runQuickSpin = async (prompt: string): Promise<void> => {
     const session = ctrl.start({ status: PHASES[0].status });
     session.setProgress();
     session.signal({ kind: "retrieval", label: "Unproven retrieval candidate", evidenceRef: "" });
     const intervention = await session.intervene({
       kind: "refine",
-      label: "Prioritize walkability in the final ranking",
+      label: "Apply the user-requested constraints in the final ranking",
     });
     for (const phase of PHASES) {
       session.setPhase(phase.status);
@@ -524,7 +645,10 @@ function mountLab(app: HTMLElement): void {
       "</strong> UNKNOWN/rejected signal(s), and host intervention <strong>" +
       (intervention.accepted ? "ACKNOWLEDGED" : "REJECTED") +
       "</strong>.";
-    appendBubble("Here are five spots — assuming everyone still likes tacos.", "ai");
+    appendDemoResults(prompt);
+    revealGhostTools();
+    ghostStatus.textContent =
+      "Replay-safe Wait Ghost ready from this run. Share it only if you want to compare the waiting experience.";
     refreshStats();
     showGhostComparison();
   };
@@ -534,14 +658,16 @@ function mountLab(app: HTMLElement): void {
     running = true;
     runBtn.disabled = true;
     failureBtn.disabled = true;
-    runBtn.textContent = "Generating…";
-    appendBubble("Where should five friends eat tonight in Austin?", "user");
-    if (mode === "classic") await runClassic();
-    else await runQuickSpin();
+    runBtn.textContent = "Running…";
+    const prompt = promptInput.value.trim() || DEFAULT_PROMPT;
+    promptInput.value = prompt;
+    appendBubble(prompt, "user");
+    if (mode === "classic") await runClassic(prompt);
+    else await runQuickSpin(prompt);
     running = false;
     runBtn.disabled = false;
     failureBtn.disabled = false;
-    runBtn.textContent = "Run 12-second comparison";
+    runBtn.textContent = "Run my prompt";
   };
 
   const runFailure = async (): Promise<void> => {
@@ -579,7 +705,10 @@ function mountLab(app: HTMLElement): void {
     failureBtn.textContent = "Run negative-path proof";
   };
 
-  runBtn.addEventListener("click", () => void runDemo());
+  promptForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void runDemo();
+  });
   failureBtn.addEventListener("click", () => void runFailure());
   copyCapsuleBtn.addEventListener("click", () => {
     const capsule = ctrl.exportLastCapsule();
@@ -621,6 +750,7 @@ function mountLab(app: HTMLElement): void {
     ctrl = createQuickSpin(controllerOptions);
     copyCapsuleBtn.textContent = "Copy Evidence Capsule";
     copyGhostBtn.textContent = "Copy redacted Wait Ghost link";
+    hideGhostTools();
     refreshStats();
   });
   for (const button of segBtns)
@@ -631,7 +761,10 @@ function mountLab(app: HTMLElement): void {
 
   setMode("quickspin");
   if (sharedGhost) {
+    revealGhostTools();
     ghostStatus.textContent = `Shared Wait Ghost loaded · ${sharedGhost.timeline.length} redacted event(s) · outcome ${sharedGhost.outcome}. Replay is historical, not live AI.`;
+  } else {
+    hideGhostTools();
   }
   refreshStats();
 }
