@@ -706,6 +706,8 @@ function mountLab(app: HTMLElement): void {
     runBtn.disabled = true;
     failureBtn.disabled = true;
     failureBtn.textContent = "Failure in flight…";
+    clearSearchOutput();
+    hideGhostTools();
     appendBubble(
       "Find dinner options, but preserve failure truth if the provider rejects.",
       "user"
